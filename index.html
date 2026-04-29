@@ -2522,6 +2522,7 @@
         }
 
         function checkMcq(btn, idx) {
+			stopTimer();
             const correct = currentQ.correctIdx;
             if(idx === correct) {
                 btn.classList.add('correct-ans');

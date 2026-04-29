@@ -699,16 +699,46 @@
         };
 		
 		const SUDDEN_DEATH_QUESTIONS = [
-            { q: "Ποια ομάδα έχει χάσει τους περισσότερους τελικούς Champions League;", a: "Juventus (7)" },
-            { q: "Ποιος παίκτης έχει τα περισσότερα γκολ σε ένα ημερολογιακό έτος (91 γκολ);", a: "Lionel Messi" },
-            { q: "Ποια χώρα κέρδισε το Euro 1992 χωρίς να έχει προκριθεί αρχικά;", a: "Δανία" },
-            { q: "Ποιος είναι ο πρώτος σκόρερ στην ιστορία της Εθνικής Βραζιλίας (επίσημα FIFA);", a: "Neymar" },
-            { q: "Ποια ομάδα κατέκτησε το πρώτο Παγκόσμιο Κύπελλο Συλλόγων το 2000;", a: "Corinthians" },
-            { q: "Ποιος παίκτης έκανε τη μεταγραφή-ρεκόρ από τη Μπαρτσελόνα στη Ρεάλ το 2000;", a: "Luis Figo" },
-            { q: "Ποιος τερματοφύλακας έχει σκοράρει τα περισσότερα γκολ στην ιστορία του ποδοσφαίρου;", a: "Rogerio Ceni" },
-            { q: "Ποια εθνική ομάδα ονομάζεται 'La Roja';", a: "Ισπανία" },
-            { q: "Ποιος προπονητής έχει τους περισσότερους τίτλους Premier League;", a: "Sir Alex Ferguson" },
-            { q: "Σε ποια ομάδα έπαιζε ο Ronaldinho πριν τη Μπαρτσελόνα;", a: "Paris Saint-Germain" }
+            { q: "Ποια ομάδα έχει χάσει τους περισσότερους τελικούς Champions League (7);", a: "Juventus" },
+			{ q: "Ποιος παίκτης πέτυχε 91 γκολ σε ένα ημερολογιακό έτος (2012);", a: "Lionel Messi" },
+			{ q: "Ποια χώρα κατέκτησε το Euro 1992 χωρίς να έχει προκριθεί αρχικά;", a: "Δανία" },
+			{ q: "Ποιος είναι ο πρώτος σκόρερ όλων των εποχών στην Εθνική Βραζιλίας (FIFA);", a: "Neymar" },
+			{ q: "Ποιος παίκτης έκανε την ακριβότερη μεταγραφή από Μπαρτσελόνα σε Ρεάλ το 2000;", a: "Luis Figo" },
+			{ q: "Ποιος τερματοφύλακας έχει σκοράρει τα περισσότερα γκολ στην ιστορία (131);", a: "Rogerio Ceni" },
+			{ q: "Ποιος προπονητής έχει κατακτήσει τους περισσότερους τίτλους Premier League (13);", a: "Sir Alex Ferguson" },
+			{ q: "Σε ποια ομάδα έπαιζε ο Ronaldinho στη Γαλλία πριν τη Μπαρτσελόνα;", a: "Paris Saint-Germain" },
+			{ q: "Ποιος παίκτης κατέχει το ρεκόρ γκολ σε ένα μόνο Μουντιάλ (13 γκολ το 1958);", a: "Just Fontaine" },
+			{ q: "Ποια ομάδα κέρδισε το πρώτο Champions League με τη νέα του ονομασία (1993);", a: "Marseille" },
+			{ q: "Ποιος είναι ο μοναδικός παίκτης που πήρε UCL με 3 διαφορετικές ομάδες;", a: "Clarence Seedorf" },
+			{ q: "Ποιος παίκτης είχε το προσωνύμιο 'Το Φαινόμενο';", a: "Ronaldo (Nazario)" },
+			{ q: "Ποιος πέτυχε το νικητήριο γκολ της Ισπανίας στον τελικό του Μουντιάλ 2010;", a: "Andres Iniesta" },
+			{ q: "Ποιος είναι ο πρώτος σκόρερ όλων των εποχών στην ιστορία των Μουντιάλ (16 γκολ);", a: "Miroslav Klose" },
+			{ q: "Ποιος προπονητής οδήγησε την Εθνική Ελλάδας στην κορυφή της Ευρώπης το 2004;", a: "Otto Rehhagel" },
+			{ q: "Ποιος παίκτης είχε το παρατσούκλι 'The Little Magician' στην Premier League;", a: "Philippe Coutinho" },
+			{ q: "Ποιος είναι ο πρώτος σκόρερ στην ιστορία της Premier League (260 γκολ);", a: "Alan Shearer" },
+			{ q: "Ποιος παίκτης έδωσε την ασίστ στον Ινιέστα στον τελικό του Μουντιάλ 2010;", a: "Cesc Fabregas" },
+			{ q: "Ποια ομάδα έχει το παρατσούκλι 'The Cherries' στην Αγγλία;", a: "Bournemouth" },
+			{ q: "Ποιος τερματοφύλακας απέκρουσε 4 πέναλτι στον τελικό του Πρωταθλητριών το 1986;", a: "Helmuth Duckadam" },
+			{ q: "Ποια εθνική ομάδα αποκαλείται 'La Seleccion';", a: "Αργεντινή" },
+			{ q: "Ποια ομάδα κατέκτησε το πρώτο Μουντιάλ στην ιστορία (1930);", a: "Ουρουγουάη" },
+			{ q: "Ποιος παίκτης έκανε το 'Panenka' πέναλτι στον τελικό του Euro 1976;", a: "Antonin Panenka" },
+			{ q: "Ποια ομάδα έχει ως έδρα το στάδιο 'Estadio Da Luz';", a: "Benfica" },
+			{ q: "Ποιος παίκτης πέτυχε το 'Γκολ του Αιώνα' κόντρα στην Αγγλία το 1986;", a: "Diego Maradona" },
+			{ q: "Ποια ομάδα κέρδισε το Champions League το 2004 με προπονητή τον Μουρίνιο;", a: "Porto" },
+			{ q: "Ποια χώρα φιλοξένησε το Μουντιάλ του 1998;", a: "Γαλλία" },
+			{ q: "Ποιος παίκτης πήρε τη Χρυσή Μπάλα το 2005;", a: "Ronaldinho" },
+			{ q: "Ποια ομάδα φοράει φανέλα με οριζόντιες πράσινες-λευκές ρίγες στη Σκωτία;", a: "Celtic" },
+			{ q: "Ποιος παίκτης αποβλήθηκε στον τελικό του Μουντιάλ 2006 για κουτουλιά;", a: "Zinedine Zidane" },
+			{ q: "Ποιος είναι ο πρώτος σκόρερ στην ιστορία του Champions League;", a: "Cristiano Ronaldo" },
+			{ q: "Σε ποια ομάδα έπαιζε ο Erling Haaland πριν τη Μάντσεστερ Σίτι;", a: "Borussia Dortmund" },
+			{ q: "Ποιος παίκτης είναι γνωστός ως 'Ο Αυτοκράτορας' (Der Kaiser);", a: "Franz Beckenbauer" },
+			{ q: "Ποια εθνική ομάδα έχει το παρατσούκλι 'A Seleção das Quinas';", a: "Πορτογαλία" },
+			{ q: "Ποια ομάδα κατέκτησε το Europa League 3 συνεχόμενες φορές (2014-2016);", a: "Sevilla" },
+			{ q: "Ποιος παίκτης πέτυχε 5 γκολ σε 9 λεπτά κόντρα στη Βόλφσμπουργκ;", a: "Robert Lewandowski" },
+			{ q: "Σε ποια πόλη βρίσκεται η έδρα της ομάδας Borussia Monchengladbach;", a: "Mönchengladbach" },
+			{ q: "Ποια ομάδα κατέκτησε το μοναδικό της αήττητο πρωτάθλημα στην Αγγλία το 2004;", a: "Arsenal" },
+			{ q: "Ποιος παίκτης πέτυχε το νικητήριο γκολ της Γερμανίας στον τελικό του 2014;", a: "Mario Gotze" },
+			{ q: "Ποια ομάδα έχει κατακτήσει τα περισσότερα Europa League/UEFA Cup;", a: "Sevilla" }
         ];
 
         const L = {
@@ -1030,8 +1060,6 @@
 				q_preston: "https://www.jetpunk.com/img/user-img/bc/bc22249525-450.webp",
 				q_argentinos_juniors: "https://www.jetpunk.com/img/user-img/aa/aa0b23d3b1-450.webp",
 				q_shanghai_shenhua: "https://www.jetpunk.com/img/user-img/43/43bf4f635c-450.webp",
-			    q_zorya_luhansk: "https://www.jetpunk.com/img/user-img/d7/d7ab720792-450.webp",
-				q_sporting_kc: "https://www.jetpunk.com/img/user-img/4b/4b7a231172-450.webp",
 				q_sparta_rotterdam: "https://www.jetpunk.com/img/user-img/3e/3ea20c7ae5-450.webp",
                 q_charleroi: "https://www.jetpunk.com/img/user-img/bf/bf4fb17ca4-450.webp",
                 q_cercle_brugge: "https://www.jetpunk.com/img/user-img/ec/ecc61172df-450.webp",
@@ -2318,10 +2346,15 @@
             document.getElementById('q-answer-box').style.display = 'none';
             document.getElementById('fifty-box').style.display = 'none';
             
-            // Καθαρισμός Admin Controls
             document.getElementById('admin-controls').style.display = 'none';
             document.getElementById('t5-admin-controls').style.display = 'none';
             document.getElementById('score-admin-controls').style.display = 'none';
+			
+			document.getElementById('score-steal-section').style.display = 'none';
+            
+            // --- Η ΔΙΟΡΘΩΣΗ: Κλείνουμε το σκονάκι αν ήταν ανοιχτό από πριν ---
+            document.getElementById('t5-secret-list').style.display = 'none'; 
+            
             document.getElementById('btn-show').style.display = 'block';
             document.getElementById('btn-correct').style.display = 'none';
             document.getElementById('btn-wrong').style.display = 'none';
@@ -2331,7 +2364,6 @@
             if(currentQ.type === "top5") {
                 document.getElementById('t5-admin-controls').style.display = 'flex';
             } else {
-                // Για MCQ, LOGO, SCORE, TRANSFER κλπ, δείχνουμε το κουμπί ΑΠΟΚΑΛΥΨΗ
                 document.getElementById('admin-controls').style.display = 'flex';
             }
 
@@ -2353,6 +2385,15 @@
                 document.getElementById('score-match-container').style.display = 'flex'; 
                 document.getElementById('sm-title').innerText = currentQ.title;
                 document.getElementById('sm-teams').innerText = currentQ.teams;
+                
+                // --- ΕΛΕΓΧΟΣ ΓΙΑ ΤΟΝ ΠΙΝΑΚΑ ΚΛΕΨΙΜΑΤΟΣ ---
+                if (isSteal) {
+                    document.getElementById('score-steal-section').style.display = 'block';
+                    let stealName = (stealingTeam === 1) ? team1.name : team2.name;
+                    document.getElementById('lbl-steal-team').innerText = `ΚΛΕΨΙΜΟ ΑΠΟ: ${stealName}`;
+                } else {
+                    document.getElementById('score-steal-section').style.display = 'none';
+                }
             } 
             else if (currentQ.type === "logo") {
                 document.getElementById('q-img').src = currentQ.img;
@@ -2390,9 +2431,9 @@
             }
        
              // ΕΚΚΙΝΗΣΗ ΧΡΟΝΟΜΕΤΡΟΥ: 120s για Top 5, 60s για τα υπόλοιπα
-			let qTime = (currentQ.type === "top5") ? 120 : 60;
-			startTimer(qTime);
-	   }
+            let qTime = (currentQ.type === "top5") ? 120 : 60;
+            startTimer(qTime);
+    }
 
         function toggleT5Peek() {
             const list = document.getElementById('t5-secret-list');

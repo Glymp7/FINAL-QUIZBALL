@@ -2431,10 +2431,7 @@
             document.getElementById('admin-controls').style.display = 'none';
             document.getElementById('t5-admin-controls').style.display = 'none';
             document.getElementById('score-admin-controls').style.display = 'none';
-            
             document.getElementById('score-steal-section').style.display = 'none';
-            
-            // --- Η ΔΙΟΡΘΩΣΗ: Κλείνουμε το σκονάκι αν ήταν ανοιχτό από πριν ---
             document.getElementById('t5-secret-list').style.display = 'none'; 
             
             document.getElementById('btn-show').style.display = 'block';
@@ -2469,97 +2466,6 @@
                 document.getElementById('sm-teams').innerText = currentQ.teams;
                 
                 // --- ΕΛΕΓΧΟΣ ΓΙΑ ΤΟΝ ΠΙΝΑΚΑ ΚΛΕΨΙΜΑΤΟΣ ---
-                if (isSteal) {
-                    document.getElementById('score-steal-section').style.display = 'block';
-                    let stealName = (stealingTeam === 1) ? team1.name : team2.name;
-                    document.getElementById('lbl-steal-team').innerText = `ΚΛΕΨΙΜΟ ΑΠΟ: ${stealName}`;
-                } else {
-                    document.getElementById('score-steal-section').style.display = 'none';
-                }
-            } 
-            else if (currentQ.type === "logo") {
-                document.getElementById('q-img').src = currentQ.img;
-                document.getElementById('q-img').style.display = 'block';
-            } 
-            else if (currentQ.type === "combo") {
-                document.getElementById('combo-img1').src = currentQ.logos[0];
-                document.getElementById('combo-img2').src = currentQ.logos[1];
-                document.getElementById('combo-container').style.display = 'flex';
-            } 
-            else if (currentQ.type === "transfer") {
-                const list = document.getElementById('tf-list');
-                list.innerHTML = "";
-                currentQ.transfers.forEach(t => {
-                    list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${t.l}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
-                });
-                document.getElementById('transfer-container').style.display = 'flex';
-            } 
-            else if (currentQ.type === "pitch") {
-                document.getElementById('pitch-container').style.display = 'flex';
-                renderPitch(currentQ.lineup);
-            } 
-            else if (currentQ.type === "top5") {
-                document.getElementById('top5-container').style.display = 'flex';
-                document.getElementById('btn-t5-stop').style.display = 'none';
-                document.getElementById('t5-secret-list').innerHTML = currentQ.top5.map((item, i) => `${i+1}. ${item}`).join('<br>');
-                t5Strikes = 0; t5Fofunction openQuestion(id, conf) {
-            currentQ = activeDb.find(q => q.id === id);
-            if (!currentQ) return;
-            
-            isFiftyFifty = false;
-            isSteal = false;
-            stealingTeam = 0;
-            
-            document.getElementById('board-screen').style.display = 'none';
-            document.getElementById('question-screen').style.display = 'flex';
-            document.body.style.background = conf.color;
-            
-            document.getElementById('q-text').style.display = 'block';
-            document.getElementById('mc-grid').style.display = 'none';
-            document.getElementById('q-img').style.display = 'none';
-            document.getElementById('combo-container').style.display = 'none';
-            document.getElementById('transfer-container').style.display = 'none';
-            document.getElementById('pitch-container').style.display = 'none';
-            document.getElementById('top5-container').style.display = 'none';
-            document.getElementById('score-match-container').style.display = 'none';
-            document.getElementById('sm-answer-box').style.display = 'none';
-            document.getElementById('q-answer-box').style.display = 'none';
-            document.getElementById('fifty-box').style.display = 'none';
-            
-            document.getElementById('admin-controls').style.display = 'none';
-            document.getElementById('t5-admin-controls').style.display = 'none';
-            document.getElementById('score-admin-controls').style.display = 'none';
-            document.getElementById('score-steal-section').style.display = 'none';
-            document.getElementById('t5-secret-list').style.display = 'none'; 
-            
-            document.getElementById('btn-show').style.display = 'block';
-            document.getElementById('btn-correct').style.display = 'none';
-            document.getElementById('btn-wrong').style.display = 'none';
-            document.getElementById('btn-next').style.display = 'none';
-
-            if(currentQ.type === "top5") {
-                document.getElementById('t5-admin-controls').style.display = 'flex';
-            } else {
-                document.getElementById('admin-controls').style.display = 'flex';
-            }
-
-            updatePointsTag();
-            document.getElementById('q-text').innerText = currentQ.q;
-            
-            if (currentQ.type === "mcq") {
-                document.getElementById('mc-grid').style.display = 'flex';
-                for(let i=0; i<4; i++) {
-                    const btn = document.getElementById(`opt-${i}`);
-                    document.getElementById(`opt-txt-${i}`).innerText = currentQ.options[i];
-                    btn.className = "mc-option"; btn.disabled = false; btn.style.visibility = 'visible';
-                }
-            } 
-            else if (currentQ.type === "score") {
-                document.getElementById('q-text').style.display = 'none'; 
-                document.getElementById('score-match-container').style.display = 'flex'; 
-                document.getElementById('sm-title').innerText = currentQ.title;
-                document.getElementById('sm-teams').innerText = currentQ.teams;
-                
                 if (isSteal) {
                     document.getElementById('score-steal-section').style.display = 'block';
                     let stealName = (stealingTeam === 1) ? team1.name : team2.name;

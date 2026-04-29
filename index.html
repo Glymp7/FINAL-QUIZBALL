@@ -2125,6 +2125,7 @@
                 }
 
                 // ΟΤΑΝ Ο ΧΡΟΝΟΣ ΜΗΔΕΝΙΣΕΙ:
+                // ΟΤΑΝ Ο ΧΡΟΝΟΣ ΜΗΔΕΝΙΣΕΙ:
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     
@@ -2134,6 +2135,36 @@
                     }
 
                     timerText.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ! ⏰";
+                    
+                    // 1. Αν είναι Πολλαπλής Επιλογής (MCQ), το κλειδώνουμε κανονικά ως λάθος
+                    if (currentQ.type === "mcq") {
+                        document.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
+                        document.getElementById('q-answer-box').innerText = currentQ.a;
+                        document.getElementById('q-answer-box').style.display = 'block';
+                        
+                        document.getElementById('admin-controls').style.display = 'flex';
+                        document.getElementById('t5-admin-controls').style.display = 'none';
+                        document.getElementById('score-admin-controls').style.display = 'none';
+                        document.getElementById('btn-show').style.display = 'none';
+                        document.getElementById('btn-correct').style.display = 'none';
+                        document.getElementById('btn-wrong').style.display = 'none';
+                        
+                        const btnNext = document.getElementById('btn-next');
+                        btnNext.style.display = 'block';
+                        btnNext.style.background = '#d63031';
+                        btnNext.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ - ΕΠΙΣΤΡΟΦΗ ΣΤΟΝ ΠΙΝΑΚΑ ➔";
+                        btnNext.onclick = () => resolveTurn(false);
+                    } else {
+                        // 2. Για όλες τις άλλες κατηγορίες (Ποιος Λείπει, Player ID, Combo κλπ)
+                        // Απενεργοποιούμε το 50/50 αν υπήρχε
+                        if (isFiftyFifty) {
+                            document.querySelectorAll('#fifty-box .mc-option').forEach(b => b.disabled = true);
+                        }
+                        // Κάνουμε Αποκάλυψη της Απάντησης, ΑΛΛΑ αφήνουμε τα κουμπιά "ΣΩΣΤΟ" / "ΛΑΘΟΣ"
+                        // ώστε ο Διαιτητής να αποφασίσει αν θα δώσει τους πόντους!
+                        revealAnswer();
+                    }
+                }
                     
                     // --- ΚΛΕΙΔΩΜΑ ΟΘΟΝΗΣ ΚΑΙ ΑΥΤΟΜΑΤΟ ΛΑΘΟΣ ---
                     // 1. Απενεργοποιούμε τα κουμπιά των MCQ αν είναι τέτοια ερώτηση
@@ -2442,8 +2473,8 @@
             document.getElementById('admin-controls').style.display = 'none';
             document.getElementById('t5-admin-controls').style.display = 'none';
             document.getElementById('score-admin-controls').style.display = 'none';
-			
-			document.getElementById('score-steal-section').style.display = 'none';
+            
+            document.getElementById('score-steal-section').style.display = 'none';
             
             // --- Η ΔΙΟΡΘΩΣΗ: Κλείνουμε το σκονάκι αν ήταν ανοιχτό από πριν ---
             document.getElementById('t5-secret-list').style.display = 'none'; 
@@ -2523,9 +2554,16 @@
                 });
             }
        
-             // ΕΚΚΙΝΗΣΗ ΧΡΟΝΟΜΕΤΡΟΥ: 120s για Top 5, 60s για τα υπόλοιπα
-            let qTime = (currentQ.type === "top5") ? 120 : 60;
-            startTimer(qTime);
+             // --- ΝΕΟΣ ΚΩΔΙΚΑΣ: ΕΚΚΙΝΗΣΗ ΧΡΟΝΟΜΕΤΡΟΥ ΕΚΤΟΣ TOP 5 ---
+            if (currentQ.type === "top5") {
+                document.getElementById('timer-container').style.display = 'none';
+                document.getElementById('timer-text').style.display = 'none';
+                stopTimer(); // Κλείνουμε τελείως το ρολόι
+            } else {
+                document.getElementById('timer-container').style.display = 'block';
+                document.getElementById('timer-text').style.display = 'block';
+                startTimer(60); // 60 δευτερόλεπτα για όλες τις άλλες
+            }
     }
 
         function toggleT5Peek() {

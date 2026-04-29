@@ -2389,9 +2389,9 @@
                 });
             }
        
-             // ΕΚΚΙΝΗΣΗ ΧΡΟΝΟΜΕΤΡΟΥ: 60s για Top 5, 30s για τα υπόλοιπα
-            let qTime = (currentQ.type === "top5") ? 120 : 60;
-            startTimer(qTime);
+             // ΕΚΚΙΝΗΣΗ ΧΡΟΝΟΜΕΤΡΟΥ: 120s για Top 5, 60s για τα υπόλοιπα
+			let qTime = (currentQ.type === "top5") ? 120 : 60;
+			startTimer(qTime);
 	   }
 
         function toggleT5Peek() {

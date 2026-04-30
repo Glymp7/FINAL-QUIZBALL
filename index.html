@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quizball Ultimate</title>
 	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-	<meta name="apple-mobile-web-app-capable" content="yes">kos
+	<meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/NyLgv48K/Gemini-Generated-Image-yv9x7iyv9x7iyv9x.png">
 	
@@ -1061,12 +1061,12 @@
 				barranquilla: "https://upload.wikimedia.org/wikipedia/en/0/0b/Barranquilla_FC_logo.png",
 				minerven: "https://upload.wikimedia.org/wikipedia/en/0/08/Minerven.png",
 				lecce: "https://upload.wikimedia.org/wikipedia/en/2/23/US_Lecce_crest.svg",
-				nantes: "https://upload.wikimedia.org/wikipedia/commons/4/45/Logo_FC_Nantes_%28avec_fond%29_-_2019.svg",
-			    vitesse: "https://upload.wikimedia.org/wikipedia/en/thumb/c/c8/SBV_Vitesse_logo.svg/960px-SBV_Vitesse_logo.svg.png",
+				nantes: "https://tmssl.akamaized.net//images/wappen/big/995.png?lm=1581355747",
+			    vitesse: "https://tmssl.akamaized.net//images/wappen/head/499.png?lm=1679396090",
 			    lens: "https://upload.wikimedia.org/wikipedia/en/thumb/c/cc/RC_Lens_logo.svg/250px-RC_Lens_logo.svg.png",
 			    atalanta: "https://upload.wikimedia.org/wikipedia/en/thumb/6/66/AtalantaBC.svg/250px-AtalantaBC.svg.png",
-				vilnius: "https://upload.wikimedia.org/wikipedia/el/thumb/c/c9/FK_%C5%BDalgiris_%28logo%29.svg/1280px-FK_%C5%BDalgiris_%28logo%29.svg.png",
-				lks_lodz: "https://upload.wikimedia.org/wikipedia/en/d/dd/%C5%81KS_%C5%81%C3%B3d%C5%BA_crest.svg",
+				vilnius: "https://www.mfl.lt/img/kom_logo88_vfm.jpg",
+				lks_lodz: "https://tmssl.akamaized.net//images/wappen/head/256.png?lm=1706716572",
 			
 			
 				
@@ -2505,14 +2505,24 @@
                 const list = document.getElementById('tf-list');
                 list.innerHTML = "";
                 currentQ.transfers.forEach(t => {
-                    // --- ΕΛΕΓΧΟΣ ΓΙΑ RETIRED ΚΑΙ WITHOUT CLUB ---
-                    let logoUrl = t.l;
+                    
+                    // --- ΕΛΕΓΧΟΣ ΓΙΑ RETIRED ---
                     if (t.c.includes("Retired")) {
-                        logoUrl = "https://i.postimg.cc/1tx5sxvb/football-boot-clip-art-png-favpng-xuf-ULV9wkr-Fa8k-WNt-Wfi-Bb-Mbn.jpg"; 
-                    } else if (t.c.includes("Without Club")) {
-                        logoUrl = "https://cdn-icons-png.flaticon.com/512/4819/4819582.png"; 
+                        let bootUrl = "https://i.postimg.cc/1tx5sxvb/football-boot-clip-art-png-favpng-xuf-ULV9wkr-Fa8k-WNt-Wfi-Bb-Mbn.jpg";
+                        // Τυπώνει ΜΟΝΟ την εικόνα στο κέντρο, χωρίς κανένα κείμενο
+                        list.innerHTML += `<div class="tf-row" style="justify-content: center; padding: 15px;"><img src="${bootUrl}" style="height: 45px; width: 45px; object-fit: contain;" onerror="this.style.opacity='0'"></div>`;
+                        return; // Σταματάει εδώ για να μην τυπώσει την κανονική γραμμή
                     }
-                    list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${logoUrl}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
+
+                    // --- ΕΛΕΓΧΟΣ ΓΙΑ WITHOUT CLUB ---
+                    let logoUrl = t.l;
+                    let clubName = t.c;
+                    if (t.c.includes("Without Club")) {
+                        logoUrl = "https://cdn-icons-png.flaticon.com/512/4819/4819582.png"; 
+                        clubName = "Ελεύθερος"; // Το μεταφράζουμε κιόλας!
+                    }
+
+                    list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${logoUrl}" onerror="this.style.opacity='0'"><span>${clubName}</span></div><div class="tf-fee">${t.f}</div></div>`;
                 });
                 document.getElementById('transfer-container').style.display = 'flex';
             } 

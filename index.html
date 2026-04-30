@@ -2519,7 +2519,7 @@
                     list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${logoUrl}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
                 });
                 document.getElementById('transfer-container').style.display = 'flex';
-            }
+            } 
             else if (currentQ.type === "pitch") {
                 document.getElementById('pitch-container').style.display = 'flex';
                 renderPitch(currentQ.lineup);

@@ -2509,14 +2509,17 @@
                     // --- ΕΛΕΓΧΟΣ ΓΙΑ RETIRED ΚΑΙ WITHOUT CLUB ---
                     let logoUrl = t.l;
                     if (t.c.includes("Retired")) {
-                        logoUrl = "https://cdn-icons-png.flaticon.com/512/5021/5021044.png"; // Εικόνα: Κρεμασμένα παπούτσια
+                        // Η δική σου εικόνα για κρεμασμένα παπούτσια!
+                        logoUrl = "https://i.postimg.cc/1tx5sxvb/football-boot-clip-art-png-favpng-xuf-ULV9wkr-Fa8k-WNt-Wfi-Bb-Mbn.jpg"; 
                     } else if (t.c.includes("Without Club")) {
-                        logoUrl = "https://cdn-icons-png.flaticon.com/512/4819/4819582.png"; // Εικόνα: Ερωτηματικό (ελεύθερος)
+                        // Εικόνα ερωτηματικό για παίκτες χωρίς ομάδα
+                        logoUrl = "https://cdn-icons-png.flaticon.com/512/4819/4819582.png"; 
                     }
 
                     list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${logoUrl}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
                 });
                 document.getElementById('transfer-container').style.display = 'flex';
+            };
             }
             else if (currentQ.type === "pitch") {
                 document.getElementById('pitch-container').style.display = 'flex';

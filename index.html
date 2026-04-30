@@ -2505,10 +2505,19 @@
                 const list = document.getElementById('tf-list');
                 list.innerHTML = "";
                 currentQ.transfers.forEach(t => {
-                    list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${t.l}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
+                    
+                    // --- ΕΛΕΓΧΟΣ ΓΙΑ RETIRED ΚΑΙ WITHOUT CLUB ---
+                    let logoUrl = t.l;
+                    if (t.c.includes("Retired")) {
+                        logoUrl = "https://cdn-icons-png.flaticon.com/512/5021/5021044.png"; // Εικόνα: Κρεμασμένα παπούτσια
+                    } else if (t.c.includes("Without Club")) {
+                        logoUrl = "https://cdn-icons-png.flaticon.com/512/4819/4819582.png"; // Εικόνα: Ερωτηματικό (ελεύθερος)
+                    }
+
+                    list.innerHTML += `<div class="tf-row"><div class="tf-year">${t.y}</div><div class="tf-club"><img src="${logoUrl}" onerror="this.style.opacity='0'"><span>${t.c}</span></div><div class="tf-fee">${t.f}</div></div>`;
                 });
                 document.getElementById('transfer-container').style.display = 'flex';
-            } 
+            }
             else if (currentQ.type === "pitch") {
                 document.getElementById('pitch-container').style.display = 'flex';
                 renderPitch(currentQ.lineup);

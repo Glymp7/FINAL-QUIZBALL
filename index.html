@@ -2668,23 +2668,9 @@
             renderBoard();
         }
 
-        // ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΤΕΛΕΙΟ ΑΝΑΚΑΤΕΜΑ ΤΗΣ ΤΡΑΠΟΥΛΑΣ
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
         // ΦΟΡΤΩΜΑ ΕΡΩΤΗΣΕΩΝ ΜΕ ΤΙΣ 6 ΣΤΑΘΕΡΕΣ ΚΑΙ ΤΙΣ 2 ΕΠΙΛΕΓΜΕΝΕΣ
         function generateGameSession() {
             activeDb = [];
-            
-            // ΑΝΑΚΑΤΕΥΟΥΜΕ ΟΛΟ ΤΟ POOL ΠΡΙΝ ΤΡΑΒΗΞΟΥΜΕ ΤΙΣ ΕΡΩΤΗΣΕΙΣ!
-            if (typeof globalPool !== 'undefined' && globalPool.length > 0) {
-                shuffleArray(globalPool);
-            }
-
             const getQ = (cat, points, count) => {
                 let result = [];
                 for(let i=0; i<count; i++) {
@@ -2702,7 +2688,6 @@
                 }
                 return result;
             };
-
             // ΣΤΑΘΕΡΕΣ ΚΑΤΗΓΟΡΙΕΣ (6)
             activeDb.push(...getQ("Γεωγραφία", 1, 1), ...getQ("Γεωγραφία", 2, 1), ...getQ("Γεωγραφία", 3, 1));
             activeDb.push(...getQ("Ιστορία", 1, 1), ...getQ("Ιστορία", 2, 1), ...getQ("Ιστορία", 3, 1));

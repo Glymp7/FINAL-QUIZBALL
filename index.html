@@ -648,6 +648,7 @@
                 <button class="ll-btn btn-fifty" id="ll-1-fifty" onclick="useLL(1, 'fifty')">50:50</button>
                 <button class="ll-btn btn-x2" id="ll-1-x2" onclick="useLL(1, 'x2')">x2</button>
                 <button class="ll-btn btn-sabo" id="ll-1-sabo" onclick="useLL(1, 'sabo')">💥</button>
+				<button class="ll-btn" id="ll-var-1" onclick="triggerVAR(1)" style="background-color: #34495e;">📺</button>
             </div>
         </div>
         <div style="font-size: 20px; font-weight: 900; color: #b2bec3; padding: 0 10px;" id="vs-text">VS</div>
@@ -659,6 +660,7 @@
                 <button class="ll-btn btn-fifty" id="ll-2-fifty" onclick="useLL(2, 'fifty')">50:50</button>
                 <button class="ll-btn btn-x2" id="ll-2-x2" onclick="useLL(2, 'x2')">x2</button>
                 <button class="ll-btn btn-sabo" id="ll-2-sabo" onclick="useLL(2, 'sabo')">💥</button>
+				<button class="ll-btn" id="ll-var-2" onclick="triggerVAR(2)" style="background-color: #34495e;">📺</button>
             </div>
         </div>
     </div>
@@ -2726,8 +2728,8 @@
         // 4. ΟΛΟΚΛΗΡΩΣΗ ΚΑΙ ΕΝΑΡΞΗ ΑΓΩΝΑ
         function finalizeSetupAndStart() {
             team1.score = 0; team2.score = 0; activeMultiplier = 1; 
-            t1LL = { fifty: true, x2: true, sabo: true };
-            t2LL = { fifty: true, x2: true, sabo: true };
+            t1LL = { fifty: true, x2: true, sabo: true, var: true };
+			t2LL = { fifty: true, x2: true, sabo: true, var: true };
             document.querySelectorAll('.ll-btn').forEach(btn => btn.classList.remove('used-ll'));
             document.getElementById('x2-badge-1').style.display = 'none';
             document.getElementById('x2-badge-2').style.display = 'none';
@@ -2968,9 +2970,19 @@
         }
 
         // --- ΛΕΙΤΟΥΡΓΙΑ VAR ---
-        function triggerVAR() {
-            // (Εδώ βάζεις τον κώδικα για να αφαιρείται η βοήθεια από τον παίκτη, όπως έκανες με το 50:50)
-            // π.χ. t1LL.var = false;
+        function triggerVAR(team) {
+            // 1. Έλεγχος αν η ομάδα έχει ήδη κάψει το VAR
+            if (team === 1 && !t1LL.var) return;
+            if (team === 2 && !t2LL.var) return;
+
+            // 2. Καίμε τη βοήθεια και κοκκινίζουμε το κουμπί
+            if (team === 1) {
+                t1LL.var = false;
+                document.getElementById('ll-var-1').classList.add('used-ll');
+            } else {
+                t2LL.var = false;
+                document.getElementById('ll-var-2').classList.add('used-ll');
+            }
 
             const modal = document.getElementById('var-modal');
             const noise = document.getElementById('var-noise');
@@ -2978,24 +2990,24 @@
             const hintText = document.getElementById('var-hint');
             const closeBtn = document.getElementById('close-var-btn');
 
-            // 1. Εμφάνιση του pop-up με τα παράσιτα ενεργά
+            // 3. Εμφάνιση του pop-up με τα παράσιτα
             modal.style.display = 'flex';
             noise.style.display = 'block';
             checking.style.display = 'block';
             hintText.style.display = 'none';
             closeBtn.style.display = 'none';
 
-            // 2. Παίρνουμε το hint (αν δεν υπάρχει στην ερώτηση, βγάζει ένα default μήνυμα)
+            // 4. Παίρνουμε το hint
             let currentHint = activeQ.hint || "Ο διαιτητής κοιτάζει τις γραμμές... αλλά μάλλον χάλασε η κάμερα!";
             hintText.innerHTML = currentHint;
 
-            // 3. Μετά από 3 δευτερόλεπτα, σταματάει η συχνότητα και εμφανίζεται το Hint!
+            // 5. Μετά από 3 δευτερόλεπτα εμφανίζεται το Hint!
             setTimeout(() => {
                 noise.style.display = 'none';
                 checking.style.display = 'none';
                 hintText.style.display = 'block';
                 closeBtn.style.display = 'block';
-            }, 3000); // 3000 = 3 δευτερόλεπτα
+            }, 3000); 
         }
 
         // 4. Κλείσιμο VAR

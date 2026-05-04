@@ -675,20 +675,24 @@
         <div id="board-container"></div>
     </div>
 
-	<!-- 📺 VAR MODAL (ΚΡΥΜΜΕΝΟ ΑΡΧΙΚΑ) -->
-    <div id="var-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
-        <h2 style="color: white; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Ο Διαιτητης παει στο VAR...</h2>
-        
-        <div class="var-tv-container">
-            <!-- Εφέ παρασίτων/χιόνι -->
-            <div id="var-noise" class="var-noise"></div>
-            <!-- Κείμενο Checking -->
-            <div id="var-checking" class="var-checking">CHECKING VAR...</div>
-            <!-- Το Hint που θα εμφανιστεί -->
-            <div id="var-hint" class="var-hint">Εδώ θα εμφανιστεί το στοιχείο!</div>
+	<!-- 📺 VAR MODAL ΜΕ ΤΗΝ ΕΙΚΟΝΑ -->
+    <div id="var-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+
+        <!-- ΦΑΣΗ 1: Εικόνα Διαιτητή & Αναμονή -->
+        <div id="var-phase-1" style="display: flex; flex-direction: column; align-items: center;">
+            <h2 style="color: white; margin-bottom: 30px; font-size: 2.5rem; letter-spacing: 2px;">Ο ΔΙΑΙΤΗΤΗΣ ΠΑΕΙ ΣΤΟ VAR...</h2>
+            <img src="logos/var.png" alt="VAR" style="max-width: 350px; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);">
         </div>
 
-        <button id="close-var-btn" class="close-var-btn" onclick="closeVarModal()">Επιστροφη στην ερωτηση</button>
+        <!-- ΦΑΣΗ 2: Η απόφαση (Το Hint) -->
+        <div id="var-phase-2" style="display: none; flex-direction: column; align-items: center; width: 90%; max-width: 600px;">
+            <h2 style="color: #00ff00; margin-bottom: 20px; font-size: 2.5rem;">ΑΠΟΦΑΣΗ VAR</h2>
+            <div id="var-hint" style="color: white; font-size: 1.5rem; line-height: 1.6; background: #222; padding: 30px; border-radius: 15px; border: 3px solid #00ff00; margin-bottom: 30px; width: 100%;">
+                Εδώ θα μπει το hint
+            </div>
+            <button onclick="closeVarModal()" style="padding: 15px 40px; font-size: 1.3rem; font-weight: bold; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase;">Επιστροφη στην ερωτηση</button>
+        </div>
+
     </div>
 
     <div id="question-screen">
@@ -2971,11 +2975,11 @@
 
         // --- ΛΕΙΤΟΥΡΓΙΑ VAR ---
         function triggerVAR(team) {
-            // 1. Έλεγχος αν η ομάδα έχει ήδη κάψει το VAR
+            // Έλεγχος αν η ομάδα έχει ήδη κάψει το VAR
             if (team === 1 && !t1LL.var) return;
             if (team === 2 && !t2LL.var) return;
 
-            // 2. Καίμε τη βοήθεια και κοκκινίζουμε το κουμπί
+            // Καίμε τη βοήθεια
             if (team === 1) {
                 t1LL.var = false;
                 document.getElementById('ll-var-1').classList.add('used-ll');
@@ -2985,32 +2989,26 @@
             }
 
             const modal = document.getElementById('var-modal');
-            const noise = document.getElementById('var-noise');
-            const checking = document.getElementById('var-checking');
+            const phase1 = document.getElementById('var-phase-1');
+            const phase2 = document.getElementById('var-phase-2');
             const hintText = document.getElementById('var-hint');
-            const closeBtn = document.getElementById('close-var-btn');
 
-            // 3. Εμφάνιση του pop-up με τα παράσιτα
-            modal.style.display = 'flex';
-            noise.style.display = 'block';
-            checking.style.display = 'block';
-            hintText.style.display = 'none';
-            closeBtn.style.display = 'none';
-
-            // 4. Παίρνουμε το hint
-            let currentHint = activeQ.hint || "Ο διαιτητής κοιτάζει τις γραμμές... αλλά μάλλον χάλασε η κάμερα!";
+            // Αν η ερώτηση δεν έχει hint, βγάζει αυτό το προεπιλεγμένο μήνυμα!
+            let currentHint = activeQ.hint || "Το VAR δεν έχει ξεκάθαρο πλάνο... Πρέπει να βρείτε την απάντηση μόνοι σας!";
             hintText.innerHTML = currentHint;
 
-            // 5. Μετά από 3 δευτερόλεπτα εμφανίζεται το Hint!
+            // Εμφανίζουμε την Εικόνα του VAR (Φάση 1)
+            modal.style.display = 'flex';
+            phase1.style.display = 'flex';
+            phase2.style.display = 'none';
+
+            // Μετά από 3.5 δευτερόλεπτα, κρύβουμε την εικόνα και δείχνουμε το Hint (Φάση 2)
             setTimeout(() => {
-                noise.style.display = 'none';
-                checking.style.display = 'none';
-                hintText.style.display = 'block';
-                closeBtn.style.display = 'block';
-            }, 3000); 
+                phase1.style.display = 'none';
+                phase2.style.display = 'flex';
+            }, 3500); 
         }
 
-        // 4. Κλείσιμο VAR
         function closeVarModal() {
             document.getElementById('var-modal').style.display = 'none';
         }

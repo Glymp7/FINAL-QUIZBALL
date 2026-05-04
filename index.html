@@ -2662,7 +2662,7 @@
         }
 
         function initGlobalPool() {
-            let saved = localStorage.getItem('quizball_pool_v6');
+            let saved = localStorage.getItem('quizball_pool_FINAL');
             if (saved) {
                 globalPool = JSON.parse(saved);
                 if(globalPool.length < 25) { 
@@ -2803,7 +2803,7 @@
                 activeDb.push(...getQ(cat, 2, 2));
             });
             
-            localStorage.setItem('quizball_pool_v6', JSON.stringify(globalPool));
+            localStorage.setItem('quizball_pool_FINAL', JSON.stringify(globalPool));
         }
 
         function renderBoard() {

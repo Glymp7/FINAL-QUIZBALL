@@ -2973,13 +2973,13 @@
             }
         }
 
-        // --- ΛΕΙΤΟΥΡΓΙΑ VAR ---
+        // --- ΛΕΙΤΟΥΡΓΙΑ VAR (ΑΣΦΑΛΗΣ ΕΚΔΟΣΗ) ---
         function triggerVAR(team) {
-            // Έλεγχος αν η ομάδα έχει ήδη κάψει το VAR
-            if (team === 1 && !t1LL.var) return;
-            if (team === 2 && !t2LL.var) return;
+            // Αν έχει ήδη πατηθεί, μην κάνεις τίποτα
+            if (team === 1 && t1LL.var === false) return;
+            if (team === 2 && t2LL.var === false) return;
 
-            // Καίμε τη βοήθεια
+            // Καίμε το κουμπί
             if (team === 1) {
                 t1LL.var = false;
                 document.getElementById('ll-var-1').classList.add('used-ll');
@@ -2993,16 +2993,24 @@
             const phase2 = document.getElementById('var-phase-2');
             const hintText = document.getElementById('var-hint');
 
-            // Αν η ερώτηση δεν έχει hint, βγάζει αυτό το προεπιλεγμένο μήνυμα!
-            let currentHint = activeQ.hint || "Το VAR δεν έχει ξεκάθαρο πλάνο... Πρέπει να βρείτε την απάντηση μόνοι σας!";
+            // --- ΕΔΩ ΕΙΝΑΙ ΟΛΟ ΤΟ ΖΟΥΜΙ ---
+            // Ψάχνουμε αν η τρέχουσα ερώτηση έχει το πεδίο "hint". 
+            // (Βάλαμε activeQ, αν στον κώδικά σου η τρέχουσα ερώτηση λέγεται αλλιώς π.χ. currentQuestion, άλλαξέ το)
+            let currentHint = "";
+            try {
+                currentHint = activeQ.hint ? activeQ.hint : "Δεν έχεις προσθέσει ακόμα hint σε αυτή την ερώτηση στη βάση δεδομένων!";
+            } catch(e) {
+                currentHint = "Σφάλμα: Δεν βρέθηκε η ερώτηση για να δοθεί hint.";
+            }
+            
             hintText.innerHTML = currentHint;
 
-            // Εμφανίζουμε την Εικόνα του VAR (Φάση 1)
+            // Εμφάνιση Φάσης 1 (Εικόνα)
             modal.style.display = 'flex';
             phase1.style.display = 'flex';
             phase2.style.display = 'none';
 
-            // Μετά από 3.5 δευτερόλεπτα, κρύβουμε την εικόνα και δείχνουμε το Hint (Φάση 2)
+            // Μετά από 3.5 δευτερόλεπτα, δείχνει την απόφαση
             setTimeout(() => {
                 phase1.style.display = 'none';
                 phase2.style.display = 'flex';

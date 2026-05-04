@@ -476,6 +476,82 @@
             .sm-score-text { font-size: 42px; margin-bottom: 10px; }
             .sm-scorers-text { font-size: 14px; }
             .score-btn-row button { font-size: 11px; padding: 10px 5px; }
+
+			/* --- VAR TV EFFECTS --- */
+	        .var-tv-container {
+	            width: 90%;
+	            max-width: 600px;
+	            height: 350px;
+	            background: #111;
+	            border: 15px solid #222;
+	            border-radius: 10px;
+	            position: relative;
+	            overflow: hidden;
+	            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2), inset 0 0 20px #000;
+	            display: flex;
+	            justify-content: center;
+	            align-items: center;
+	        }
+	
+	        /* Το εφέ με τα παράσιτα (συχνότητα) */
+	        .var-noise {
+	            position: absolute;
+	            top: 0; left: 0; width: 100%; height: 100%;
+	            background: repeating-linear-gradient(0deg, #111, #111 2px, #333 2px, #333 4px);
+	            opacity: 0.5;
+	            animation: scrollNoise 0.1s infinite;
+	            z-index: 2;
+	        }
+	
+	        @keyframes scrollNoise {
+	            0% { transform: translateY(0); }
+	            100% { transform: translateY(4px); }
+	        }
+	
+	        /* Το κείμενο που αναβοσβήνει */
+	        .var-checking {
+	            position: absolute;
+	            z-index: 3;
+	            color: #fff;
+	            font-size: 2.5rem;
+	            font-weight: 900;
+	            font-family: 'Courier New', Courier, monospace;
+	            text-shadow: 2px 2px 10px #000;
+	            animation: blink 0.8s infinite;
+	        }
+	
+	        @keyframes blink {
+	            0%, 100% { opacity: 1; }
+	            50% { opacity: 0.1; }
+	        }
+	
+	        /* Το κείμενο του Hint */
+	        .var-hint {
+	            display: none;
+	            position: relative;
+	            z-index: 4;
+	            color: #00ff00; /* Πράσινο νέον */
+	            font-size: 1.8rem;
+	            font-weight: bold;
+	            text-align: center;
+	            padding: 20px;
+	            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+	        }
+	
+	        /* Κουμπί επιστροφής */
+	        .close-var-btn {
+	            margin-top: 30px;
+	            padding: 15px 30px;
+	            font-size: 1.2rem;
+	            font-weight: bold;
+	            background: #e74c3c;
+	            color: #fff;
+	            border: 2px solid #c0392b;
+	            border-radius: 8px;
+	            cursor: pointer;
+	            display: none; /* Κρυμμένο μέχρι να βγει το hint */
+	            text-transform: uppercase;
+	        }
             
             /* Γήπεδο (Player ID) */
             .shirt { width: 22px; height: 22px; font-size: 11px; }
@@ -595,6 +671,22 @@
     <div id="board-screen">
         <div class="board-title" id="board-title-text">Κατηγορίες</div>
         <div id="board-container"></div>
+    </div>
+
+	<!-- 📺 VAR MODAL (ΚΡΥΜΜΕΝΟ ΑΡΧΙΚΑ) -->
+    <div id="var-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+        <h2 style="color: white; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Ο Διαιτητης παει στο VAR...</h2>
+        
+        <div class="var-tv-container">
+            <!-- Εφέ παρασίτων/χιόνι -->
+            <div id="var-noise" class="var-noise"></div>
+            <!-- Κείμενο Checking -->
+            <div id="var-checking" class="var-checking">CHECKING VAR...</div>
+            <!-- Το Hint που θα εμφανιστεί -->
+            <div id="var-hint" class="var-hint">Εδώ θα εμφανιστεί το στοιχείο!</div>
+        </div>
+
+        <button id="close-var-btn" class="close-var-btn" onclick="closeVarModal()">Επιστροφη στην ερωτηση</button>
     </div>
 
     <div id="question-screen">
@@ -2875,6 +2967,43 @@
             }
         }
 
+        // --- ΛΕΙΤΟΥΡΓΙΑ VAR ---
+        function triggerVAR() {
+            // (Εδώ βάζεις τον κώδικα για να αφαιρείται η βοήθεια από τον παίκτη, όπως έκανες με το 50:50)
+            // π.χ. t1LL.var = false;
+
+            const modal = document.getElementById('var-modal');
+            const noise = document.getElementById('var-noise');
+            const checking = document.getElementById('var-checking');
+            const hintText = document.getElementById('var-hint');
+            const closeBtn = document.getElementById('close-var-btn');
+
+            // 1. Εμφάνιση του pop-up με τα παράσιτα ενεργά
+            modal.style.display = 'flex';
+            noise.style.display = 'block';
+            checking.style.display = 'block';
+            hintText.style.display = 'none';
+            closeBtn.style.display = 'none';
+
+            // 2. Παίρνουμε το hint (αν δεν υπάρχει στην ερώτηση, βγάζει ένα default μήνυμα)
+            let currentHint = activeQ.hint || "Ο διαιτητής κοιτάζει τις γραμμές... αλλά μάλλον χάλασε η κάμερα!";
+            hintText.innerHTML = currentHint;
+
+            // 3. Μετά από 3 δευτερόλεπτα, σταματάει η συχνότητα και εμφανίζεται το Hint!
+            setTimeout(() => {
+                noise.style.display = 'none';
+                checking.style.display = 'none';
+                hintText.style.display = 'block';
+                closeBtn.style.display = 'block';
+            }, 3000); // 3000 = 3 δευτερόλεπτα
+        }
+
+        // 4. Κλείσιμο VAR
+        function closeVarModal() {
+            document.getElementById('var-modal').style.display = 'none';
+        }
+
+		
         function toggleT5Peek() {
             const list = document.getElementById('t5-secret-list');
             list.style.display = list.style.display === 'none' ? 'block' : 'none';

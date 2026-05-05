@@ -440,12 +440,6 @@
         .btn-sm-steal-1 { background: #8e44ad; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; flex: 1; font-size: 13px; cursor: pointer; }
         .btn-sm-steal-2 { background: #6c5ce7; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; flex: 1; font-size: 13px; cursor: pointer; }
 		
-		
-		/* --- SUDDEN DEATH --- */
-        #sudden-death-screen { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 150; background: radial-gradient(circle, #d63031, #2d3436); color: white; text-align: center; padding: 20px; box-sizing: border-box; }
-        .sd-title { font-size: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; animation: pulse 1s infinite; }
-        .sd-turn-info { font-size: 20px; font-weight: bold; margin: 20px 0; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 50px; }
-		
 		/* ========================================================= */
         /* 📱 RESPONSIVE DESIGN - ΕΙΔΙΚΕΣ ΡΥΘΜΙΣΕΙΣ ΓΙΑ ΚΙΝΗΤΑ (iPhone) */
         /* ========================================================= */
@@ -486,21 +480,56 @@
             animation: pulseSoft 2s infinite;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-		
-		/* --- JOKER MODAL --- */
+        
+        /* --- JOKER MODAL --- */
         #joker-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 10005; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
         .joker-spinner { font-size: 100px; display: inline-block; animation: spin 0.5s infinite linear; filter: drop-shadow(0 0 20px #f1c40f); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .joker-result-text { font-size: 35px; font-weight: 900; text-transform: uppercase; margin-top: 20px; padding: 20px; border-radius: 15px; display: none; animation: popIn 0.5s forwards; text-shadow: 2px 2px 10px black; }
 
-        /* --- PENALTY SHOOTOUT UI --- */
-        .penalty-scoreboard { display: flex; justify-content: space-around; width: 100%; max-width: 500px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .pen-team { display: flex; flex-direction: column; align-items: center; width: 45%; }
-        .pen-name { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-        .pen-circles { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
-        .pen-circle { width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.5); background: transparent; transition: 0.3s; }
-        .pen-scored { background: #00b894; border-color: #00b894; box-shadow: 0 0 10px #00b894; }
-        .pen-missed { background: #d63031; border-color: #d63031; box-shadow: 0 0 10px #d63031; }
+        /* --- PENALTY SHOOTOUT UI V2 --- */
+        .penalty-screen {
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
+            width: 100%; height: 100%; position: absolute; z-index: 150; 
+            /* Αίσθηση νυχτερινού γηπέδου: Σκούρο μπλε/μαύρο που σβήνει σε πράσινο του χορταριού */
+            background: radial-gradient(circle at bottom, #0f5127 0%, #0a192f 80%); 
+            color: white; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        
+        .sd-title { font-size: 38px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); margin-bottom: 15px;}
+        
+        /* Τηλεοπτικό Scoreboard */
+        .penalty-scoreboard { 
+            display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px; 
+            background: linear-gradient(135deg, rgba(0,0,0,0.85), rgba(30,30,30,0.9)); 
+            padding: 20px; border-radius: 20px; margin-bottom: 30px; 
+            border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+        }
+        .pen-team { display: flex; flex-direction: column; align-items: center; width: 40%; }
+        .pen-vs { font-size: 24px; font-weight: 900; color: #f1c40f; opacity: 0.6; }
+        .pen-name { font-size: 20px; font-weight: 900; margin-bottom: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .pen-circles { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .pen-circle { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); transition: 0.3s; }
+        .pen-scored { background: #00b894; border-color: #fff; box-shadow: 0 0 15px #00b894; }
+        .pen-missed { background: #d63031; border-color: #fff; box-shadow: 0 0 15px #d63031; }
+
+        /* Ταμπελάκι σειράς που αναβοσβήνει */
+        .sd-turn-info { background: #f1c40f; color: #000; padding: 12px 25px; border-radius: 50px; font-size: 18px; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4); margin-bottom: 25px; animation: pulseSoft 1.5s infinite; }
+
+        /* Κουτί ερώτησης */
+        .pen-q-box { background: white; color: #2d3436; padding: 30px 20px; border-radius: 15px; width: 100%; font-weight: bold; font-size: 20px; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-bottom: 5px solid #dfe6e9; }
+        
+        /* Κουμπί Αποκάλυψης */
+        .pen-btn-show { width: 100%; background: linear-gradient(135deg, #0984e3, #2a5298); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 900; padding: 18px; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.3); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
+        .pen-btn-show:active { transform: scale(0.95); }
+        
+        /* Κουμπιά Σωστού Λάθους */
+        .pen-btn-action { flex: 1; padding: 18px; border: none; border-radius: 12px; font-size: 17px; font-weight: 900; color: white; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 15px rgba(0,0,0,0.3); transition: 0.2s; }
+        .pen-btn-action.goal { background: #00b894; border-bottom: 5px solid #00876c; }
+        .pen-btn-action.miss { background: #d63031; border-bottom: 5px solid #a32223; }
+        .pen-btn-action:active { transform: translateY(4px); border-bottom-width: 0px; }
+        
+        .pen-answer-text { font-size: 32px; font-weight: 900; color: #f1c40f; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); margin-top: 15px; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 10px; border: 2px dashed #f1c40f;}
 		
 		@media (max-width: 600px) {
             /* Αρχική Οθόνη */
@@ -884,8 +913,9 @@
         </div>
     </div>
 	
-	<div id="sudden-death-screen" style="display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 150; background: linear-gradient(to bottom, #1e3c72, #2a5298); color: white; text-align: center; padding: 20px; box-sizing: border-box;">
-        <div class="sd-title" style="margin-bottom: 10px;">🥅 ΠΕΝΑΛΤΙ 🥅</div>
+	<!-- ΠΕΝΑΛΤΙ SCREEN V2 -->
+    <div id="sudden-death-screen" class="penalty-screen">
+        <div class="sd-title">🥅 ΠΕΝΑΛΤΙ 🥅</div>
         
         <!-- Scoreboard Πέναλτι -->
         <div class="penalty-scoreboard">
@@ -895,6 +925,7 @@
                     <div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div>
                 </div>
             </div>
+            <div class="pen-vs">VS</div>
             <div class="pen-team">
                 <div class="pen-name" id="pen-name-2">ΟΜΑΔΑ Β</div>
                 <div class="pen-circles" id="pen-circles-2">
@@ -903,21 +934,21 @@
             </div>
         </div>
 
-        <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, Η ΜΠΑΛΑ ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
+        <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
         
-        <div id="sd-question-box" style="background: white; color: #2d3436; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; font-weight: bold; font-size: 18px; margin-bottom: 20px; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);">
+        <div id="sd-question-box" class="pen-q-box">
             Ερώτηση...
         </div>
         
-        <div id="sd-controls" style="width: 100%; max-width: 450px; margin-bottom: 15px;">
-            <button class="btn-admin btn-show" id="sd-btn-show" style="width: 100%; border-radius: 10px;" onclick="revealSdAnswer()">ΑΠΟΚΑΛΥΨΗ ΑΠΑΝΤΗΣΗΣ</button>
+        <div id="sd-controls" style="width: 100%; max-width: 500px; margin-bottom: 15px;">
+            <button class="pen-btn-show" id="sd-btn-show" onclick="revealSdAnswer()">ΑΠΟΚΑΛΥΨΗ ΑΠΑΝΤΗΣΗΣ</button>
             
             <div id="sd-result-btns" style="display:none; gap:15px; justify-content: center; width: 100%;">
-                <button class="btn-admin" style="background: #d63031; display: block; border-radius: 10px;" onclick="resolveSdTurn(false)">❌ ΑΠΕΚΡΟΥΣΕ</button>
-                <button class="btn-admin" style="background: #00b894; display: block; border-radius: 10px;" onclick="resolveSdTurn(true)">⚽ ΓΚΟΟΟΛ</button>
+                <button class="pen-btn-action miss" onclick="resolveSdTurn(false)">❌ ΑΠΕΚΡΟΥΣΕ</button>
+                <button class="pen-btn-action goal" onclick="resolveSdTurn(true)">⚽ ΓΚΟΟΟΛ</button>
             </div>
         </div>
-        <div id="sd-answer" style="display:none; font-size: 26px; font-weight: 900; color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></div>
+        <div id="sd-answer" class="pen-answer-text"></div>
     </div>
 
     <!-- JOKER MODAL -->

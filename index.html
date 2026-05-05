@@ -3474,7 +3474,6 @@
 		    llState.joker = false;
 		    document.getElementById(`ll-joker-${teamId}`).classList.add('used-ll');
 		    
-		    // Εμφάνιση του Κουλοχέρη
 		    const modal = document.getElementById('joker-modal');
 		    const spinner = document.getElementById('joker-spinner');
 		    const resultTxt = document.getElementById('joker-result');
@@ -3482,57 +3481,36 @@
 		    spinner.style.display = 'block';
 		    resultTxt.style.display = 'none';
 		
-		    // Σταματάμε τον χρόνο προσωρινά
 		    stopTimer();
 		
 		    setTimeout(() => {
 		        spinner.style.display = 'none';
-		        
-		        // Ορίζουμε την ομάδα που παίζει
 		        let currentTeam = (teamId === 1) ? team1 : team2;
 		
 		        const outcomes = [
 		            { 
-		                t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 ΠΟΝΤΟΙ ΣΤΗΝ ΟΜΑΔΑ!", 
+		                t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 BONUS ΠΟΝΤΟΙ!", 
 		                c: "#00b894",
-		                action: () => {
-		                    currentTeam.score += 2; // Προσθήκη 2 πόντων
-		                    sfxGoal.play();
-		                    if(typeof triggerConfetti === "function") triggerConfetti();
-		                    updateScoreboard(); // Ανανέωση του UI
-		                    nextQuestion(); // Πάμε στην επόμενη ερώτηση
-		                }
+		                isGoal: true,
+		                bonus: 2
 		            },
 		            { 
-		                t: "🏟️ VAR DECISION: GOAL!\n+2 ΠΟΝΤΟΙ ΣΤΗΝ ΟΜΑΔΑ!", 
+		                t: "🏟️ VAR DECISION: GOAL!\n+2 BONUS ΠΟΝΤΟΙ!", 
 		                c: "#1e3c72",
-		                action: () => {
-		                    currentTeam.score += 2;
-		                    sfxGoal.play();
-		                    if(typeof triggerConfetti === "function") triggerConfetti();
-		                    updateScoreboard();
-		                    nextQuestion();
-		                }
+		                isGoal: true,
+		                bonus: 2
 		            },
 		            { 
 		                t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
 		                c: "#d63031",
-		                action: () => {
-		                    if (currentTeam.score > 0) currentTeam.score--; // Αφαίρεση 1 πόντου
-		                    sfxBuzzer.play();
-		                    updateScoreboard();
-		                    nextQuestion();
-		                }
+		                isGoal: false,
+		                bonus: -1
 		            },
 		            { 
 		                t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
 		                c: "#636e72",
-		                action: () => {
-		                    if (currentTeam.score > 0) currentTeam.score--;
-		                    sfxBuzzer.play();
-		                    updateScoreboard();
-		                    nextQuestion();
-		                }
+		                isGoal: false,
+		                bonus: -1
 		            }
 		        ];
 		        
@@ -3543,11 +3521,30 @@
 		        resultTxt.style.display = 'block';
 		        
 		        setTimeout(() => {
+		            // 1. Κλείνουμε τα πάντα
 		            modal.style.display = 'none';
-		            chosen.action(); // Εδώ εκτελείται η νέα βαθμολογία
+		            document.getElementById('question-screen').style.display = 'none';
+		
+		            // 2. Υπολογισμός Πόντων Αγώνα
+		            if (chosen.isGoal) {
+		                // Πόντοι ερώτησης + Bonus
+		                let qPoints = (typeof currentQuestion !== 'undefined') ? (currentQuestion.points || 1) : 1;
+		                currentTeam.score += (qPoints + chosen.bonus);
+		                sfxGoal.play();
+		                if(typeof triggerConfetti === "function") triggerConfetti();
+		            } else {
+		                // Ποινή -1 (αν έχουν πόντους)
+		                if (currentTeam.score > 0) currentTeam.score--;
+		                sfxBuzzer.play();
+		            }
+		
+		            // 3. Ενημέρωση UI και συνέχεια στα πέναλτι
+		            updatePenaltyUI(); // Ανανεώνει τα σκορ πάνω
+		            finishTurnLogic(chosen.isGoal); // Στέλνει το true/false στη δική σου συνάρτηση
+		            
 		        }, 4000);
 		    }, 2000);
-		} // <--- ΕΔΩ ΕΚΛΕΙΝΕ Η useJoker
+		}
 		
 		function closeJoker() { 
 		    document.getElementById('joker-modal').style.display = 'none'; 

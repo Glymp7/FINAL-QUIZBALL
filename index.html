@@ -2794,22 +2794,24 @@
 		    document.getElementById('sd-answer').style.display = 'none';
 		
 		    let gifImg = document.getElementById('pen-action-gif');
-            
-            if (isCorrect) {
-                sfxGoal.play();
-                // ΤΟ ΝΕΟ LINK ΓΙΑ ΓΚΟΛ
-                gifImg.src = "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif"; 
-            } else {
-                sfxBuzzer.play();
-                // ΤΟ ΝΕΟ LINK ΓΙΑ ΑΠΟΚΡΟΥΣΗ
-                gifImg.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif";
-            }
-            
-            gifImg.style.display = 'block';
+    
+		    // Προσθέτουμε ένα "timestamp" στο τέλος για να αναγκάσουμε το GIF να ξεκινήσει από την αρχή
+		    let resetCache = "?t=" + new Date().getTime();
 		
+		    if (isCorrect) {
+		        sfxGoal.play();
+		        gifImg.src = "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif" + resetCache; 
+		    } else {
+		        sfxBuzzer.play();
+		        gifImg.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif" + resetCache;
+		    }
+		    
+		    gifImg.style.display = 'block';
+				
 		    // 5. Αναμονή 2.5 δευτερόλεπτα για να τελειώσει το animation
 		    setTimeout(() => {
-		        gifImg.style.display = 'none'; // Κρύβουμε το GIF
+		        gifImg.style.display = 'none'; // Εξαφανίζεται το GIF
+                gifImg.src = ""; // Καθαρίζουμε το src για να "μηδενίσει" η εικόνα
 		        
 		        // Ενημέρωση των πινάκων των πέναλτι (Logic)
 		        if (currentTurn === 1) {
@@ -2846,7 +2848,7 @@
 		            showEndScreen();
 		        }
 		
-		    }, 2500); 
+		    }, 3800); 
 		}
 
         // ΝΕΕΣ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΤΟ ΝΟΜΙΣΜΑ & BUILDER

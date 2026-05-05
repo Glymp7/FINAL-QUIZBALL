@@ -489,12 +489,24 @@
 
         /* --- PENALTY SHOOTOUT UI V2 --- */
         .penalty-screen {
-            display: none; flex-direction: column; justify-content: center; align-items: center; 
-            width: 100%; height: 100%; position: absolute; z-index: 150; 
-            /* Αίσθηση νυχτερινού γηπέδου: Σκούρο μπλε/μαύρο που σβήνει σε πράσινο του χορταριού */
-            background: radial-gradient(circle at bottom, #0f5127 0%, #0a192f 80%); 
-            color: white; text-align: center; padding: 20px; box-sizing: border-box;
-        }
+		    display: none; 
+		    flex-direction: column; 
+		    justify-content: center; 
+		    align-items: center; 
+		    width: 100%; 
+		    height: 100%; 
+		    position: absolute; 
+		    z-index: 150; 
+		    /* Νέο φόντο που θυμίζει γήπεδο */
+		    background: radial-gradient(circle at center, #2ecc71 0%, #27ae60 100%);
+		    background-image: 
+		        linear-gradient(rgba(255,255,255,0.1) 2px, transparent 2px),
+		        linear-gradient(90deg, rgba(255,255,255,0.1) 2px, transparent 2px);
+		    background-size: 50px 50px; /* Εφέ τετραγώνων στο χορτάρι */
+		    color: white; 
+		    padding: 20px; 
+		    box-sizing: border-box;
+		}
         
         .sd-title { font-size: 38px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); margin-bottom: 15px;}
         
@@ -913,6 +925,11 @@
         </div>
     </div>
 	
+	<div id="penalty-intro" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; flex-direction:column; text-align:center;">
+	    <h1 style="color:#f1c40f; font-size:50px; text-transform:uppercase; animation: pulse 1s infinite;">Ισοπαλία!</h1>
+	    <h2 style="color:white; font-size:30px;">Ο αγώνας οδηγείται στα πέναλτι...</h2>
+    <div style="font-size:80px; margin-top:20px;">⚽</div>
+    </div>
 	<!-- ΠΕΝΑΛΤΙ SCREEN V2 -->
     <div id="sudden-death-screen" class="penalty-screen">
         <div class="sd-title">🥅 ΠΕΝΑΛΤΙ 🥅</div>
@@ -2736,22 +2753,28 @@
         let sdPool = [];
 
         function checkForSuddenDeath() {
-            if (gameMode === '1v1' && team1.score === team2.score) {
-                startSuddenDeath(); // Πλέον είναι τα Πέναλτι
-            } else {
-                showEndScreen();
-            }
-        }
-
-        function startSuddenDeath() {
-            sdPool = shuffle([...SUDDEN_DEATH_QUESTIONS]);
-            document.getElementById('board-screen').style.display = 'none';
-            document.getElementById('sudden-death-screen').style.display = 'flex';
-            currentTurn = 1;
-            penA = []; penB = []; penRound = 0;
-            updatePenaltyUI();
-            nextSdQuestion();
-        }
+		    if (gameMode === '1v1' && team1.score === team2.score) {
+		        // Εμφάνιση του intro γραφικού
+		        const intro = document.getElementById('penalty-intro');
+		        intro.style.display = 'flex';
+		        setTimeout(() => {
+		            intro.style.display = 'none';
+		            startSuddenDeath();
+		        }, 3000);
+		    } else {
+		        showEndScreen();
+		    }
+		}
+		
+		function startSuddenDeath() {
+		    sdPool = shuffle([...SUDDEN_DEATH_QUESTIONS]);
+		    document.getElementById('board-screen').style.display = 'none';
+		    document.getElementById('sudden-death-screen').style.display = 'flex';
+		    currentTurn = 1;
+		    penA = []; penB = []; penRound = 0;
+		    updatePenaltyUI();
+		    nextSdQuestion();
+		}
 
         function updatePenaltyUI() {
             document.getElementById('pen-name-1').innerText = team1.name;
@@ -2817,38 +2840,58 @@
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
-		        // Έπαιξε η Ομάδα 1
+		        // Ομάδα Α
 		        if(penRound < 5) penA.push(isCorrect ? 1 : 0);
 		        else penA[penRound] = isCorrect ? 1 : 0;
-		        
-		        currentTurn = 2; // ΑΛΛΑΓΗ ΣΕΙΡΑΣ
-		        updatePenaltyUI();
-		        nextSdQuestion();
+		        currentTurn = 2;
 		    } else {
-		        // Έπαιξε η Ομάδα 2
+		        // Ομάδα Β
 		        if(penRound < 5) penB.push(isCorrect ? 1 : 0);
 		        else penB[penRound] = isCorrect ? 1 : 0;
-		        
-		        updatePenaltyUI();
+		        currentTurn = 1;
+		        penRound++;
+		    }
 		
-		        // Έλεγχος αν τελείωσε ο αγώνας ή πάμε σε νέο γύρο
-		        let aScore = penA.reduce((a,b)=>a+(b===1?1:0),0);
-		        let bScore = penB.reduce((a,b)=>a+(b===1?1:0),0);
-		        
-		        // Απλή λογική νίκης μετά τα 5 πέναλτι
-		        if (penRound >= 4 && aScore !== bScore) {
-		             showEndScreen(); 
-		        } else {
-		            currentTurn = 1; // Επιστροφή στην Ομάδα 1
-		            penRound++;
-		            // Αν φτάσαμε στον "ξαφνικό θάνατο", προσθέτουμε κύκλους
-		            if(penRound >= 5) {
-		                document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
-		                document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
-		            }
-		            nextSdQuestion();
+		    updatePenaltyUI();
+		
+		    let aScore = penA.filter(x => x === 1).length;
+		    let bScore = penB.filter(x => x === 1).length;
+		    
+		    // Πόσα πέναλτι απομένουν για την κάθε ομάδα (στα πρώτα 5)
+		    let aRemaining = 5 - penA.length;
+		    let bRemaining = 5 - penB.length;
+		
+		    // ΠΟΔΟΣΦΑΙΡΙΚΗ ΛΟΓΙΚΗ ΝΙΚΗΣ
+		    // 1. Έλεγχος κατά τη διάρκεια των πρώτων 5 πέναλτι
+		    if (penRound < 5) {
+		        if (aScore > bScore + bRemaining) { // Η Ομάδα Α νίκησε μαθηματικά
+		            team1.score++; 
+		            showEndScreen(); 
+		            return;
+		        }
+		        if (bScore > aScore + aRemaining) { // Η Ομάδα Β νίκησε μαθηματικά
+		            team2.score++; 
+		            showEndScreen(); 
+		            return;
+		        }
+		    } 
+		    // 2. Έλεγχος μετά την ολοκλήρωση των 5 πέναλτι (Sudden Death γύροι)
+		    else {
+		        if (penA.length === penB.length && aScore !== bScore) {
+		            if (aScore > bScore) team1.score++; else team2.score++;
+		            showEndScreen();
+		            return;
 		        }
 		    }
+		
+		    // Αν δεν έχουμε νικητή, συνεχίζουμε
+		    if (penRound >= 5 && currentTurn === 1) {
+		        // Προσθήκη επιπλέον κύκλων για Sudden Death
+		        document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
+		        document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
+		    }
+		    
+		    nextSdQuestion();
 		}
         // ΝΕΕΣ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΤΟ ΝΟΜΙΣΜΑ & BUILDER
         let coinWinnerId = 1;

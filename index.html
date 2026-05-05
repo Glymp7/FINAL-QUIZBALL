@@ -3229,69 +3229,74 @@
 
         // ΦΟΡΤΩΜΑ ΕΡΩΤΗΣΕΩΝ ΜΕ ΤΙΣ 6 ΣΤΑΘΕΡΕΣ ΚΑΙ ΤΙΣ 2 ΕΠΙΛΕΓΜΕΝΕΣ
         function generateGameSession() {
-		    activeDb = [];
-		    
-		    const getQ = (cat, points, count) => {
-		        let result = [];
-		        for(let i=0; i<count; i++) {
-		            let idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
-		            
-		            // --- ΝΕΑ ΛΟΓΙΚΗ ΑΠΟΦΥΓΗΣ ΕΠΑΝΑΛΗΨΕΩΝ ---
-		            // Αν το pool άδειασε από ΑΥΤΗ την κατηγορία και πόντους, την ξαναγεμίζουμε κρυφά
-		            if (idx === -1) {
-		                let refill = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
-		                
-		                // Ανακατεύουμε τις ερωτήσεις που μόλις τραβήξαμε
-		                for (let j = refill.length - 1; j > 0; j--) {
-		                    const k = Math.floor(Math.random() * (j + 1));
-		                    [refill[j], refill[k]] = [refill[k], refill[j]];
-		                }
-		                
-		                // Τις ρίχνουμε στο globalPool
-		                globalPool.push(...refill);
-		                
-		                // Ξαναψάχνουμε (τώρα σίγουρα θα βρει)
-		                idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
-		            }
-		
-		            // Τραβάμε την ερώτηση και την αφαιρούμε από το pool για να μην ξαναπέσει
-		            if(idx > -1) {
-		                let q = globalPool.splice(idx, 1)[0];
-		                
-		                // Βεβαιωνόμαστε ότι δεν βάζουμε την ίδια ερώτηση 2 φορές στο ίδιο board
-		                if (!result.some(r => r.q === q.q)) {
-		                    result.push({...q, played: false, id: Math.random()});
-		                } else {
-		                    // Αν έτυχε διπλή, δίνουμε μια ακόμα ευκαιρία στη λούπα
-		                    i--; 
-		                }
-		            }
-		        }
-		        return result;
-		    };
-		
-		    // ΣΤΑΘΕΡΕΣ ΚΑΤΗΓΟΡΙΕΣ (6)
-		    activeDb.push(...getQ("Γεωγραφία", 1, 1), ...getQ("Γεωγραφία", 2, 1), ...getQ("Γεωγραφία", 3, 1));
-		    activeDb.push(...getQ("Ιστορία", 1, 1), ...getQ("Ιστορία", 2, 1), ...getQ("Ιστορία", 3, 1));
-		    activeDb.push(...getQ("Logo Quiz", 2, 1), ...getQ("Logo Quiz", 3, 1));
-		    activeDb.push(...getQ("Ποιος Λείπει;", 2, 2)); 
-		    activeDb.push(...getQ("Top 5", 3, 2));
-		    activeDb.push(...getQ("Player ID", 2, 2));
-		
-		    // ΕΠΙΛΕΓΜΕΝΕΣ ΚΑΤΗΓΟΡΙΕΣ (2)
-		    selectedOptionals.forEach(cat => {
-		        if (cat === "Higher or Lower") {
-		            // Το Higher or Lower δίνει 1 πόντο (φέρνουμε 2 ερωτήσεις του 1 πόντου)
-		            activeDb.push(...getQ(cat, 1, 2));
-		        } else {
-		            // Όλες οι υπόλοιπες δίνουν 2 πόντους
-		            activeDb.push(...getQ(cat, 2, 2));
-		        }
-		    });
-		    
-		    // Αποθήκευση της νέας κατάστασης του pool
-		    localStorage.setItem('quizball_pool_FINAL_BUILDv.13', JSON.stringify(globalPool));
-		}
+            activeDb = [];
+            
+            const getQ = (cat, points, count) => {
+                let result = [];
+                for(let i=0; i<count; i++) {
+                    let idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
+                    
+                    // Αν το pool άδειασε από ΑΥΤΗ την κατηγορία και πόντους, την ξαναγεμίζουμε κρυφά
+                    if (idx === -1) {
+                        let refill = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
+                        
+                        // Ανακατεύουμε τις ερωτήσεις που μόλις τραβήξαμε
+                        for (let j = refill.length - 1; j > 0; j--) {
+                            const k = Math.floor(Math.random() * (j + 1));
+                            [refill[j], refill[k]] = [refill[k], refill[j]];
+                        }
+                        
+                        globalPool.push(...refill);
+                        idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
+                    }
+
+                    if(idx > -1) {
+                        let q = globalPool.splice(idx, 1)[0];
+                        
+                        // --- ΔΙΟΡΘΩΣΗ: Πιο έξυπνος έλεγχος για διπλότυπα ---
+                        // Δεν κοιτάμε μόνο το κείμενο (q.q), αλλά και την απάντηση/εικόνα
+                        let isDuplicate = result.some(r => 
+                            r.q === q.q && 
+                            r.a === q.a && 
+                            r.img === q.img && 
+                            r.missing === q.missing && 
+                            r.title === q.title
+                        );
+
+                        if (!isDuplicate) {
+                            result.push({...q, played: false, id: Math.random()});
+                        } else {
+                            // Αν έτυχε διπλή, δίνουμε μια ακόμα ευκαιρία στη λούπα
+                            i--; 
+                        }
+                    }
+                }
+                return result;
+            };
+
+            // ΣΤΑΘΕΡΕΣ ΚΑΤΗΓΟΡΙΕΣ (6)
+            activeDb.push(...getQ("Γεωγραφία", 1, 1), ...getQ("Γεωγραφία", 2, 1), ...getQ("Γεωγραφία", 3, 1));
+            activeDb.push(...getQ("Ιστορία", 1, 1), ...getQ("Ιστορία", 2, 1), ...getQ("Ιστορία", 3, 1));
+            activeDb.push(...getQ("Logo Quiz", 2, 1), ...getQ("Logo Quiz", 3, 1));
+            
+            // ΔΙΟΡΘΩΣΗ ΤΥΠΟΓΡΑΦΙΚΟΥ: Η κατηγορία στο ALL_QUESTIONS είναι "Ποιος λείπει" 
+            activeDb.push(...getQ("Ποιος λείπει", 2, 2)); 
+            
+            activeDb.push(...getQ("Top 5", 3, 2));
+            activeDb.push(...getQ("Player ID", 2, 2));
+
+            // ΕΠΙΛΕΓΜΕΝΕΣ ΚΑΤΗΓΟΡΙΕΣ (2)
+            selectedOptionals.forEach(cat => {
+                if (cat === "Higher or Lower") {
+                    activeDb.push(...getQ(cat, 1, 2));
+                } else {
+                    activeDb.push(...getQ(cat, 2, 2));
+                }
+            });
+            
+            // Αποθήκευση της νέας κατάστασης του pool
+            localStorage.setItem('quizball_pool_FINAL_BUILDv.13', JSON.stringify(globalPool));
+        }
 
         function renderBoard() {
             const container = document.getElementById('board-container');

@@ -3521,9 +3521,17 @@
 		        resultTxt.style.display = 'block';
 		        
 		        setTimeout(() => {
-		            // 1. Κλείνουμε τα πάντα
-		            modal.style.display = 'none';
-		            document.getElementById('question-screen').style.display = 'none';
+				    // 1. Κλείνουμε το modal του Τζόκερ
+				    modal.style.display = 'none';
+				
+				    // 2. Κλείνουμε ΤΗΝ ΟΘΟΝΗ ΤΗΣ ΕΡΩΤΗΣΗΣ (Αυτό λείπει!)
+				    document.getElementById('question-screen').style.display = 'none';
+				    
+				    // 3. Επιστρέφουμε στο κεντρικό ταμπλό
+				    document.getElementById('game-screen').style.display = 'flex';
+				
+				    // ... υπόλοιπος κώδικας (πόντοι και finishTurnLogic)
+				}, 4000);
 		
 		            // 2. Υπολογισμός Πόντων Αγώνα
 		            if (chosen.isGoal) {

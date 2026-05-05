@@ -936,7 +936,7 @@
 
         <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
 		<!-- ΕΔΩ ΘΑ ΠΑΙΖΕΙ ΤΟ GIF ΤΟΥ ΠΕΝΑΛΤΙ -->
-        <img id="pen-action-gif" style="display:none; width:100%; max-width:400px; height:auto; border-radius:15px; margin: 15px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.7); object-fit: contain;" src="" />
+        <img id="pen-action-gif" src="" style="display: none; width: 100%; max-width: 400px; ..." />
         
         <div id="sd-question-box" class="pen-q-box">
             Ερώτηση...
@@ -2794,18 +2794,18 @@
 		    document.getElementById('sd-answer').style.display = 'none';
 		
 		    let gifImg = document.getElementById('pen-action-gif');
-		    
-		    // 3. Επιλογή GIF
-		    if (isCorrect) {
-		        // GIF για ΓΚΟΛ
-		        gifImg.src = "https://media.tenor.com/T0bH10i4R4UAAAAC/goal-football.gif"; 
-		    } else {
-		        // GIF για ΑΠΟΚΡΟΥΣΗ (Διάλεξα μια πιο εντυπωσιακή)
-		        gifImg.src = "https://media.tenor.com/w4pB4W5E5jIAAAAC/goalkeeper-save.gif";
-		    }
-		    
-		    // 4. ΕΜΦΑΝΙΣΗ GIF
-		    gifImg.style.display = 'block';
+            
+            if (isCorrect) {
+                sfxGoal.play();
+                // ΤΟ ΝΕΟ LINK ΓΙΑ ΓΚΟΛ
+                gifImg.src = "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif"; 
+            } else {
+                sfxBuzzer.play();
+                // ΤΟ ΝΕΟ LINK ΓΙΑ ΑΠΟΚΡΟΥΣΗ
+                gifImg.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif";
+            }
+            
+            gifImg.style.display = 'block';
 		
 		    // 5. Αναμονή 2.5 δευτερόλεπτα για να τελειώσει το animation
 		    setTimeout(() => {

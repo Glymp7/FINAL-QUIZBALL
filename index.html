@@ -2796,26 +2796,25 @@
 		    let gifImg = document.getElementById('pen-action-gif');
 		    let resetCache = "?t=" + new Date().getTime();
 		    let finalSrc = isCorrect 
-		        ? "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif" + resetCache
-		        : "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif" + resetCache;
-		
-		    // 3. ΠΡΟΦΟΡΤΩΣΗ: Περιμένουμε να κατέβει η εικόνα πριν την δείξουμε
-		    let tempImg = new Image();
-		    tempImg.src = finalSrc;
-		    tempImg.onload = function() {
-		        gifImg.src = finalSrc;
-		        gifImg.style.display = 'block';
-		
-		        // Χρόνος ανάλογα με το GIF: 3.2" για γκολ, 3.8" για απόκρουση
-		        let duration = isCorrect ? 3200 : 3800;
-		
-		        setTimeout(() => {
-		            gifImg.style.display = 'none';
-		            gifImg.src = "";
-		            finishTurnLogic(isCorrect); // Πάμε στη λογική του σκορ
-		        }, duration);
-		    };
-		}
+        ? "https://i.postimg.cc/4x2Xr8r4/Anthony-Martial-Goal-GIF-by-Manchester-United.gif" + resetCache
+        : "https://i.postimg.cc/NF8gSQcw/Save-La-Liga-GIF-by-DAZN.gif" + resetCache;
+
+    let tempImg = new Image();
+    tempImg.src = finalSrc;
+    tempImg.onload = function() {
+        gifImg.src = finalSrc;
+        gifImg.style.display = 'block';
+
+        // Αύξησε αυτούς τους χρόνους αν δεις ότι πάλι κόβεται
+        // Δοκίμασε 4000 (4 δευτερόλεπτα) και για τα δύο για σιγουριά
+        let duration = isCorrect ? 4000 : 4500; 
+
+        setTimeout(() => {
+            gifImg.style.display = 'none';
+            gifImg.src = "";
+            finishTurnLogic(isCorrect);
+        }, duration);
+    };
 		
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {

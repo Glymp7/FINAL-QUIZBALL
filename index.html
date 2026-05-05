@@ -2799,23 +2799,23 @@
         ? "https://i.postimg.cc/4x2Xr8r4/Anthony-Martial-Goal-GIF-by-Manchester-United.gif" + resetCache
         : "https://i.postimg.cc/NF8gSQcw/Save-La-Liga-GIF-by-DAZN.gif" + resetCache;
 
-    let tempImg = new Image();
-    tempImg.src = finalSrc;
-    tempImg.onload = function() {
-        gifImg.src = finalSrc;
-        gifImg.style.display = 'block';
-
-        // Αύξησε αυτούς τους χρόνους αν δεις ότι πάλι κόβεται
-        // Δοκίμασε 4000 (4 δευτερόλεπτα) και για τα δύο για σιγουριά
-        let duration = isCorrect ? 4000 : 4500; 
-
-        setTimeout(() => {
-            gifImg.style.display = 'none';
-            gifImg.src = "";
-            finishTurnLogic(isCorrect);
-        }, duration);
-    };
+		    let tempImg = new Image();
+		    tempImg.src = finalSrc;
+		    tempImg.onload = function() {
+		        gifImg.src = finalSrc;
+		        gifImg.style.display = 'block';
 		
+		        // Αύξησε αυτούς τους χρόνους αν δεις ότι πάλι κόβεται
+		        // Δοκίμασε 4000 (4 δευτερόλεπτα) και για τα δύο για σιγουριά
+		        let duration = isCorrect ? 4000 : 4500; 
+		
+		        setTimeout(() => {
+		            gifImg.style.display = 'none';
+		            gifImg.src = "";
+		            finishTurnLogic(isCorrect);
+		        }, duration);
+		    };
+		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
 		        if(penRound < 5) penA.push(isCorrect ? 1 : 0);

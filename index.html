@@ -808,7 +808,6 @@
             <div class="ll-container" id="ll-box-1">
                 <button class="ll-btn btn-fifty" id="ll-1-fifty" onclick="useLL(1, 'fifty')">50:50</button>
                 <button class="ll-btn btn-x2" id="ll-1-x2" onclick="useLL(1, 'x2')">x2</button>
-                <button class="ll-btn btn-sabo" id="ll-1-sabo" onclick="useLL(1, 'sabo')">💥</button>
 				<button class="ll-btn" id="ll-var-1" onclick="triggerVAR(1)" style="background-color: #34495e;">📺</button>
 				<button class="ll-btn" id="ll-joker-1" onclick="useJoker(1)" style="background-color: #8e44ad;">🃏</button>
             </div>
@@ -2777,8 +2776,8 @@
         let currentTurn = 1;
         let team1 = { name: "", score: 0 };
         let team2 = { name: "", score: 0 };
-        let t1LL = { fifty: true, x2: true, sabo: true };
-        let t2LL = { fifty: true, x2: true, sabo: true };
+        let t1LL = { fifty: true, x2: true};
+        let t2LL = { fifty: true, x2: true};
         
         let isFiftyFifty = false;
         let isDouble = false;
@@ -3731,55 +3730,51 @@
             document.getElementById('btn-wrong').style.display = 'block';
         }
 
-        function resolveScoreMatch(ptsAwarded, didSteal) {
-            if (ptsAwarded === 0) {
-                resolveTurn(false);
-                return;
-            }
-            currentQ.p = ptsAwarded; // 1 ή 2
-            if (didSteal) {
-                isSteal = true;
-                stealingTeam = currentTurn === 1 ? 2 : 1;
-            }
-            resolveTurn(true);
-        }
+        function resolveScoreMatch(ptsAwarded) {
+		    if (ptsAwarded === 0) {
+		        resolveTurn(false);
+		        return;
+		    }
+		    currentQ.p = ptsAwarded; // 1 ή 2
+		    resolveTurn(true); // Πηγαίνει αυτόματα στην ομάδα που παίζει
+		}
 
         function resolveTurn(status) {
-            if(status !== 'skip') {
-                let pts = currentQ.p;
-                if (isFiftyFifty && isDouble) { pts = currentQ.p; }
-                else if (isFiftyFifty) { pts = 1; }
-                else if (isDouble) { pts = currentQ.p * 2; }
-
-                if (status === true) { 
-                    if(gameMode === '1v1') { 
-                        let awardedTeam = isSteal ? stealingTeam : currentTurn;
-                        if(awardedTeam === 1) team1.score += pts; else team2.score += pts; 
-                    }
-                    else team1.score += pts;
-                }
-                if(gameMode === '1v1') currentTurn = currentTurn === 1 ? 2 : 1;
-            }
-            
-            isFiftyFifty = false; isDouble = false; isSteal = false; stealingTeam = 0;
-            currentQ.played = true;
-            
-            document.getElementById('score-t1').innerText = team1.score;
-            document.getElementById('score-t2').innerText = team2.score;
-            document.getElementById('question-screen').style.display = 'none';
-            
-            // ΕΔΩ ΜΠΑΙΝΕΙ Η ΑΛΛΑΓΗ:
-            if(activeDb.every(q => q.played)) {
-                checkForSuddenDeath(); 
-            } else { 
-                // Επαναφορά του background στο προεπιλεγμένο χρώμα (π.χ., το eef2f3 που έχεις ορίσει)
-                document.body.style.background = 'var(--bg-main)'; 
-                
-                document.getElementById('board-screen').style.display = 'flex'; 
-                renderBoard(); 
-                updateTurnUI(); 
-            }
-        }
+		    if(status !== 'skip') {
+		        let pts = currentQ.p;
+		        if (isFiftyFifty && isDouble) { pts = currentQ.p; }
+		        else if (isFiftyFifty) { pts = 1; }
+		        else if (isDouble) { pts = currentQ.p * 2; }
+		
+		        if (status === true) { 
+		            // Πλέον οι πόντοι πηγαίνουν πάντα στην currentTurn
+		            if(currentTurn === 1) team1.score += pts; 
+		            else team2.score += pts;
+		        }
+		        
+		        // Αλλαγή σειράς
+		        currentTurn = currentTurn === 1 ? 2 : 1;
+		    }
+		    
+		    // Μηδενισμός μόνο των απαραίτητων βοηθειών
+		    isFiftyFifty = false; 
+		    isDouble = false; 
+		    currentQ.played = true;
+		    
+		    // Ενημέρωση UI
+		    document.getElementById('score-t1').innerText = team1.score;
+		    document.getElementById('score-t2').innerText = team2.score;
+		    document.getElementById('question-screen').style.display = 'none';
+		    
+		    if(activeDb.every(q => q.played)) {
+		        checkForSuddenDeath(); 
+		    } else { 
+		        document.body.style.background = 'var(--bg-main)'; 
+		        document.getElementById('board-screen').style.display = 'flex'; 
+		        renderBoard(); 
+		        updateTurnUI(); 
+		    }
+		}
 
         function updateTurnUI() {
             if (gameMode === 'training') return;

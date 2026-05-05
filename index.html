@@ -486,6 +486,22 @@
             animation: pulseSoft 2s infinite;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
+		
+		/* --- JOKER MODAL --- */
+        #joker-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 10005; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
+        .joker-spinner { font-size: 100px; display: inline-block; animation: spin 0.5s infinite linear; filter: drop-shadow(0 0 20px #f1c40f); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .joker-result-text { font-size: 35px; font-weight: 900; text-transform: uppercase; margin-top: 20px; padding: 20px; border-radius: 15px; display: none; animation: popIn 0.5s forwards; text-shadow: 2px 2px 10px black; }
+
+        /* --- PENALTY SHOOTOUT UI --- */
+        .penalty-scoreboard { display: flex; justify-content: space-around; width: 100%; max-width: 500px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .pen-team { display: flex; flex-direction: column; align-items: center; width: 45%; }
+        .pen-name { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        .pen-circles { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+        .pen-circle { width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.5); background: transparent; transition: 0.3s; }
+        .pen-scored { background: #00b894; border-color: #00b894; box-shadow: 0 0 10px #00b894; }
+        .pen-missed { background: #d63031; border-color: #d63031; box-shadow: 0 0 10px #d63031; }
+		
 		@media (max-width: 600px) {
             /* Αρχική Οθόνη */
             .home-title { font-size: 38px; }
@@ -716,6 +732,7 @@
                 <button class="ll-btn btn-x2" id="ll-1-x2" onclick="useLL(1, 'x2')">x2</button>
                 <button class="ll-btn btn-sabo" id="ll-1-sabo" onclick="useLL(1, 'sabo')">💥</button>
 				<button class="ll-btn" id="ll-var-1" onclick="triggerVAR(1)" style="background-color: #34495e;">📺</button>
+				<button class="ll-btn" id="ll-joker-1" onclick="useJoker(1)" style="background-color: #8e44ad;">🃏</button>
             </div>
         </div>
         <div style="font-size: 20px; font-weight: 900; color: #b2bec3; padding: 0 10px;" id="vs-text">VS</div>
@@ -728,6 +745,7 @@
                 <button class="ll-btn btn-x2" id="ll-2-x2" onclick="useLL(2, 'x2')">x2</button>
                 <button class="ll-btn btn-sabo" id="ll-2-sabo" onclick="useLL(2, 'sabo')">💥</button>
 				<button class="ll-btn" id="ll-var-2" onclick="triggerVAR(2)" style="background-color: #34495e;">📺</button>
+				<button class="ll-btn" id="ll-joker-2" onclick="useJoker(2)" style="background-color: #8e44ad;">🃏</button>
             </div>
         </div>
     </div>
@@ -866,10 +884,28 @@
         </div>
     </div>
 	
-	<div id="sudden-death-screen">
-        <div class="sd-title">⚡ SUDDEN DEATH ⚡</div>
-        <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, ΣΕΙΡΑ ΣΟΥ...</div>
-        <div id="sd-question-box" style="background: white; color: #2d3436; padding: 25px; border-radius: 15px; width: 90%; max-width: 450px; font-weight: bold; font-size: 18px; margin-bottom: 20px;">
+	<div id="sudden-death-screen" style="display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 150; background: linear-gradient(to bottom, #1e3c72, #2a5298); color: white; text-align: center; padding: 20px; box-sizing: border-box;">
+        <div class="sd-title" style="margin-bottom: 10px;">🥅 ΠΕΝΑΛΤΙ 🥅</div>
+        
+        <!-- Scoreboard Πέναλτι -->
+        <div class="penalty-scoreboard">
+            <div class="pen-team">
+                <div class="pen-name" id="pen-name-1">ΟΜΑΔΑ Α</div>
+                <div class="pen-circles" id="pen-circles-1">
+                    <div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div>
+                </div>
+            </div>
+            <div class="pen-team">
+                <div class="pen-name" id="pen-name-2">ΟΜΑΔΑ Β</div>
+                <div class="pen-circles" id="pen-circles-2">
+                    <div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, Η ΜΠΑΛΑ ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
+        
+        <div id="sd-question-box" style="background: white; color: #2d3436; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; font-weight: bold; font-size: 18px; margin-bottom: 20px; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);">
             Ερώτηση...
         </div>
         
@@ -877,12 +913,17 @@
             <button class="btn-admin btn-show" id="sd-btn-show" style="width: 100%; border-radius: 10px;" onclick="revealSdAnswer()">ΑΠΟΚΑΛΥΨΗ ΑΠΑΝΤΗΣΗΣ</button>
             
             <div id="sd-result-btns" style="display:none; gap:15px; justify-content: center; width: 100%;">
-                <button class="btn-admin" style="background: #d63031; display: block; border-radius: 10px;" onclick="resolveSdTurn(false)">❌ ΛΑΘΟΣ</button>
-                <button class="btn-admin" style="background: #00b894; display: block; border-radius: 10px;" onclick="resolveSdTurn(true)">✅ ΣΩΣΤΟ</button>
+                <button class="btn-admin" style="background: #d63031; display: block; border-radius: 10px;" onclick="resolveSdTurn(false)">❌ ΑΠΕΚΡΟΥΣΕ</button>
+                <button class="btn-admin" style="background: #00b894; display: block; border-radius: 10px;" onclick="resolveSdTurn(true)">⚽ ΓΚΟΟΟΛ</button>
             </div>
         </div>
-        
         <div id="sd-answer" style="display:none; font-size: 26px; font-weight: 900; color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></div>
+    </div>
+
+    <!-- JOKER MODAL -->
+    <div id="joker-modal">
+        <div class="joker-spinner" id="joker-spinner">🎰</div>
+        <div id="joker-result" class="joker-result-text"></div>
     </div>
 
     <div id="end-screen">
@@ -2657,12 +2698,14 @@
         let t5Found = 0;
 		
 		
-		let sdResults = { t1: null, t2: null };
+		let penA = [];
+        let penB = [];
+        let penRound = 0; // Γύροι από το 0 έως το 4 (για τα 5 πέναλτι)
         let sdPool = [];
 
         function checkForSuddenDeath() {
             if (gameMode === '1v1' && team1.score === team2.score) {
-                startSuddenDeath();
+                startSuddenDeath(); // Πλέον είναι τα Πέναλτι
             } else {
                 showEndScreen();
             }
@@ -2673,14 +2716,30 @@
             document.getElementById('board-screen').style.display = 'none';
             document.getElementById('sudden-death-screen').style.display = 'flex';
             currentTurn = 1;
+            penA = []; penB = []; penRound = 0;
+            updatePenaltyUI();
             nextSdQuestion();
+        }
+
+        function updatePenaltyUI() {
+            document.getElementById('pen-name-1').innerText = team1.name;
+            document.getElementById('pen-name-2').innerText = team2.name;
+            
+            let c1 = document.getElementById('pen-circles-1').children;
+            let c2 = document.getElementById('pen-circles-2').children;
+            
+            // Καθαρίζουμε και βάζουμε τα σωστά/λάθος
+            for(let i=0; i<5; i++) {
+                if(c1[i]) c1[i].className = 'pen-circle' + (penA[i] === 1 ? ' pen-scored' : (penA[i] === 0 ? ' pen-missed' : ''));
+                if(c2[i]) c2[i].className = 'pen-circle' + (penB[i] === 1 ? ' pen-scored' : (penB[i] === 0 ? ' pen-missed' : ''));
+            }
         }
 
         function nextSdQuestion() {
             if (sdPool.length === 0) sdPool = shuffle([...SUDDEN_DEATH_QUESTIONS]);
             currentQ = sdPool.pop();
             
-            document.getElementById('sd-turn-display').innerText = `${currentTurn === 1 ? team1.name : team2.name}, ΣΕΙΡΑ ΣΟΥ...`;
+            document.getElementById('sd-turn-display').innerText = `${currentTurn === 1 ? team1.name : team2.name}, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...`;
             document.getElementById('sd-question-box').innerText = currentQ.q;
             document.getElementById('sd-answer').style.display = 'none';
             document.getElementById('sd-btn-show').style.display = 'block';
@@ -2695,28 +2754,47 @@
         }
 
         function resolveSdTurn(isCorrect) {
+            if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
+            
             if (currentTurn === 1) {
-                sdResults.t1 = isCorrect;
+                if(penRound < 5) penA.push(isCorrect ? 1 : 0);
+                else penA[penRound] = isCorrect ? 1 : 0; // Ξαφνικός θάνατος μετά τα 5
                 currentTurn = 2;
-                nextSdQuestion();
+                updatePenaltyUI();
+                setTimeout(() => nextSdQuestion(), 800); // Μικρή καθυστέρηση για να δει το κυκλάκι
             } else {
-                sdResults.t2 = isCorrect;
+                if(penRound < 5) penB.push(isCorrect ? 1 : 0);
+                else penB[penRound] = isCorrect ? 1 : 0;
                 
-                // Έλεγχος αν έχουμε νικητή
-                if (sdResults.t1 && !sdResults.t2) { 
-                    // Κέρδισε η Τ1
-                    team1.score += 1; // +1 Πόντος Νίκης (Χρυσό Γκολ)
-                    showEndScreen();
-                } else if (!sdResults.t1 && sdResults.t2) { 
-                    // Κέρδισε η Τ2
-                    team2.score += 1; // +1 Πόντος Νίκης (Χρυσό Γκολ)
-                    showEndScreen();
+                updatePenaltyUI();
+                
+                // Υπολογισμός αν έχουμε Νικητή!
+                let aScore = penA.reduce((a,b)=>a+(b===1?1:0),0);
+                let bScore = penB.reduce((a,b)=>a+(b===1?1:0),0);
+                
+                let aRem = 5 - (penRound + 1); // Πόσα πέναλτι μένουν
+                let bRem = 5 - (penRound + 1);
+                
+                let win = false;
+                if (penRound < 4) { // Στα πρώτα 5
+                    if (aScore > bScore + bRem) { team1.score++; win = true; } // Μαθηματικά δεν πιάνεται
+                    if (bScore > aScore + aRem) { team2.score++; win = true; }
+                } else if (penRound >= 4) { // Τέλος των 5 ή Ξαφνικός Θάνατος (ένα-ένα)
+                    if (aScore > bScore) { team1.score++; win = true; }
+                    else if (bScore > aScore) { team2.score++; win = true; }
+                }
+                
+                if (win) {
+                    setTimeout(() => showEndScreen(), 1500);
                 } else {
-                    // Παραμένει ισοπαλία (Και οι 2 σωστοί ή και οι 2 λάθος)
-                    sdResults = { t1: null, t2: null };
                     currentTurn = 1;
-                    alert("Τρομερό ντέρμπι! Και οι δύο ομάδες είχαν το ίδιο αποτέλεσμα. Πάμε σε νέα ερώτηση!");
-                    nextSdQuestion();
+                    penRound++;
+                    // Αν πάμε στα 6,7... προσθέτουμε νέα κυκλάκια γραφικά
+                    if(penRound >= 5) {
+                        document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
+                        document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
+                    }
+                    setTimeout(() => nextSdQuestion(), 1000);
                 }
             }
         }
@@ -2987,8 +3065,8 @@
         // 4. ΟΛΟΚΛΗΡΩΣΗ ΚΑΙ ΕΝΑΡΞΗ ΑΓΩΝΑ
         function finalizeSetupAndStart() {
             team1.score = 0; team2.score = 0; activeMultiplier = 1; 
-            t1LL = { fifty: true, x2: true, sabo: true, var: true };
-			t2LL = { fifty: true, x2: true, sabo: true, var: true };
+            t1LL = { fifty: true, x2: true, sabo: true, var: true, joker: true };
+            t2LL = { fifty: true, x2: true, sabo: true, var: true, joker: true };
             document.querySelectorAll('.ll-btn').forEach(btn => btn.classList.remove('used-ll'));
             document.getElementById('x2-badge-1').style.display = 'none';
             document.getElementById('x2-badge-2').style.display = 'none';
@@ -3250,7 +3328,55 @@
             }
         }
 
-        // --- ΛΕΙΤΟΥΡΓΙΑ VAR (ΑΣΦΑΛΗΣ ΕΚΔΟΣΗ) ---
+        
+		function useJoker(teamId) {
+            if (gameMode !== '1v1') return;
+            if (currentTurn !== teamId) { alert("Δεν είναι η σειρά σας!"); return; }
+            let llState = (teamId === 1) ? t1LL : t2LL;
+            if (!llState.joker) return;
+            
+            let inQuestion = document.getElementById('question-screen').style.display === 'flex';
+            if (!inQuestion) { alert("Το Joker παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
+
+            llState.joker = false;
+            document.getElementById(`ll-joker-${teamId}`).classList.add('used-ll');
+            
+            // Εμφάνιση του Κουλοχέρη
+            const modal = document.getElementById('joker-modal');
+            const spinner = document.getElementById('joker-spinner');
+            const resultTxt = document.getElementById('joker-result');
+            modal.style.display = 'flex';
+            spinner.style.display = 'block';
+            resultTxt.style.display = 'none';
+
+            // Σταματάμε τον χρόνο προσωρινά
+            stopTimer();
+
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                const outcomes = [
+                    { t: "✅ ΑΠΕΥΘΕΙΑΣ ΓΚΟΛ!\n(Η ερώτηση μετράει Σωστή)", action: () => resolveTurn(true), c: "#00b894" },
+                    { t: "💥 ΑΥΤΟΓΚΟΛ!\n(Χάνεις τη σειρά σου - Λάθος)", action: () => resolveTurn(false), c: "#d63031" },
+                    { t: "⏱️ ΠΑΡΑΤΑΣΗ!\n(+30 Δευτερόλεπτα)", action: () => { timeLeft += 30; totalTime += 30; startTimer(timeLeft); closeJoker(); }, c: "#0984e3" },
+                    { t: "🟨 ΚΙΤΡΙΝΗ ΚΑΡΤΑ!\n(Ο χρόνος πέφτει στα 10s)", action: () => { timeLeft = Math.min(timeLeft, 10); startTimer(timeLeft); closeJoker(); }, c: "#f1c40f" }
+                ];
+                
+                let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
+                resultTxt.innerText = chosen.t;
+                resultTxt.style.background = chosen.c;
+                resultTxt.style.color = "white";
+                resultTxt.style.display = 'block';
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    chosen.action();
+                }, 4000);
+            }, 2000); // Γυρίζει για 2 δευτερόλεπτα
+        }
+
+        function closeJoker() { document.getElementById('joker-modal').style.display = 'none'; }
+		
+		// --- ΛΕΙΤΟΥΡΓΙΑ VAR (ΑΣΦΑΛΗΣ ΕΚΔΟΣΗ) ---
         function triggerVAR(team) {
             // Αν έχει ήδη πατηθεί, μην κάνεις τίποτα
             if (team === 1 && t1LL.var === false) return;

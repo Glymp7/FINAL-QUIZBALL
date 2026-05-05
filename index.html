@@ -2786,73 +2786,62 @@
         }
 
         function resolveSdTurn(isCorrect) {
-		    // 1. Ήχοι
 		    if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
 		
-		    // 2. Κρύβουμε τα στοιχεία της ερώτησης
+		    // Κρύβουμε τα πάντα για να φανεί το μήνυμα
 		    document.getElementById('sd-question-box').style.display = 'none';
 		    document.getElementById('sd-controls').style.display = 'none';
 		    document.getElementById('sd-answer').style.display = 'none';
 		
 		    const actionBox = document.getElementById('penalty-action-box');
 		    
-		    // 3. Animation ρυθμίσεις
 		    if (isCorrect) {
 		        actionBox.innerText = "⚽ ΓΚΟΟΟΛ !!!";
 		        actionBox.style.backgroundColor = "#00b894";
-		        actionBox.style.color = "white";
-		        actionBox.style.boxShadow = "0 0 30px #00b894";
 		    } else {
 		        actionBox.innerText = "🧤 ΑΠΕΚΡΟΥΣΕ !";
 		        actionBox.style.backgroundColor = "#d63031";
-		        actionBox.style.color = "white";
-		        actionBox.style.boxShadow = "0 0 30px #d63031";
 		    }
 		
-		    // Εμφάνιση με εφέ
 		    actionBox.style.display = 'flex';
-		    actionBox.style.transform = "scale(0.8)";
-		    setTimeout(() => { actionBox.style.transform = "scale(1.1)"; }, 50);
 		
-		    // 4. Αναμονή 2 δευτερόλεπτα και μετά συνέχεια στη λογική
 		    setTimeout(() => {
 		        actionBox.style.display = 'none';
-		        finishTurnLogic(isCorrect); // Εδώ τρέχει η finishTurnLogic που ήδη έχεις
+		        
+		        // ΠΟΛΥ ΣΗΜΑΝΤΙΚΟ: Επαναφέρουμε τα κουτιά για την επόμενη ομάδα
+		        document.getElementById('sd-question-box').style.display = 'block';
+		        document.getElementById('sd-controls').style.display = 'block';
+		        
+		        finishTurnLogic(isCorrect); 
 		    }, 2000);
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
+		        // Έπαιξε η Ομάδα 1
 		        if(penRound < 5) penA.push(isCorrect ? 1 : 0);
 		        else penA[penRound] = isCorrect ? 1 : 0;
-		        currentTurn = 2;
+		        
+		        currentTurn = 2; // ΑΛΛΑΓΗ ΣΕΙΡΑΣ
 		        updatePenaltyUI();
-		        setTimeout(() => nextSdQuestion(), 500);
+		        nextSdQuestion();
 		    } else {
+		        // Έπαιξε η Ομάδα 2
 		        if(penRound < 5) penB.push(isCorrect ? 1 : 0);
 		        else penB[penRound] = isCorrect ? 1 : 0;
+		        
 		        updatePenaltyUI();
 		
+		        // Έλεγχος αν τελείωσε ο αγώνας ή πάμε σε νέο γύρο
 		        let aScore = penA.reduce((a,b)=>a+(b===1?1:0),0);
 		        let bScore = penB.reduce((a,b)=>a+(b===1?1:0),0);
-		        let aRem = 5 - (penRound + 1); 
-		        let bRem = 5 - (penRound + 1);
 		        
-		        let win = false;
-		        if (penRound < 4) { 
-		            if (aScore > bScore + bRem) { team1.score++; win = true; } 
-		            else if (bScore > aScore + aRem) { team2.score++; win = true; }
-		        } else { 
-		            if (aScore > bScore) { team1.score++; win = true; }
-		            else if (bScore > aScore) { team2.score++; win = true; }
-		        }
-		        
-		        if (win) {
-		            setTimeout(() => showEndScreen(), 1000);
+		        // Απλή λογική νίκης μετά τα 5 πέναλτι
+		        if (penRound >= 4 && aScore !== bScore) {
+		             showEndScreen(); 
 		        } else {
-		            document.getElementById('sd-question-box').style.display = 'block';
-		            document.getElementById('sd-controls').style.display = 'block';
-		            currentTurn = 1;
+		            currentTurn = 1; // Επιστροφή στην Ομάδα 1
 		            penRound++;
+		            // Αν φτάσαμε στον "ξαφνικό θάνατο", προσθέτουμε κύκλους
 		            if(penRound >= 5) {
 		                document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
 		                document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
@@ -2861,7 +2850,6 @@
 		        }
 		    }
 		}
-
         // ΝΕΕΣ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΤΟ ΝΟΜΙΣΜΑ & BUILDER
         let coinWinnerId = 1;
         let builderTeamId = 1;

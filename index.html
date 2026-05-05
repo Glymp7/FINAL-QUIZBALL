@@ -3229,39 +3229,69 @@
 
         // ΦΟΡΤΩΜΑ ΕΡΩΤΗΣΕΩΝ ΜΕ ΤΙΣ 6 ΣΤΑΘΕΡΕΣ ΚΑΙ ΤΙΣ 2 ΕΠΙΛΕΓΜΕΝΕΣ
         function generateGameSession() {
-            activeDb = [];
-            const getQ = (cat, points, count) => {
-                let result = [];
-                for(let i=0; i<count; i++) {
-                    let idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
-                    if(idx > -1) {
-                        let q = globalPool.splice(idx, 1)[0];
-                        result.push({...q, played: false, id: Math.random()});
-                    } else {
-                        let fallback = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
-                        if(fallback.length > 0) {
-                            let q = fallback[Math.floor(Math.random() * fallback.length)];
-                            result.push({...q, played: false, id: Math.random()});
-                        }
-                    }
-                }
-                return result;
-            };
-            // ΣΤΑΘΕΡΕΣ ΚΑΤΗΓΟΡΙΕΣ (6)
-            activeDb.push(...getQ("Γεωγραφία", 1, 1), ...getQ("Γεωγραφία", 2, 1), ...getQ("Γεωγραφία", 3, 1));
-            activeDb.push(...getQ("Ιστορία", 1, 1), ...getQ("Ιστορία", 2, 1), ...getQ("Ιστορία", 3, 1));
-            activeDb.push(...getQ("Logo Quiz", 2, 1), ...getQ("Logo Quiz", 3, 1));
-            activeDb.push(...getQ("Ποιος Λείπει;", 2, 2)); 
-            activeDb.push(...getQ("Top 5", 3, 2));
-            activeDb.push(...getQ("Player ID", 2, 2));
-
-            // ΕΠΙΛΕΓΜΕΝΕΣ ΚΑΤΗΓΟΡΙΕΣ (2)
-            selectedOptionals.forEach(cat => {
-                activeDb.push(...getQ(cat, 2, 2));
-            });
-            
-            localStorage.setItem('quizball_pool_FINAL_BUILDv.13', JSON.stringify(globalPool));
-        }
+		    activeDb = [];
+		    
+		    const getQ = (cat, points, count) => {
+		        let result = [];
+		        for(let i=0; i<count; i++) {
+		            let idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
+		            
+		            // --- ΝΕΑ ΛΟΓΙΚΗ ΑΠΟΦΥΓΗΣ ΕΠΑΝΑΛΗΨΕΩΝ ---
+		            // Αν το pool άδειασε από ΑΥΤΗ την κατηγορία και πόντους, την ξαναγεμίζουμε κρυφά
+		            if (idx === -1) {
+		                let refill = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
+		                
+		                // Ανακατεύουμε τις ερωτήσεις που μόλις τραβήξαμε
+		                for (let j = refill.length - 1; j > 0; j--) {
+		                    const k = Math.floor(Math.random() * (j + 1));
+		                    [refill[j], refill[k]] = [refill[k], refill[j]];
+		                }
+		                
+		                // Τις ρίχνουμε στο globalPool
+		                globalPool.push(...refill);
+		                
+		                // Ξαναψάχνουμε (τώρα σίγουρα θα βρει)
+		                idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
+		            }
+		
+		            // Τραβάμε την ερώτηση και την αφαιρούμε από το pool για να μην ξαναπέσει
+		            if(idx > -1) {
+		                let q = globalPool.splice(idx, 1)[0];
+		                
+		                // Βεβαιωνόμαστε ότι δεν βάζουμε την ίδια ερώτηση 2 φορές στο ίδιο board
+		                if (!result.some(r => r.q === q.q)) {
+		                    result.push({...q, played: false, id: Math.random()});
+		                } else {
+		                    // Αν έτυχε διπλή, δίνουμε μια ακόμα ευκαιρία στη λούπα
+		                    i--; 
+		                }
+		            }
+		        }
+		        return result;
+		    };
+		
+		    // ΣΤΑΘΕΡΕΣ ΚΑΤΗΓΟΡΙΕΣ (6)
+		    activeDb.push(...getQ("Γεωγραφία", 1, 1), ...getQ("Γεωγραφία", 2, 1), ...getQ("Γεωγραφία", 3, 1));
+		    activeDb.push(...getQ("Ιστορία", 1, 1), ...getQ("Ιστορία", 2, 1), ...getQ("Ιστορία", 3, 1));
+		    activeDb.push(...getQ("Logo Quiz", 2, 1), ...getQ("Logo Quiz", 3, 1));
+		    activeDb.push(...getQ("Ποιος Λείπει;", 2, 2)); 
+		    activeDb.push(...getQ("Top 5", 3, 2));
+		    activeDb.push(...getQ("Player ID", 2, 2));
+		
+		    // ΕΠΙΛΕΓΜΕΝΕΣ ΚΑΤΗΓΟΡΙΕΣ (2)
+		    selectedOptionals.forEach(cat => {
+		        if (cat === "Higher or Lower") {
+		            // Το Higher or Lower δίνει 1 πόντο (φέρνουμε 2 ερωτήσεις του 1 πόντου)
+		            activeDb.push(...getQ(cat, 1, 2));
+		        } else {
+		            // Όλες οι υπόλοιπες δίνουν 2 πόντους
+		            activeDb.push(...getQ(cat, 2, 2));
+		        }
+		    });
+		    
+		    // Αποθήκευση της νέας κατάστασης του pool
+		    localStorage.setItem('quizball_pool_FINAL_BUILDv.13', JSON.stringify(globalPool));
+		}
 
         function renderBoard() {
             const container = document.getElementById('board-container');
@@ -3634,18 +3664,67 @@
 		    let inQuestion = document.getElementById('question-screen').style.display === 'flex';
 		    if (type === 'x2' && inQuestion) { alert("⭐ Ο Διπλασιασμός παίζεται στον Πίνακα!"); return; }
 		    if (type === 'fifty' && !inQuestion) { alert("Το 50/50 παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
+		    
+		    if (type === 'fifty' && (currentQ.type === 'top5' || currentQ.type === 'score')) { 
+		        alert("Αυτή η βοήθεια δεν λειτουργεί σε αυτή την κατηγορία!"); return; 
+		    }
 		
 		    llState[type] = false;
 		    let btns = document.querySelectorAll(`#ll-box-${teamId} .ll-btn`);
-		    let targetIdx = type === 'fifty' ? 0 : 1; // Το x2 είναι πλέον το δεύτερο κουμπί
+		    // Το 50/50 είναι το πρώτο κουμπί (index 0), το x2 είναι το δεύτερο (index 1)
+		    let targetIdx = type === 'fifty' ? 0 : 1; 
 		    if(btns[targetIdx]) btns[targetIdx].classList.add('used-ll');
 		
 		    if (type === 'x2') { 
 		        isDouble = true; 
 		        document.getElementById(`x2-badge-${teamId}`).style.display = 'block';
+		        if(inQuestion) updatePointsTag();
 		    } else if (type === 'fifty') {
 		        isFiftyFifty = true;
-		        // ... υπόλοιπη λογική 50/50 ...
+		        updatePointsTag(); // Αυτό αλλάζει την ταμπέλα πάνω σε "1 ΠΟΝΤΟΣ"
+		        
+		        if (currentQ.type === "mcq") {
+		            // --- ΛΟΓΙΚΗ ΓΙΑ ΠΟΛΛΑΠΛΗΣ ΕΠΙΛΟΓΗΣ (Όπως στην εικόνα σου) ---
+		            // Βρίσκουμε ποια είναι τα λάθος κουτιά (0, 1, 2, ή 3)
+		            let wrongs = [0, 1, 2, 3].filter(i => i !== currentQ.correctIdx);
+		            
+		            // Τα ανακατεύουμε τυχαία
+		            for (let i = wrongs.length - 1; i > 0; i--) {
+		                const j = Math.floor(Math.random() * (i + 1));
+		                [wrongs[i], wrongs[j]] = [wrongs[j], wrongs[i]];
+		            }
+		            
+		            // Εξαφανίζουμε τα 2 πρώτα λάθος κουτιά!
+		            let optA = document.getElementById(`opt-${wrongs[0]}`);
+		            let optB = document.getElementById(`opt-${wrongs[1]}`);
+		            if(optA) optA.style.visibility = 'hidden';
+		            if(optB) optB.style.visibility = 'hidden';
+		            
+		        } else {
+		            // --- ΛΟΓΙΚΗ ΓΙΑ ΑΠΛΕΣ ΕΡΩΤΗΣΕΙΣ ΜΕ FAKE ΑΠΑΝΤΗΣΗ ---
+		            let correctDisplay = currentQ.a;
+		            if (currentQ.type === "combo" && currentQ.a.includes(" / ")) {
+		                let correctArray = currentQ.a.split(" / ");
+		                correctDisplay = correctArray[Math.floor(Math.random() * correctArray.length)];
+		            }
+		            
+		            let opts = [correctDisplay, currentQ.fake];
+		            for (let i = opts.length - 1; i > 0; i--) {
+		                const j = Math.floor(Math.random() * (i + 1));
+		                [opts[i], opts[j]] = [opts[j], opts[i]];
+		            }
+		            
+		            const fBox = document.getElementById('fifty-box');
+		            let safeOpt0 = opts[0] ? opts[0].replace(/'/g, "\\'") : "";
+		            let safeOpt1 = opts[1] ? opts[1].replace(/'/g, "\\'") : "";
+		
+		            fBox.innerHTML = `<div style="color:white; font-weight:bold; margin-bottom:10px;">💡 50/50</div>
+		                <button class="mc-option" onclick="checkFifty(this, '${safeOpt0}')">${opts[0]}</button>
+		                <button class="mc-option" onclick="checkFifty(this, '${safeOpt1}')">${opts[1]}</button>`;
+		            
+		            fBox.style.display = 'flex';
+		            document.getElementById('btn-show').style.display = 'none'; // Κρύβει το κουμπί της Αποκάλυψης
+		        }
 		    }
 		}
 

@@ -3488,30 +3488,10 @@
 		        let currentTeam = (teamId === 1) ? team1 : team2;
 		
 		        const outcomes = [
-		            { 
-		                t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 BONUS ΠΟΝΤΟΙ!", 
-		                c: "#00b894",
-		                isGoal: true,
-		                bonus: 2
-		            },
-		            { 
-		                t: "🏟️ VAR DECISION: GOAL!\n+2 BONUS ΠΟΝΤΟΙ!", 
-		                c: "#1e3c72",
-		                isGoal: true,
-		                bonus: 2
-		            },
-		            { 
-		                t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
-		                c: "#d63031",
-		                isGoal: false,
-		                bonus: -1
-		            },
-		            { 
-		                t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
-		                c: "#636e72",
-		                isGoal: false,
-		                bonus: -1
-		            }
+		            { t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 BONUS ΠΟΝΤΟΙ!", c: "#00b894", isGoal: true, bonus: 2 },
+		            { t: "🏟️ VAR DECISION: GOAL!\n+2 BONUS ΠΟΝΤΟΙ!", c: "#1e3c72", isGoal: true, bonus: 2 },
+		            { t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", c: "#d63031", isGoal: false, bonus: -1 },
+		            { t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", c: "#636e72", isGoal: false, bonus: -1 }
 		        ];
 		        
 		        let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
@@ -3521,50 +3501,33 @@
 		        resultTxt.style.display = 'block';
 		        
 		        setTimeout(() => {
-		            // 1. Κλείνουμε τα Modals
 		            modal.style.display = 'none';
 		            document.getElementById('question-screen').style.display = 'none';
 		
-		            // 2. Υπολογισμός Πόντων (Ερώτηση + 2 ή -1)
-		            let qPoints = (typeof currentQuestion !== 'undefined') ? (currentQuestion.points || 0) : 0;
+		            // Υπολογισμός Πόντων
+		            let qPoints = (currentQ && currentQ.p) ? currentQ.p : 0;
 		            
 		            if (chosen.isGoal) {
-		                currentTeam.score += (qPoints + 2); // Πόντοι ερώτησης + 2 bonus
+		                currentTeam.score += (qPoints + 2);
 		                sfxGoal.play();
 		                if(typeof triggerConfetti === "function") triggerConfetti();
 		            } else {
-		                if (currentTeam.score > 0) currentTeam.score--; // Αφαίρεση 1 πόντου
-		                sfxBuzzer.play();
-		            }
-		
-		            // 3. Ενημέρωση του Scoreboard
-		            updateScoreboard(); 
-		
-		            // 4. Αλλαγή Σειράς (Αν παίζετε εναλλάξ)
-		            currentTurn = (currentTurn === 1) ? 2 : 1;
-		
-		            // 5. ΕΠΙΣΤΡΟΦΗ ΣΤΙΣ ΚΑΤΗΓΟΡΙΕΣ
-		            // Αν η συνάρτησή σου λέγεται αλλιώς, βάλε το σωστό όνομα εδώ:
-		            showCategoryScreen(); 
-		            
-		        }, 4000);
-		
-		            // 2. Υπολογισμός Πόντων Αγώνα
-		            if (chosen.isGoal) {
-		                // Πόντοι ερώτησης + Bonus
-		                let qPoints = (typeof currentQuestion !== 'undefined') ? (currentQuestion.points || 1) : 1;
-		                currentTeam.score += (qPoints + chosen.bonus);
-		                sfxGoal.play();
-		                if(typeof triggerConfetti === "function") triggerConfetti();
-		            } else {
-		                // Ποινή -1 (αν έχουν πόντους)
 		                if (currentTeam.score > 0) currentTeam.score--;
 		                sfxBuzzer.play();
 		            }
 		
-		            // 3. Ενημέρωση UI και συνέχεια στα πέναλτι
-		            updatePenaltyUI(); // Ανανεώνει τα σκορ πάνω
-		            finishTurnLogic(chosen.isGoal); // Στέλνει το true/false στη δική σου συνάρτηση
+		            // Ενημέρωση UI
+		            document.getElementById('score-t1').innerText = team1.score;
+		            document.getElementById('score-t2').innerText = team2.score;
+		            
+		            currentTurn = (currentTurn === 1) ? 2 : 1;
+		            currentQ.played = true;
+		
+		            // Επιστροφή στον πίνακα
+		            document.body.style.background = 'var(--bg-main)'; 
+		            document.getElementById('board-screen').style.display = 'flex'; 
+		            renderBoard(); 
+		            updateTurnUI(); 
 		            
 		        }, 4000);
 		    }, 2000);

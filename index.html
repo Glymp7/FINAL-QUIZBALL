@@ -494,11 +494,26 @@
             .training-btn { font-size: 16px; padding: 12px 25px; width: 220px; }
             .home-logo { width: 250px; margin-bottom: 30px; }
             
-            /* Header (Σκορ και Βοήθειες) */
-            .score-box h2 { font-size: 13px; }
+            /* Header (Σκορ και Βοήθειες) - ΔΙΟΡΘΩΣΗ ΓΙΑ 4 ΚΟΥΜΠΙΑ */
+            .score-box { width: 40%; padding: 6px; }
+            .score-box h2 { font-size: 12px; margin-bottom: 2px; }
             .score-box .points { font-size: 26px; }
-            .ll-btn { padding: 6px 8px; font-size: 11px; }
-            .header-home-btn { font-size: 12px; padding: 8px 12px; top: 12px; }
+            
+            /* Εδώ είναι το μαγικό: 2x2 Grid για τα κουμπιά βοηθειών! */
+            .ll-container { 
+                display: grid; 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 4px; 
+                margin-top: 6px;
+            }
+            .ll-btn { 
+                padding: 6px 2px; 
+                font-size: 10px; 
+                width: 100%; 
+                box-sizing: border-box; 
+            }
+            .header-home-btn { font-size: 11px; padding: 6px 10px; top: 10px; left: 8px; }
+            #vs-text { font-size: 16px !important; padding: 0 5px !important; }
             
             /* Πίνακας (Board) και Builder */
             .card-title { font-size: 15px; }

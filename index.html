@@ -3521,17 +3521,33 @@
 		        resultTxt.style.display = 'block';
 		        
 		        setTimeout(() => {
-				    // 1. Κλείνουμε το modal του Τζόκερ
-				    modal.style.display = 'none';
-				
-				    // 2. Κλείνουμε ΤΗΝ ΟΘΟΝΗ ΤΗΣ ΕΡΩΤΗΣΗΣ (Αυτό λείπει!)
-				    document.getElementById('question-screen').style.display = 'none';
-				    
-				    // 3. Επιστρέφουμε στο κεντρικό ταμπλό
-				    document.getElementById('game-screen').style.display = 'flex';
-				
-				    // ... υπόλοιπος κώδικας (πόντοι και finishTurnLogic)
-				}, 4000);
+		            // 1. Κλείνουμε τα Modals
+		            modal.style.display = 'none';
+		            document.getElementById('question-screen').style.display = 'none';
+		
+		            // 2. Υπολογισμός Πόντων (Ερώτηση + 2 ή -1)
+		            let qPoints = (typeof currentQuestion !== 'undefined') ? (currentQuestion.points || 0) : 0;
+		            
+		            if (chosen.isGoal) {
+		                currentTeam.score += (qPoints + 2); // Πόντοι ερώτησης + 2 bonus
+		                sfxGoal.play();
+		                if(typeof triggerConfetti === "function") triggerConfetti();
+		            } else {
+		                if (currentTeam.score > 0) currentTeam.score--; // Αφαίρεση 1 πόντου
+		                sfxBuzzer.play();
+		            }
+		
+		            // 3. Ενημέρωση του Scoreboard
+		            updateScoreboard(); 
+		
+		            // 4. Αλλαγή Σειράς (Αν παίζετε εναλλάξ)
+		            currentTurn = (currentTurn === 1) ? 2 : 1;
+		
+		            // 5. ΕΠΙΣΤΡΟΦΗ ΣΤΙΣ ΚΑΤΗΓΟΡΙΕΣ
+		            // Αν η συνάρτησή σου λέγεται αλλιώς, βάλε το σωστό όνομα εδώ:
+		            showCategoryScreen(); 
+		            
+		        }, 4000);
 		
 		            // 2. Υπολογισμός Πόντων Αγώνα
 		            if (chosen.isGoal) {

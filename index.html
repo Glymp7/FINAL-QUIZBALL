@@ -2785,70 +2785,78 @@
         }
 
         function resolveSdTurn(isCorrect) {
-		    // 1. Σταματάμε τους ήχους και παίζουμε τον νέο
+		    // 1. Ήχοι
 		    if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
 		
-		    // 2. ΚΡΥΒΟΥΜΕ τα πάντα για να φανεί το GIF καθαρά
+		    // 2. Κρύβουμε το UI
 		    document.getElementById('sd-question-box').style.display = 'none';
 		    document.getElementById('sd-controls').style.display = 'none';
 		    document.getElementById('sd-answer').style.display = 'none';
 		
 		    let gifImg = document.getElementById('pen-action-gif');
-    
-		    // Προσθέτουμε ένα "timestamp" στο τέλος για να αναγκάσουμε το GIF να ξεκινήσει από την αρχή
 		    let resetCache = "?t=" + new Date().getTime();
+		    let finalSrc = isCorrect 
+		        ? "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif" + resetCache
+		        : "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif" + resetCache;
 		
-		    if (isCorrect) {
-		        sfxGoal.play();
-		        gifImg.src = "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MnpxZHdhdmw4eHU1cWxmajlkZzc1ODF1cjJyZ2VlN2gzcHE2dWF6MCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GN3FqC3nqufe8Aj6WJ/giphy.gif" + resetCache; 
+		    // 3. ΠΡΟΦΟΡΤΩΣΗ: Περιμένουμε να κατέβει η εικόνα πριν την δείξουμε
+		    let tempImg = new Image();
+		    tempImg.src = finalSrc;
+		    tempImg.onload = function() {
+		        gifImg.src = finalSrc;
+		        gifImg.style.display = 'block';
+		
+		        // Χρόνος ανάλογα με το GIF: 3.2" για γκολ, 3.8" για απόκρουση
+		        let duration = isCorrect ? 3200 : 3800;
+		
+		        setTimeout(() => {
+		            gifImg.style.display = 'none';
+		            gifImg.src = "";
+		            finishTurnLogic(isCorrect); // Πάμε στη λογική του σκορ
+		        }, duration);
+		    };
+		}
+		
+		function finishTurnLogic(isCorrect) {
+		    if (currentTurn === 1) {
+		        if(penRound < 5) penA.push(isCorrect ? 1 : 0);
+		        else penA[penRound] = isCorrect ? 1 : 0;
+		        currentTurn = 2;
+		        updatePenaltyUI();
+		        setTimeout(() => nextSdQuestion(), 500);
 		    } else {
-		        sfxBuzzer.play();
-		        gifImg.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZwcmhzbmpoOWs4OTR4dXhwZXZldzE0bzk1Y205Z3pjZDBnM2J6eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MY8nLifZthRYeAMPD7/giphy.gif" + resetCache;
-		    }
-		    
-		    gifImg.style.display = 'block';
-				
-		    // 5. Αναμονή 2.5 δευτερόλεπτα για να τελειώσει το animation
-		    setTimeout(() => {
-		        gifImg.style.display = 'none'; // Εξαφανίζεται το GIF
-                gifImg.src = ""; // Καθαρίζουμε το src για να "μηδενίσει" η εικόνα
-		        
-		        // Ενημέρωση των πινάκων των πέναλτι (Logic)
-		        if (currentTurn === 1) {
-		            if(penRound < 5) penA.push(isCorrect ? 1 : 0);
-		            else penA[penRound] = isCorrect ? 1 : 0;
-		            currentTurn = 2;
-		        } else {
-		            if(penRound < 5) penB.push(isCorrect ? 1 : 0);
-		            else penB[penRound] = isCorrect ? 1 : 0;
-		        }
-		
+		        if(penRound < 5) penB.push(isCorrect ? 1 : 0);
+		        else penB[penRound] = isCorrect ? 1 : 0;
 		        updatePenaltyUI();
 		
-		        // Έλεγχος αν τελείωσε η διαδικασία
 		        let aScore = penA.reduce((a,b)=>a+(b===1?1:0),0);
 		        let bScore = penB.reduce((a,b)=>a+(b===1?1:0),0);
-		        let aRem = 5 - (currentTurn === 1 ? penRound : penRound + 1);
+		        let aRem = 5 - (penRound + 1); 
 		        let bRem = 5 - (penRound + 1);
-		
-		        // Συνθήκες νίκης
+		        
 		        let win = false;
-		        if (currentTurn === 1 && penRound >= 4 && aScore !== bScore) {
-		             // Αν τελείωσε ο γύρος και υπάρχει διαφορά
+		        if (penRound < 4) { 
+		            if (aScore > bScore + bRem) { team1.score++; win = true; } 
+		            else if (bScore > aScore + aRem) { team2.score++; win = true; }
+		        } else { 
+		            if (aScore > bScore) { team1.score++; win = true; }
+		            else if (bScore > aScore) { team2.score++; win = true; }
 		        }
 		        
-		        // (Εδώ συνεχίζει η υπόλοιπη logic που ήδη έχεις για το αν κέρδισε κάποιος)
-		        // Στο τέλος του setTimeout, ξαναδείχνουμε το box για την επόμενη ερώτηση
-		        if (!win) {
+		        if (win) {
+		            setTimeout(() => showEndScreen(), 1000);
+		        } else {
 		            document.getElementById('sd-question-box').style.display = 'block';
 		            document.getElementById('sd-controls').style.display = 'block';
-		            if (currentTurn === 1) penRound++; 
+		            currentTurn = 1;
+		            penRound++;
+		            if(penRound >= 5) {
+		                document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
+		                document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
+		            }
 		            nextSdQuestion();
-		        } else {
-		            showEndScreen();
 		        }
-		
-		    }, 3800); 
+		    }
 		}
 
         // ΝΕΕΣ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΤΟ ΝΟΜΙΣΜΑ & BUILDER

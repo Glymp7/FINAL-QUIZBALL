@@ -486,6 +486,16 @@
         .joker-spinner { font-size: 100px; display: inline-block; animation: spin 0.5s infinite linear; filter: drop-shadow(0 0 20px #f1c40f); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .joker-result-text { font-size: 35px; font-weight: 900; text-transform: uppercase; margin-top: 20px; padding: 20px; border-radius: 15px; display: none; animation: popIn 0.5s forwards; text-shadow: 2px 2px 10px black; }
+		@keyframes joker-shake {
+		    0% { transform: translate(-50%, -50%) rotate(0deg); }
+		    25% { transform: translate(-52%, -48%) rotate(-3deg); }
+		    50% { transform: translate(-48%, -52%) rotate(3deg); }
+		    100% { transform: translate(-50%, -50%) rotate(0deg); }
+		}
+		.joker-animating {
+		    animation: joker-shake 0.1s infinite;
+		    border: 5px solid #f1c40f !important;
+		}
 
         .penalty-screen {
 		    display: none;
@@ -3453,51 +3463,95 @@
 
         
 		function useJoker(teamId) {
-            if (gameMode !== '1v1') return;
-            if (currentTurn !== teamId) { alert("Δεν είναι η σειρά σας!"); return; }
-            let llState = (teamId === 1) ? t1LL : t2LL;
-            if (!llState.joker) return;
-            
-            let inQuestion = document.getElementById('question-screen').style.display === 'flex';
-            if (!inQuestion) { alert("Το Joker παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
-
-            llState.joker = false;
-            document.getElementById(`ll-joker-${teamId}`).classList.add('used-ll');
-            
-            // Εμφάνιση του Κουλοχέρη
-            const modal = document.getElementById('joker-modal');
-            const spinner = document.getElementById('joker-spinner');
-            const resultTxt = document.getElementById('joker-result');
-            modal.style.display = 'flex';
-            spinner.style.display = 'block';
-            resultTxt.style.display = 'none';
-
-            // Σταματάμε τον χρόνο προσωρινά
-            stopTimer();
-
-            setTimeout(() => {
-                spinner.style.display = 'none';
-                const outcomes = [
-                    { t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\nΗ ερώτηση μετράει ως ΣΩΣΤΗ!", action: () => resolveTurn(true), c: "#00b894" },
-                    { t: "🏟️ VAR DECISION: GOAL!\nΠάρε τους πόντους δωρεάν!", action: () => resolveTurn(true), c: "#1e3c72" },
-                    { t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\nΗ ερώτηση μετράει ως ΛΑΘΟΣ!", action: () => resolveTurn(false), c: "#d63031" },
-                    { t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\nΜηδέν πόντοι και χάνεις τη σειρά!", action: () => resolveTurn(false), c: "#636e72" }
-                ];
-                
-                let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
-                resultTxt.innerText = chosen.t;
-                resultTxt.style.background = chosen.c;
-                resultTxt.style.color = "white";
-                resultTxt.style.display = 'block';
-                
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                    chosen.action();
-                }, 4000);
-            }, 2000);
+		    if (gameMode !== '1v1') return;
+		    if (currentTurn !== teamId) { alert("Δεν είναι η σειρά σας!"); return; }
+		    let llState = (teamId === 1) ? t1LL : t2LL;
+		    if (!llState.joker) return;
+		    
+		    let inQuestion = document.getElementById('question-screen').style.display === 'flex';
+		    if (!inQuestion) { alert("Το Joker παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
+		
+		    llState.joker = false;
+		    document.getElementById(`ll-joker-${teamId}`).classList.add('used-ll');
+		    
+		    // Εμφάνιση του Κουλοχέρη
+		    const modal = document.getElementById('joker-modal');
+		    const spinner = document.getElementById('joker-spinner');
+		    const resultTxt = document.getElementById('joker-result');
+		    modal.style.display = 'flex';
+		    spinner.style.display = 'block';
+		    resultTxt.style.display = 'none';
+		
+		    // Σταματάμε τον χρόνο προσωρινά
+		    stopTimer();
+		
+		    setTimeout(() => {
+		        spinner.style.display = 'none';
+		        
+		        // Ορίζουμε την ομάδα που παίζει
+		        let currentTeam = (teamId === 1) ? team1 : team2;
+		
+		        const outcomes = [
+		            { 
+		                t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 ΠΟΝΤΟΙ ΣΤΗΝ ΟΜΑΔΑ!", 
+		                c: "#00b894",
+		                action: () => {
+		                    currentTeam.score += 2; // Προσθήκη 2 πόντων
+		                    sfxGoal.play();
+		                    if(typeof triggerConfetti === "function") triggerConfetti();
+		                    updateScoreboard(); // Ανανέωση του UI
+		                    nextQuestion(); // Πάμε στην επόμενη ερώτηση
+		                }
+		            },
+		            { 
+		                t: "🏟️ VAR DECISION: GOAL!\n+2 ΠΟΝΤΟΙ ΣΤΗΝ ΟΜΑΔΑ!", 
+		                c: "#1e3c72",
+		                action: () => {
+		                    currentTeam.score += 2;
+		                    sfxGoal.play();
+		                    if(typeof triggerConfetti === "function") triggerConfetti();
+		                    updateScoreboard();
+		                    nextQuestion();
+		                }
+		            },
+		            { 
+		                t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
+		                c: "#d63031",
+		                action: () => {
+		                    if (currentTeam.score > 0) currentTeam.score--; // Αφαίρεση 1 πόντου
+		                    sfxBuzzer.play();
+		                    updateScoreboard();
+		                    nextQuestion();
+		                }
+		            },
+		            { 
+		                t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", 
+		                c: "#636e72",
+		                action: () => {
+		                    if (currentTeam.score > 0) currentTeam.score--;
+		                    sfxBuzzer.play();
+		                    updateScoreboard();
+		                    nextQuestion();
+		                }
+		            }
+		        ];
+		        
+		        let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
+		        resultTxt.innerText = chosen.t;
+		        resultTxt.style.background = chosen.c;
+		        resultTxt.style.color = "white";
+		        resultTxt.style.display = 'block';
+		        
+		        setTimeout(() => {
+		            modal.style.display = 'none';
+		            chosen.action(); // Εδώ εκτελείται η νέα βαθμολογία
+		        }, 4000);
+		    }, 2000);
+		} // <--- ΕΔΩ ΕΚΛΕΙΝΕ Η useJoker
+		
+		function closeJoker() { 
+		    document.getElementById('joker-modal').style.display = 'none'; 
 		}
-
-        function closeJoker() { document.getElementById('joker-modal').style.display = 'none'; }
 		
 		// --- ΛΕΙΤΟΥΡΓΙΑ VAR (ΑΣΦΑΛΗΣ ΕΚΔΟΣΗ) ---
         function triggerVAR(team) {

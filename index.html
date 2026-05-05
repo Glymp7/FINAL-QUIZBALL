@@ -3106,8 +3106,8 @@
         }
 
         function initGlobalPool() {
-            // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.16
-            let saved = localStorage.getItem('quizball_pool_FINAL_BUILDv.16');
+            // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.17
+            let saved = localStorage.getItem('quizball_pool_FINAL_BUILDv.17');
             if (saved) {
                 globalPool = JSON.parse(saved);
                 if(globalPool.length < 25) { 
@@ -3237,16 +3237,27 @@
                     if(idx > -1) {
                         let q = globalPool.splice(idx, 1)[0];
                         
+                        // --- ΤΟ ΔΙΟΡΘΩΜΕΝΟ ΚΟΜΜΑΤΙ ---
                         let isDuplicate = false;
-                        if (q.q) {
-                            let prefix = q.q.substring(0, 15);
-                            isDuplicate = result.some(r => r.q && r.q.startsWith(prefix));
+                        
+                        if (cat === "Ποιος Λείπει;") {
+                            // Στο "Ποιος Λείπει" ελέγχουμε την εκφώνηση για να μην πέσει ίδιο ματς
+                            if (q.q) {
+                                let prefix = q.q.substring(0, 15);
+                                isDuplicate = result.some(r => r.q && r.q.startsWith(prefix));
+                            }
+                        } else if (cat === "Βρες το Σκορ") {
+                            // Στο Σκορ ελέγχουμε τον τίτλο του ματς
+                            isDuplicate = result.some(r => r.title === q.title);
+                        } else {
+                            // Στις υπόλοιπες ελέγχουμε να μην πέσει η ίδια απάντηση
+                            isDuplicate = result.some(r => r.a === q.a);
                         }
 
                         if (!isDuplicate) {
                             result.push({...q, played: false, id: Math.random()});
                         } else {
-                            i--; 
+                            i--; // Πέσαμε σε διπλότυπη, ξαναδοκιμάζουμε!
                         }
                     }
                 }
@@ -3270,8 +3281,8 @@
                 }
             });
             
-            // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.16
-            localStorage.setItem('quizball_pool_FINAL_BUILDv.16', JSON.stringify(globalPool));
+            // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.17 ΓΙΑ ΑΣΦΑΛΕΙΑ
+            localStorage.setItem('quizball_pool_FINAL_BUILDv.17', JSON.stringify(globalPool));
         }
 
         function renderBoard() {

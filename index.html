@@ -2785,35 +2785,40 @@
         }
 
         function resolveSdTurn(isCorrect) {
-		    // 1. Ήχοι
 		    if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
 		
-		    // 2. Κρύβουμε το UI
 		    document.getElementById('sd-question-box').style.display = 'none';
 		    document.getElementById('sd-controls').style.display = 'none';
 		    document.getElementById('sd-answer').style.display = 'none';
 		
 		    let gifImg = document.getElementById('pen-action-gif');
+		    
+		    // Πάντα φρέσκο link για να ξεκινά από το frame 1
 		    let resetCache = "?t=" + new Date().getTime();
 		    let finalSrc = isCorrect 
-        ? "https://i.postimg.cc/4x2Xr8r4/Anthony-Martial-Goal-GIF-by-Manchester-United.gif" + resetCache
-        : "https://i.postimg.cc/NF8gSQcw/Save-La-Liga-GIF-by-DAZN.gif" + resetCache;
-
-		    let tempImg = new Image();
-		    tempImg.src = finalSrc;
-		    tempImg.onload = function() {
-		        gifImg.src = finalSrc;
+		        ? "https://i.postimg.cc/4x2Xr8r4/Anthony-Martial-Goal-GIF-by-Manchester-United.gif" + resetCache
+		        : "https://i.postimg.cc/NF8gSQcw/Save-La-Liga-GIF-by-DAZN.gif" + resetCache;
+		
+		    // ΠΡΟΣΟΧΗ: Κρύβουμε την εικόνα πριν της δώσουμε το src
+		    gifImg.style.display = 'none';
+		    gifImg.src = finalSrc;
+		
+		    // Χρησιμοποιούμε το onload για να σιγουρευτούμε ότι "κατέβηκε" όλο το αρχείο
+		    gifImg.onload = function() {
+		        // Μόνο ΤΩΡΑ την εμφανίζουμε
 		        gifImg.style.display = 'block';
 		
-		        // Αύξησε αυτούς τους χρόνους αν δεις ότι πάλι κόβεται
-		        // Δοκίμασε 4000 (4 δευτερόλεπτα) και για τα δύο για σιγουριά
-		        let duration = isCorrect ? 4000 : 4500; 
+		        // Δίνουμε πολύ χρόνο (5-6 δευτερόλεπτα) για να προλάβει να δείξει όλη την κίνηση
+		        let duration = isCorrect ? 5000 : 6000; 
 		
 		        setTimeout(() => {
 		            gifImg.style.display = 'none';
-		            gifImg.src = "";
+		            gifImg.src = ""; // Καθαρισμός για το επόμενο
 		            finishTurnLogic(isCorrect);
 		        }, duration);
+		        
+		        // Ακυρώνουμε το onload για να μην ξανατρέξει κατά λάθος
+		        gifImg.onload = null;
 		    };
 		}
 		function finishTurnLogic(isCorrect) {

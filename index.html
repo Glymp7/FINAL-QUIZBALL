@@ -936,7 +936,11 @@
 
         <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
 		<!-- ΕΔΩ ΘΑ ΠΑΙΖΕΙ ΤΟ GIF ΤΟΥ ΠΕΝΑΛΤΙ -->
-        <img id="pen-action-gif" src="" style="display: none; width: 100%; max-width: 400px; ..." />
+        <!-- ΤΕΡΜΑ ΓΙΑ ΤΑ ΠΕΝΑΛΤΙ -->
+		<div id="penalty-area" style="display:none; width:100%; max-width:450px; height:220px; margin: 15px auto; position: relative; background: url('https://i.postimg.cc/9Fm875mG/football-goal-background.jpg') center/cover; border-radius: 15px; border: 3px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;">
+		    <!-- Η ΜΠΑΛΑ -->
+		    <div id="penalty-ball" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 35px; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">⚽</div>
+		</div>
         
         <div id="sd-question-box" class="pen-q-box">
             Ερώτηση...
@@ -2785,41 +2789,45 @@
         }
 
         function resolveSdTurn(isCorrect) {
+		    // Ήχοι
 		    if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
 		
+		    // Κρύβουμε τα κείμενα
 		    document.getElementById('sd-question-box').style.display = 'none';
 		    document.getElementById('sd-controls').style.display = 'none';
 		    document.getElementById('sd-answer').style.display = 'none';
 		
-		    let gifImg = document.getElementById('pen-action-gif');
-		    
-		    // Πάντα φρέσκο link για να ξεκινά από το frame 1
-		    let resetCache = "?t=" + new Date().getTime();
-		    let finalSrc = isCorrect 
-		        ? "https://i.postimg.cc/4x2Xr8r4/Anthony-Martial-Goal-GIF-by-Manchester-United.gif" + resetCache
-		        : "https://i.postimg.cc/NF8gSQcw/Save-La-Liga-GIF-by-DAZN.gif" + resetCache;
+		    const area = document.getElementById('penalty-area');
+		    const ball = document.getElementById('penalty-ball');
 		
-		    // ΠΡΟΣΟΧΗ: Κρύβουμε την εικόνα πριν της δώσουμε το src
-		    gifImg.style.display = 'none';
-		    gifImg.src = finalSrc;
+		    // Εμφάνιση γηπέδου και επαναφορά μπάλας στο κέντρο
+		    area.style.display = 'block';
+		    ball.style.bottom = '10px';
+		    ball.style.left = '50%';
+		    ball.style.opacity = '1';
+		    ball.style.transform = 'translateX(-50%) scale(1)';
 		
-		    // Χρησιμοποιούμε το onload για να σιγουρευτούμε ότι "κατέβηκε" όλο το αρχείο
-		    gifImg.onload = function() {
-		        // Μόνο ΤΩΡΑ την εμφανίζουμε
-		        gifImg.style.display = 'block';
+		    // Animation της μπάλας μετά από λίγο
+		    setTimeout(() => {
+		        if (isCorrect) {
+		            // Η μπάλα πάει στο "Γάμα"
+		            ball.style.bottom = '150px';
+		            ball.style.left = '80%';
+		            ball.style.transform = 'translateX(-50%) scale(0.6)';
+		        } else {
+		            // Η μπάλα πάει στον τερματοφύλακα (κέντρο) ή έξω
+		            ball.style.bottom = '120px';
+		            ball.style.left = '50%';
+		            ball.style.transform = 'translateX(-50%) scale(0.6)';
+		            setTimeout(() => { ball.style.opacity = '0'; }, 300); // Χάνεται η μπάλα (την έπιασε)
+		        }
+		    }, 100);
 		
-		        // Δίνουμε πολύ χρόνο (5-6 δευτερόλεπτα) για να προλάβει να δείξει όλη την κίνηση
-		        let duration = isCorrect ? 5000 : 6000; 
-		
-		        setTimeout(() => {
-		            gifImg.style.display = 'none';
-		            gifImg.src = ""; // Καθαρισμός για το επόμενο
-		            finishTurnLogic(isCorrect);
-		        }, duration);
-		        
-		        // Ακυρώνουμε το onload για να μην ξανατρέξει κατά λάθος
-		        gifImg.onload = null;
-		    };
+		    // Αναμονή 2 δευτερόλεπτα για να δούμε το αποτέλεσμα και μετά συνέχεια
+		    setTimeout(() => {
+		        area.style.display = 'none';
+		        finishTurnLogic(isCorrect);
+		    }, 2500);
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {

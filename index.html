@@ -3830,24 +3830,43 @@
         }
 
         function renderPitch(lineup) {
-            ['fwd','mid','def','gk'].forEach(pos => {
-                const row = document.getElementById(`pitch-${pos}`);
-                row.innerHTML = "";
-                lineup[pos].forEach(p => {
-                    let isM = (p === "?" || p === "[???]");
-                    row.innerHTML += `
-                        <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
-                            <div class="shirt ${isM ? 'missing-shirt' : ''}" style="margin: 0 auto 3px auto; width: 26px; height: 26px; font-size: 13px;">👕</div>
-                            <span style="color: white; font-size: 10px; font-weight: 800; display: block; 
-                                         text-shadow: 1px 1px 2px black, -1px -1px 2px black; 
-                                         line-height: 1.1; word-wrap: break-word;">
-                                ${isM ? '???' : p}
-                            </span>
-                        </div>`;
-                });
-            });
-        }
-
+		    const pitch = document.getElementById('pitch-container');
+		
+		    pitch.innerHTML = `
+		        <div class="pitch-center-circle"></div>
+		        <div class="pitch-line"></div>
+		    `;
+		
+		    const rows = [
+		        lineup.fwd || [],
+		        lineup.mid || [],
+		        lineup.def || [],
+		        lineup.gk || []
+		    ];
+		
+		    rows.forEach(rowPlayers => {
+		        const rowDiv = document.createElement('div');
+		        rowDiv.className = 'pitch-row';
+		
+		        rowPlayers.forEach(player => {
+		            const isMissing = player === "?" || player === "[???]";
+		
+		            rowDiv.innerHTML += `
+		                <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
+		                    <div class="shirt ${isMissing ? 'missing-shirt' : ''}" style="margin: 0 auto 3px auto; width: 26px; height: 26px; font-size: 13px;">
+		                        ${isMissing ? '?' : '👕'}
+		                    </div>
+		                    <span style="color: white; font-size: 10px; font-weight: 800; display: block;
+		                                 text-shadow: 1px 1px 2px black, -1px -1px 2px black;
+		                                 line-height: 1.1; word-wrap: break-word;">
+		                        ${isMissing ? '???' : player}
+		                    </span>
+		                </div>`;
+		        });
+		
+		        pitch.appendChild(rowDiv);
+		    });
+		}
         function goHome() { location.reload(); }
 
         function showEndScreen() { 

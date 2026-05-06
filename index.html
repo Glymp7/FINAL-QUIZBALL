@@ -79,68 +79,45 @@
             transition: 0.2s;
         }
 
-        .training-btn {
-            background: rgba(255, 255, 255, 0.25);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 240px;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-        }
-
-        .training-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 15px 30px;
-            font-size: 17px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 240px;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .training-btn:active { transform: scale(0.95); }
-
-        /* Κουμπί Προπόνηση */
-        .training-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 220px;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-        }
-
-        /* Κουμπί Προπόνηση */
-        .training-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 220px;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-        }
+        .buttons-container {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    justify-content: center;
+		    gap: 15px;
+		    width: 100%;
+		}
+		
+		.play-now-btn,
+		.training-btn {
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    margin-left: auto;
+		    margin-right: auto;
+		    text-align: center;
+		    box-sizing: border-box;
+		}
+		
+		.training-btn {
+		    background: rgba(255, 255, 255, 0.2);
+		    color: white;
+		    border: 2px solid rgba(255, 255, 255, 0.5);
+		    padding: 15px 30px;
+		    font-size: 16px;
+		    font-weight: bold;
+		    border-radius: 50px;
+		    cursor: pointer;
+		    width: 240px;
+		    backdrop-filter: blur(5px);
+		    transition: 0.2s;
+		    gap: 8px;
+		}
+		
+		.play-now-btn:active,
+		.training-btn:active {
+		    transform: scale(0.95);
+		}
 
         /* --- 2. SETUP SCREEN --- */
         #setup-screen { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 90; background: rgba(0,0,0,0.9); color: white; }
@@ -737,7 +714,8 @@
             .home-title { font-size: 38px; }
             .home-subtitle { font-size: 16px; margin-bottom: 25px; }
             .play-now-btn { font-size: 20px; padding: 15px 30px; width: 260px; }
-            .training-btn { font-size: 16px; padding: 12px 25px; width: 220px; }
+			.training-btn { font-size: 16px; padding: 12px 25px; width: 220px; }
+			.buttons-container { align-items: center; width: 100%; }
             .home-logo { width: 250px; margin-bottom: 30px; }
             
             /* --- HEADER & ΒΟΗΘΕΙΕΣ (4 ΚΟΥΜΠΙΑ ΣΕ 2x2 GRID) --- */
@@ -784,7 +762,6 @@
 
             /* Γήπεδο (Player ID) */
             .shirt { width: 22px; height: 22px; font-size: 11px; }
-            #pitch-container { max-width: 250px; }
             
             /* Admin Κουμπιά κάτω-κάτω */
             .btn-admin, .btn-next, .btn-t5-stop, .btn-t5-strike { font-size: 13px; padding: 12px; }

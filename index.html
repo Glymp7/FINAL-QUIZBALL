@@ -2989,24 +2989,76 @@
             document.getElementById('btn-next').onclick = () => resolveTurn(isCorrect);
         }
 
+		function getFormationFromQuestionText(qText) {
+		    const match = qText.match(/\((\d-\d(?:-\d){1,3})\)/);
+		    return match ? match[1].replaceAll("-", "") : "433";
+		}
+		
+		const NATIONS_FORMATIONS = {
+		    "442":  [1, 4, 4, 2],
+		    "433":  [1, 4, 3, 3],
+		    "352":  [1, 3, 5, 2],
+		    "4231": [1, 4, 2, 3, 1],
+		    "343":  [1, 3, 4, 3],
+		    "3421": [1, 3, 4, 2, 1],
+		
+		    // Τα έχεις ήδη σε ερωτήσεις σου, άρα τα βάζουμε και αυτά
+		    "541":  [1, 5, 4, 1],
+		    "4411": [1, 4, 4, 1, 1]
+		};
+		
+		function createNationPlayer(flagCode) {
+		    let flagHtml = `<img src="https://flagcdn.com/w80/${flagCode}.png" class="flag-circle" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
+		
+		    return `
+		        <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
+		            ${flagHtml}
+		            <span style="color: white; font-size: 10px; font-weight: 800; display: block; 
+		                         text-shadow: 1px 1px 2px black, -1px -1px 2px black; 
+		                         line-height: 1.1; text-transform: uppercase;">
+		                ${flagCode}
+		            </span>
+		        </div>`;
+		}
+		
 		function renderNationsPitch(lineup) {
-            ['fwd','mid','def','gk'].forEach(pos => {
-                const row = document.getElementById(`pitch-${pos}`);
-                row.innerHTML = "";
-                lineup[pos].forEach(p => {
-                    let flagHtml = `<img src="https://flagcdn.com/w80/${p}.png" class="flag-circle" onerror="this.src='https://flagcdn.com/w80/un.png'">`;
-                    row.innerHTML += `
-                        <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
-                            ${flagHtml}
-                            <span style="color: white; font-size: 10px; font-weight: 800; display: block; 
-                                         text-shadow: 1px 1px 2px black, -1px -1px 2px black; 
-                                         line-height: 1.1; text-transform: uppercase;">
-                                ${p}
-                            </span>
-                        </div>`;
-                });
-            });
-        }
+		    const pitch = document.getElementById('pitch-container');
+		
+		    // Κρατάμε τις γραμμές/κύκλο του γηπέδου και σβήνουμε μόνο τις παλιές σειρές παικτών
+		    pitch.querySelectorAll('.pitch-row').forEach(row => row.remove());
+		
+		    const formation = getFormationFromQuestionText(currentQ.q);
+		    const shape = NATIONS_FORMATIONS[formation] || NATIONS_FORMATIONS["433"];
+		
+		    // Η σειρά στα data σου είναι: GK, DEF, MID, FWD
+		    const allPlayers = [
+		        ...(lineup.gk || []),
+		        ...(lineup.def || []),
+		        ...(lineup.mid || []),
+		        ...(lineup.fwd || [])
+		    ];
+		
+		    let index = 0;
+		    let rowsFromGoalToAttack = shape.map(count => {
+		        const row = allPlayers.slice(index, index + count);
+		        index += count;
+		        return row;
+		    });
+		
+		    // Στο γήπεδο θέλουμε πάνω τους επιθετικούς και κάτω τον τερματοφύλακα
+		    const rowsForDisplay = rowsFromGoalToAttack.reverse();
+		
+		    rowsForDisplay.forEach(rowPlayers => {
+		        const rowDiv = document.createElement('div');
+		        rowDiv.className = 'pitch-row';
+		
+		        rowPlayers.forEach(player => {
+		            rowDiv.innerHTML += createNationPlayer(player);
+		        });
+		
+		        pitch.appendChild(rowDiv);
+		    });
+		}
 		
 		// --- ΛΟΓΙΚΗ ΓΙΑ ΤΑ CONFETTI ---
         function triggerConfetti() {

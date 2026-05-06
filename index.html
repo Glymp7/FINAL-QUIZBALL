@@ -311,6 +311,94 @@
 		    box-sizing: border-box;
 		}
 		
+		/* --- MARKINGS ΓΗΠΕΔΟΥ --- */
+		.pitch-markings {
+		    position: absolute;
+		    inset: 0;
+		    z-index: 1;
+		    pointer-events: none;
+		}
+		
+		.pitch-half-line {
+		    position: absolute;
+		    left: 0;
+		    top: 50%;
+		    width: 100%;
+		    height: 2px;
+		    background: rgba(255,255,255,0.35);
+		    transform: translateY(-50%);
+		}
+		
+		.pitch-center-circle {
+		    width: 56px;
+		    height: 56px;
+		    border: 2px solid rgba(255,255,255,0.30);
+		    border-radius: 50%;
+		    position: absolute;
+		    top: 50%;
+		    left: 50%;
+		    transform: translate(-50%, -50%);
+		}
+		
+		.pitch-box {
+		    position: absolute;
+		    left: 50%;
+		    width: 54%;
+		    height: 15%;
+		    border: 2px solid rgba(255,255,255,0.28);
+		    transform: translateX(-50%);
+		    box-sizing: border-box;
+		}
+		
+		.pitch-box.top {
+		    top: 0;
+		    border-top: none;
+		}
+		
+		.pitch-box.bottom {
+		    bottom: 0;
+		    border-bottom: none;
+		}
+		
+		.pitch-goal-area {
+		    position: absolute;
+		    left: 50%;
+		    width: 28%;
+		    height: 8%;
+		    border: 2px solid rgba(255,255,255,0.22);
+		    transform: translateX(-50%);
+		    box-sizing: border-box;
+		}
+		
+		.pitch-goal-area.top {
+		    top: 0;
+		    border-top: none;
+		}
+		
+		.pitch-goal-area.bottom {
+		    bottom: 0;
+		    border-bottom: none;
+		}
+		
+		.pitch-spot {
+		    position: absolute;
+		    left: 50%;
+		    width: 4px;
+		    height: 4px;
+		    background: rgba(255,255,255,0.35);
+		    border-radius: 50%;
+		    transform: translateX(-50%);
+		}
+		
+		.pitch-spot.top {
+		    top: 11%;
+		}
+		
+		.pitch-spot.bottom {
+		    bottom: 11%;
+		}
+		
+		/* --- ROWS ΠΑΙΚΤΩΝ --- */
 		.pitch-row {
 		    display: flex;
 		    justify-content: space-evenly;
@@ -327,8 +415,8 @@
 		    text-align: center;
 		    flex: 1 1 0;
 		    min-width: 0;
-		    overflow: visible;
 		    padding: 0 1px !important;
+		    box-sizing: border-box;
 		}
 		
 		.pitch-row > div > span {
@@ -347,6 +435,7 @@
 		    overflow: visible;
 		}
 		
+		/* --- ΦΑΝΕΛΕΣ --- */
 		.shirt {
 		    width: 24px;
 		    height: 24px;
@@ -389,6 +478,11 @@
 		
 		    .missing-shirt {
 		        font-size: 13px !important;
+		    }
+		
+		    .pitch-center-circle {
+		        width: 48px;
+		        height: 48px;
 		    }
 		}
         /* TOP 5 */
@@ -919,8 +1013,16 @@
                 </div>
 
                 <div id="pitch-container">
-				    <div class="pitch-center-circle"></div>
-				    <div class="pitch-line"></div>
+				    <div class="pitch-markings">
+				        <div class="pitch-half-line"></div>
+				        <div class="pitch-center-circle"></div>
+				        <div class="pitch-box top"></div>
+				        <div class="pitch-box bottom"></div>
+				        <div class="pitch-goal-area top"></div>
+				        <div class="pitch-goal-area bottom"></div>
+				        <div class="pitch-spot top"></div>
+				        <div class="pitch-spot bottom"></div>
+				    </div>
 				</div>
 
                 <div id="top5-container">
@@ -3908,8 +4010,16 @@
 		    const pitch = document.getElementById('pitch-container');
 		
 		    pitch.innerHTML = `
-		        <div class="pitch-center-circle"></div>
-		        <div class="pitch-line"></div>
+		        <div class="pitch-markings">
+		            <div class="pitch-half-line"></div>
+		            <div class="pitch-center-circle"></div>
+		            <div class="pitch-box top"></div>
+		            <div class="pitch-box bottom"></div>
+		            <div class="pitch-goal-area top"></div>
+		            <div class="pitch-goal-area bottom"></div>
+		            <div class="pitch-spot top"></div>
+		            <div class="pitch-spot bottom"></div>
+		        </div>
 		    `;
 		
 		    const rows = [
@@ -3926,17 +4036,17 @@
 		        rowPlayers.forEach(player => {
 		            const isMissing = player === "?" || player === "[???]";
 		
-		            rowDiv.innerHTML += `
-		                <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
-		                    <div class="shirt ${isMissing ? 'missing-shirt' : ''}" style="margin: 0 auto 3px auto; width: 26px; height: 26px; font-size: 13px;">
-		                        ${isMissing ? '?' : '👕'}
-		                    </div>
-		                    <span style="color: white; font-size: 10px; font-weight: 800; display: block;
-		                                 text-shadow: 1px 1px 2px black, -1px -1px 2px black;
-		                                 line-height: 1.1; word-wrap: break-word;">
-		                        ${isMissing ? '???' : player}
-		                    </span>
-		                </div>`;
+		            const playerDiv = document.createElement('div');
+		            playerDiv.className = 'pitch-player';
+		
+		            playerDiv.innerHTML = `
+		                <div class="shirt ${isMissing ? 'missing-shirt' : ''}">
+		                    ${isMissing ? '?' : '👕'}
+		                </div>
+		                <span class="pitch-player-name">${isMissing ? '???' : player}</span>
+		            `;
+		
+		            rowDiv.appendChild(playerDiv);
 		        });
 		
 		        pitch.appendChild(rowDiv);

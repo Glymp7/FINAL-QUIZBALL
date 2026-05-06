@@ -260,6 +260,15 @@
             margin: 0 auto 3px auto;
             display: block;
         }
+		#pitch-container .flag-circle {
+		    position: relative;
+		    z-index: 2;
+		}
+		
+		#pitch-container .pitch-row span {
+		    position: relative;
+		    z-index: 2;
+		}
         
         #transfer-container { display: none; flex-direction: column; width: 100%; margin-bottom: 20px; border-radius: 12px; border: 1px solid #dfe6e9; background: white; }
         .tf-header { background: #74b9ff; color: white; padding: 8px; font-size: 13px; font-weight: bold; text-transform: uppercase; text-align: center; }
@@ -3160,14 +3169,23 @@
 		    const pitch = document.getElementById('pitch-container');
 		
 		    pitch.innerHTML = `
-		        <div class="pitch-center-circle"></div>
-		        <div class="pitch-line"></div>
+		        <div class="pitch-markings">
+		            <div class="pitch-half-line"></div>
+		            <div class="pitch-center-circle"></div>
+		
+		            <div class="pitch-box top"></div>
+		            <div class="pitch-box bottom"></div>
+		
+		            <div class="pitch-goal-area top"></div>
+		            <div class="pitch-goal-area bottom"></div>
+		
+		            <div class="pitch-spot top"></div>
+		            <div class="pitch-spot bottom"></div>
+		        </div>
 		    `;
 		
-		    const formation = normalizeFormationValue(currentQ.formation) || getFormationFromQuestionText(currentQ.q);
+		    const formation = currentQ.formation || getFormationFromQuestionText(currentQ.q);
 		    const shape = NATIONS_FORMATIONS[formation] || NATIONS_FORMATIONS["433"];
-		
-		    console.log("NATIONS FORMATION:", formation, "SHAPE:", shape, "QUESTION:", currentQ.q);
 		
 		    const allPlayers = [
 		        ...(lineup.gk || []),
@@ -3177,22 +3195,27 @@
 		    ];
 		
 		    let index = 0;
+		
 		    const rowsFromGoalToAttack = shape.map(count => {
 		        const row = allPlayers.slice(index, index + count);
 		        index += count;
 		        return row;
 		    });
 		
-		    rowsFromGoalToAttack.reverse().forEach(rowPlayers => {
+		    const rowsForDisplay = rowsFromGoalToAttack.reverse();
+		
+		    rowsForDisplay.forEach(rowPlayers => {
 		        const rowDiv = document.createElement('div');
 		        rowDiv.className = 'pitch-row';
 		
-		        rowPlayers.forEach(player => {
-		            rowDiv.innerHTML += createNationPlayer(player);
+		        rowPlayers.forEach(flagCode => {
+		            rowDiv.innerHTML += createNationPlayer(flagCode);
 		        });
 		
 		        pitch.appendChild(rowDiv);
 		    });
+		
+		    pitch.style.display = 'flex';
 		}
 		
 		// --- ΛΟΓΙΚΗ ΓΙΑ ΤΑ CONFETTI ---

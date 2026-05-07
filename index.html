@@ -3506,10 +3506,9 @@
                         if (!isDuplicate) {
 						    rememberQuestion(q);
 						    result.push({...q, played: false, id: Math.random()});
+						} else {
+						    i--; // Πέσαμε σε διπλότυπη, ξαναδοκιμάζουμε!
 						}
-                        } else {
-                            i--; // Πέσαμε σε διπλότυπη, ξαναδοκιμάζουμε!
-                        }
                     }
                 }
                 return result;

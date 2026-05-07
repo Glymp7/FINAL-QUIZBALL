@@ -2661,7 +2661,7 @@
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "4231", q: "Ποια ομάδα είναι αυτή (4-2-3-1);", lineup: { gk: ["gr"], def: ["br", "gr", "it", "ar"], mid: ["gr", "ar", "pt", "ir", "pt"], fwd: ["ma"] }, a: "Ολυμπιακός", fake: "ΠΑΟΚ", hint: "Ελληνική ομάδα με Τζολάκη, Ροντινέι, Ποντένσε, Ταρεμί και Ελ Κααμπί." },
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "4231", q: "Ποια ομάδα είναι αυτή (4-2-3-1);", lineup: { gk: ["gr"], def: ["gb-eng", "it", "hr", "gb-sct"], mid: ["gn", "ru", "rs", "no", "br"], fwd: ["se"] }, a: "ΠΑΟΚ", fake: "ΑΕΚ", hint: "Ελληνική ομάδα με Λόβρεν, Καμαρά, Οζντόεφ, Ζίβκοβιτς, Ζαφείρη και Ταϊσόν." },
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "442", q: "Ποια ομάδα είναι αυτή (4-4-2);", lineup: { gk: ["al"], def: ["gr", "cm", "pt", "gr"], mid: ["mr", "mx", "gr", "ar"], fwd: ["hu", "rs"] }, a: "ΑΕΚ", fake: "Παναθηναϊκός", hint: "Ελληνική ομάδα με Στρακόσα, Ρότα, Μουκουντί, Πινέδα, Βάργκα και Γιόβιτς." },
-			{ cat: "Nations XI", p: 2, type: "nations", formation: "541", q: "Ποια ομάδα είναι αυτή (5-4-1);", lineup: { gk: ["fr"], def: ["it", "gr", "is", "es", "gr"], mid: ["uy", "pt", "gr", "ar"], fwd: ["gh"] }, a: "Παναθηναϊκός", fake: "Άρης", hint: "Ελληνική ομάδα με Λαφόν, Καλάμπρια, Ίνγκασον, Μπακασέτα, Πελίστρι και Τετέ." },
+			{ cat: "Nations XI", p: 2, type: "nations", formation: "541", q: "Ποια ομάδα είναι αυτή (5-4-1);", lineup: { gk: ["fr"], def: ["it", "gr", "is", "es", "gr"], mid: ["ar", "pt", "gr", "ar"], fwd: ["gr"] }, a: "Παναθηναϊκός", fake: "Άρης", hint: "Ελληνική ομάδα με Λαφόν, Καλάμπρια, Ίνγκασον, Μπακασέτα, Πελίστρι και Τετέ." },
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "442", q: "Ποια ομάδα είναι αυτή (4-4-2);", lineup: { gk: ["gr"], def: ["fr", "br", "mu", "cz"], mid: ["ar", "dk", "rs", "br"], fwd: ["zw", "es"] }, a: "Άρης", fake: "ΑΕΚ", hint: "Ομάδα της Θεσσαλονίκης με Φαμπιάνο, Ρόουζ, Ράτσιτς, Καντεβέρε και Κάρλες Πέρεθ." },
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "4231", q: "Ποια ομάδα είναι αυτή (4-2-3-1);", lineup: { gk: ["es"], def: ["gb-eng", "fr", "br", "it"], mid: ["gb-eng", "gb-eng", "gb-eng", "gb-eng", "be"], fwd: ["se"] }, a: "Arsenal", fake: "Chelsea", hint: "Ομάδα με Ράγια, Σαλίμπα, Γκάμπριελ, Ράις, Σάκα, Έζε και Γκιόκερες." },
 			{ cat: "Nations XI", p: 2, type: "nations", formation: "4231", q: "Ποια ομάδα είναι αυτή (4-2-3-1);", lineup: { gk: ["ge"], def: ["nl", "fr", "nl", "hu"], mid: ["nl", "hu", "fr", "ar", "de"], fwd: ["se"] }, a: "Liverpool", fake: "Man City", hint: "Ομάδα με Μαμαρντασβίλι, Φρίμπονγκ, Φαν Ντάικ, Κέρκεζ, Μακ Άλιστερ, Βιρτς και Ίσακ." },
@@ -2848,6 +2848,30 @@
 		// ΚΕΝΤΡΙΚΗ ΔΕΞΑΜΕΝΗ ΓΙΑ ΑΠΟΦΥΓΗ ΕΠΑΝΑΛΗΨΕΩΝ
         let globalPool = [];
         let activeDb = [];
+
+		let recentlyUsedQuestions = JSON.parse(localStorage.getItem('quizball_recently_used_v1') || '[]');
+
+		function getQuestionMemoryKey(q) {
+		    return `${q.cat}|${q.p}|${q.type}|${q.q || ""}|${q.a || q.title || ""}`;
+		}
+		
+		function rememberQuestion(q) {
+		    const key = getQuestionMemoryKey(q);
+		
+		    recentlyUsedQuestions.push(key);
+		
+		    // Κρατάει μνήμη για τις τελευταίες 80 ερωτήσεις
+		    if (recentlyUsedQuestions.length > 80) {
+		        recentlyUsedQuestions = recentlyUsedQuestions.slice(-80);
+		    }
+		
+		    localStorage.setItem('quizball_recently_used_v1', JSON.stringify(recentlyUsedQuestions));
+		}
+		
+		function wasRecentlyUsed(q) {
+		    return recentlyUsedQuestions.includes(getQuestionMemoryKey(q));
+		}
+
         let currentQ = null;
         let gameMode = 'home';
         let currentTurn = 1;
@@ -2901,18 +2925,35 @@
 		    nextSdQuestion();
 		}
         function updatePenaltyUI() {
-            document.getElementById('pen-name-1').innerText = team1.name;
-            document.getElementById('pen-name-2').innerText = team2.name;
-            
-            let c1 = document.getElementById('pen-circles-1').children;
-            let c2 = document.getElementById('pen-circles-2').children;
-            
-            // Καθαρίζουμε και βάζουμε τα σωστά/λάθος
-            for(let i=0; i<5; i++) {
-                if(c1[i]) c1[i].className = 'pen-circle' + (penA[i] === 1 ? ' pen-scored' : (penA[i] === 0 ? ' pen-missed' : ''));
-                if(c2[i]) c2[i].className = 'pen-circle' + (penB[i] === 1 ? ' pen-scored' : (penB[i] === 0 ? ' pen-missed' : ''));
-            }
-        }
+		    document.getElementById('pen-name-1').innerText = team1.name;
+		    document.getElementById('pen-name-2').innerText = team2.name;
+		
+		    const box1 = document.getElementById('pen-circles-1');
+		    const box2 = document.getElementById('pen-circles-2');
+		
+		    box1.innerHTML = "";
+		    box2.innerHTML = "";
+		
+		    const totalCircles = Math.max(5, penA.length, penB.length);
+		
+		    for (let i = 0; i < totalCircles; i++) {
+		        const c1 = document.createElement('div');
+		        c1.className = 'pen-circle';
+		
+		        if (penA[i] === 1) c1.classList.add('pen-scored');
+		        if (penA[i] === 0) c1.classList.add('pen-missed');
+		
+		        box1.appendChild(c1);
+		
+		        const c2 = document.createElement('div');
+		        c2.className = 'pen-circle';
+		
+		        if (penB[i] === 1) c2.classList.add('pen-scored');
+		        if (penB[i] === 0) c2.classList.add('pen-missed');
+		
+		        box2.appendChild(c2);
+		    }
+		}
 
         function nextSdQuestion() {
             if (sdPool.length === 0) sdPool = shuffle([...SUDDEN_DEATH_QUESTIONS]);
@@ -2955,57 +2996,50 @@
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
-		        // Ομάδα Α
-		        if(penRound < 5) penA.push(isCorrect ? 1 : 0);
-		        else penA[penRound] = isCorrect ? 1 : 0;
+		        penA.push(isCorrect ? 1 : 0);
 		        currentTurn = 2;
 		    } else {
-		        // Ομάδα Β
-		        if(penRound < 5) penB.push(isCorrect ? 1 : 0);
-		        else penB[penRound] = isCorrect ? 1 : 0;
+		        penB.push(isCorrect ? 1 : 0);
 		        currentTurn = 1;
 		        penRound++;
 		    }
 		
 		    updatePenaltyUI();
 		
-		    let aScore = penA.filter(x => x === 1).length;
-		    let bScore = penB.filter(x => x === 1).length;
-		    
-		    // Πόσα πέναλτι απομένουν για την κάθε ομάδα (στα πρώτα 5)
-		    let aRemaining = 5 - penA.length;
-		    let bRemaining = 5 - penB.length;
+		    const aScore = penA.filter(x => x === 1).length;
+		    const bScore = penB.filter(x => x === 1).length;
 		
-		    // ΠΟΔΟΣΦΑΙΡΙΚΗ ΛΟΓΙΚΗ ΝΙΚΗΣ
-		    // 1. Έλεγχος κατά τη διάρκεια των πρώτων 5 πέναλτι
-		    if (penRound < 5) {
-		        if (aScore > bScore + bRemaining) { // Η Ομάδα Α νίκησε μαθηματικά
-		            team1.score++; 
-		            showEndScreen(); 
+		    const aTaken = penA.length;
+		    const bTaken = penB.length;
+		
+		    const aRemaining = Math.max(0, 5 - aTaken);
+		    const bRemaining = Math.max(0, 5 - bTaken);
+		
+		    // Έλεγχος πριν τελειώσουν τα 5 πέναλτι
+		    if (aTaken <= 5 && bTaken <= 5) {
+		        if (aScore > bScore + bRemaining) {
+		            team1.score++;
+		            showEndScreen();
 		            return;
 		        }
-		        if (bScore > aScore + aRemaining) { // Η Ομάδα Β νίκησε μαθηματικά
-		            team2.score++; 
-		            showEndScreen(); 
-		            return;
-		        }
-		    } 
-		    // 2. Έλεγχος μετά την ολοκλήρωση των 5 πέναλτι (Sudden Death γύροι)
-		    else {
-		        if (penA.length === penB.length && aScore !== bScore) {
-		            if (aScore > bScore) team1.score++; else team2.score++;
+		
+		        if (bScore > aScore + aRemaining) {
+		            team2.score++;
 		            showEndScreen();
 		            return;
 		        }
 		    }
 		
-		    // Αν δεν έχουμε νικητή, συνεχίζουμε
-		    if (penRound >= 5 && currentTurn === 1) {
-		        // Προσθήκη επιπλέον κύκλων για Sudden Death
-		        document.getElementById('pen-circles-1').innerHTML += `<div class="pen-circle"></div>`;
-		        document.getElementById('pen-circles-2').innerHTML += `<div class="pen-circle"></div>`;
+		    // Μετά τα 5 πέναλτι: sudden death
+		    // Ελέγχουμε μόνο όταν έχουν εκτελέσει και οι δύο στον ίδιο γύρο
+		    if (aTaken >= 5 && bTaken >= 5 && aTaken === bTaken && aScore !== bScore) {
+		        if (aScore > bScore) team1.score++;
+		        else team2.score++;
+		
+		        showEndScreen();
+		        return;
 		    }
-		    
+		
 		    nextSdQuestion();
 		}
         // ΝΕΕΣ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΤΟ ΝΟΜΙΣΜΑ & BUILDER
@@ -3146,17 +3180,42 @@
 		    "541":  [1, 5, 4, 1],
 		    "4411": [1, 4, 4, 1, 1]
 		};
+
+		function preloadNationFlags() {
+		    const usedFlags = new Set();
 		
+		    ALL_QUESTIONS.forEach(q => {
+		        if (q.type !== "nations" || !q.lineup) return;
+		
+		        ["gk", "def", "mid", "fwd"].forEach(pos => {
+		            (q.lineup[pos] || []).forEach(code => {
+		                usedFlags.add(String(code).trim().toLowerCase());
+		            });
+		        });
+		    });
+		
+		    usedFlags.forEach(code => {
+		        const img = new Image();
+		        img.src = `https://flagcdn.com/w80/${code}.png`;
+		    });
+		}
 		function createNationPlayer(flagCode) {
-		    const safeFlag = String(flagCode || "").trim().toLowerCase();
+		    const code = String(flagCode || "un").trim().toLowerCase();
 		
 		    return `
-		        <div style="text-align:center; flex: 1 1 0; padding: 0 2px;">
-		            <img src="https://flagcdn.com/w80/${safeFlag}.png" class="flag-circle" onerror="this.src='https://flagcdn.com/w80/un.png'">
-		            <span style="color: white; font-size: 10px; font-weight: 800; display: block;
-		                         text-shadow: 1px 1px 2px black, -1px -1px 2px black;
+		        <div style="text-align:center; flex: 1 1 0; min-width: 0; padding: 0 2px; box-sizing: border-box;">
+		            <img 
+		                src="https://flagcdn.com/w80/${code}.png"
+		                class="flag-circle"
+		                loading="eager"
+		                decoding="async"
+		                referrerpolicy="no-referrer"
+		                onerror="this.onerror=null; this.src='https://flagcdn.com/w80/un.png';"
+		            >
+		            <span style="color: white; font-size: 10px; font-weight: 800; display: block; 
+		                         text-shadow: 1px 1px 2px black, -1px -1px 2px black; 
 		                         line-height: 1.1; text-transform: uppercase;">
-		                ${safeFlag}
+		                ${code}
 		            </span>
 		        </div>`;
 		}
@@ -3184,8 +3243,8 @@
 		        </div>
 		    `;
 		
-		    const formation = currentQ.formation || getFormationFromQuestionText(currentQ.q);
-		    const shape = NATIONS_FORMATIONS[formation] || NATIONS_FORMATIONS["433"];
+		    const formation = normalizeFormationValue(currentQ.formation || getFormationFromQuestionText(currentQ.q));
+            const shape = NATIONS_FORMATIONS[formation] || NATIONS_FORMATIONS["433"];
 		
 		    const allPlayers = [
 		        ...(lineup.gk || []),
@@ -3271,7 +3330,7 @@
 
         function initGlobalPool() {
             // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.17
-            let saved = localStorage.getItem('quizball_pool_FINAL_BUILDv.19');
+            let saved = localStorage.getItem('quizball_pool_FINAL_BUILDv.20');
             if (saved) {
                 globalPool = JSON.parse(saved);
                 if(globalPool.length < 25) { 
@@ -3284,6 +3343,7 @@
             }
         }
         initGlobalPool();
+		preloadNationFlags();
 
         function openSetup() {
             document.getElementById('home-screen').style.display = 'none';
@@ -3386,23 +3446,47 @@
             const getQ = (cat, points, count) => {
                 let result = [];
                 for(let i=0; i<count; i++) {
-                    let idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
-                    
+                   let idx = globalPool.findIndex(q => 
+					    q.cat === cat && 
+					    q.p === points && 
+					    !wasRecentlyUsed(q)
+					);
+					                    
                     if (idx === -1) {
-                        let refill = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
-                        for (let j = refill.length - 1; j > 0; j--) {
-                            const k = Math.floor(Math.random() * (j + 1));
-                            [refill[j], refill[k]] = [refill[k], refill[j]];
-                        }
-                        globalPool.push(...refill);
-                        idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
-                    }
+					    let refill = ALL_QUESTIONS.filter(q => 
+					        q.cat === cat && 
+					        q.p === points && 
+					        !wasRecentlyUsed(q)
+					    );
+					
+					    // Αν όλες έχουν παιχτεί πρόσφατα, χαλαρώνουμε τον κανόνα
+					    if (refill.length === 0) {
+					        refill = ALL_QUESTIONS.filter(q => q.cat === cat && q.p === points);
+					    }
+					
+					    for (let j = refill.length - 1; j > 0; j--) {
+					        const k = Math.floor(Math.random() * (j + 1));
+					        [refill[j], refill[k]] = [refill[k], refill[j]];
+					    }
+					
+					    globalPool.push(...refill);
+					
+					    idx = globalPool.findIndex(q => 
+					        q.cat === cat && 
+					        q.p === points && 
+					        !wasRecentlyUsed(q)
+					    );
+					
+					    // Αν πάλι δεν βρήκε λόγω μνήμης, πάρε οποιαδήποτε διαθέσιμη
+					    if (idx === -1) {
+					        idx = globalPool.findIndex(q => q.cat === cat && q.p === points);
+					    }
+					}
 
                     if(idx > -1) {
-                        let q = globalPool.splice(idx, 1)[0];
-                        
-                        // --- ΤΟ ΔΙΟΡΘΩΜΕΝΟ ΚΟΜΜΑΤΙ ---
-                        let isDuplicate = false;
+					    let q = globalPool.splice(idx, 1)[0];
+					
+					    let isDuplicate = false;
                         
                         if (cat === "Ποιος Λείπει;") {
                             if (q.q) {
@@ -3420,7 +3504,9 @@
                         }
 
                         if (!isDuplicate) {
-                            result.push({...q, played: false, id: Math.random()});
+						    rememberQuestion(q);
+						    result.push({...q, played: false, id: Math.random()});
+						}
                         } else {
                             i--; // Πέσαμε σε διπλότυπη, ξαναδοκιμάζουμε!
                         }
@@ -3447,7 +3533,7 @@
             });
             
             // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.19 ΓΙΑ ΑΣΦΑΛΕΙΑ
-            localStorage.setItem('quizball_pool_FINAL_BUILDv.19', JSON.stringify(globalPool));
+            localStorage.setItem('quizball_pool_FINAL_BUILDv.20', JSON.stringify(globalPool));
         }
 
         function renderBoard() {

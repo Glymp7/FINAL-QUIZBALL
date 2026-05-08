@@ -4051,35 +4051,33 @@
 		        resultTxt.style.display = 'block';
 		        
 		        setTimeout(() => {
-		            modal.style.display = 'none';
-		            document.getElementById('question-screen').style.display = 'none';
-		
-		            // Υπολογισμός Πόντων
-		            let qPoints = (currentQ && currentQ.p) ? currentQ.p : 0;
-		            
-		            if (chosen.isGoal) {
-		                currentTeam.score += (qPoints + 2);
-		                sfxGoal.play();
-		                if(typeof triggerConfetti === "function") triggerConfetti();
-		            } else {
-		                if (currentTeam.score > 0) currentTeam.score--;
-		                sfxBuzzer.play();
-		            }
-		
-		            // Ενημέρωση UI
-		            document.getElementById('score-t1').innerText = team1.score;
-		            document.getElementById('score-t2').innerText = team2.score;
-		            
-		            currentTurn = (currentTurn === 1) ? 2 : 1;
-		            currentQ.played = true;
-		
-		            // Επιστροφή στον πίνακα
-		            document.body.style.background = 'var(--bg-main)'; 
-		            document.getElementById('board-screen').style.display = 'flex'; 
-		            renderBoard(); 
-		            updateTurnUI(); 
-		            
-		        }, 4000);
+				    modal.style.display = 'none';
+				    document.getElementById('question-screen').style.display = 'none';
+				
+				    // Υπολογισμός Πόντων Joker
+				    if (chosen.isGoal) {
+				        currentTeam.score += 2;
+				        sfxGoal.play();
+				        if (typeof triggerConfetti === "function") triggerConfetti();
+				    } else {
+				        currentTeam.score = Math.max(0, currentTeam.score - 1);
+				        sfxBuzzer.play();
+				    }
+				
+				    // Ενημέρωση UI
+				    document.getElementById('score-t1').innerText = team1.score;
+				    document.getElementById('score-t2').innerText = team2.score;
+				    
+				    currentTurn = (currentTurn === 1) ? 2 : 1;
+				    currentQ.played = true;
+				
+				    // Επιστροφή στον πίνακα
+				    document.body.style.background = 'var(--bg-main)'; 
+				    document.getElementById('board-screen').style.display = 'flex'; 
+				    renderBoard(); 
+				    updateTurnUI(); 
+				    
+				}, 4000);
 		    }, 2000);
 		}
 		

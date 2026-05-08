@@ -132,10 +132,11 @@
 		    display: none;
 		    justify-content: center;
 		    align-items: center;
-		    gap: 16px;
-		    background: linear-gradient(135deg, #ffffff, #f1f3f5);
+		    gap: 14px;
+		    background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
 		    padding: 12px 15px;
 		    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+		    border-bottom: 1px solid rgba(0,0,0,0.06);
 		    z-index: 10;
 		    flex-shrink: 0;
 		    position: relative;
@@ -156,17 +157,31 @@
 		    position: relative;
 		    margin-top: 0;
 		    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+		    transition: transform 0.25s ease, box-shadow 0.25s ease;
 		}
-        .score-box h2 { margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+		
+		.score-box.active-team-glow {
+		    box-shadow:
+		        0 0 0 3px rgba(241,196,15,0.85),
+		        0 8px 22px rgba(0,0,0,0.14);
+		    transform: scale(1.015);
+		}
+		.score-box h2 { margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .score-box .points { font-size: 32px; font-weight: 900; }
         #vs-text {
-		    font-size: 18px !important;
-		    font-weight: 900 !important;
-		    color: white !important;
+		    width: 48px;
+		    height: 48px;
+		    padding: 0 !important;
+		    border-radius: 50% !important;
 		    background: #2d3436 !important;
-		    padding: 8px 14px !important;
-		    border-radius: 999px;
-		    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+		    color: white !important;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    font-size: 16px !important;
+		    font-weight: 900 !important;
+		    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+		    flex-shrink: 0;
 		}
 		.x2-badge { position: absolute; top: -10px; right: -10px; background: #f1c40f; color: black; font-weight: 900; padding: 5px 8px; border-radius: 50%; font-size: 14px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.3); animation: pulse 1s infinite; z-index: 10; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -210,12 +225,17 @@
 		    padding: 12px 15px;
 		    color: white;
 		    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-		    transition: transform 0.18s ease, box-shadow 0.18s ease;
+		    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 		}
 		
 		.category-card:hover {
-		    transform: translateY(-2px);
-		    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+		    transform: translateY(-2px) scale(1.01);
+		    filter: brightness(1.05);
+		    box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+		}
+		
+		.category-card:active {
+		    transform: scale(0.98);
 		}
         .card-left { display: flex; align-items: center; gap: 12px; }
         .card-icon { font-size: 24px; background: rgba(255,255,255,0.25); width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border-radius: 10px; }
@@ -921,7 +941,7 @@
             
             /* --- HEADER & ΒΟΗΘΕΙΕΣ (4 ΚΟΥΜΠΙΑ ΣΕ 2x2 GRID) --- */
             .score-box {
-			    width: 42%;
+			    width: 43%;
 			    min-width: 0;
 			    padding: 7px 5px;
 			    border-radius: 12px;
@@ -944,8 +964,10 @@
             }
             .header-home-btn { font-size: 11px; padding: 6px 10px; top: 10px; left: 8px; }
             #vs-text {
-			    font-size: 13px !important;
-			    padding: 6px 8px !important;
+			    width: 34px !important;
+			    height: 34px !important;
+			    font-size: 12px !important;
+			    padding: 0 !important;
 			}
             
             /* Πίνακας (Board) και Builder */
@@ -4330,10 +4352,17 @@
 		}
 
         function updateTurnUI() {
-            if (gameMode === 'training') return;
-            document.getElementById('box-t1').style.border = currentTurn === 1 ? "4px solid gold" : "4px solid transparent";
-            document.getElementById('box-t2').style.border = currentTurn === 2 ? "4px solid gold" : "4px solid transparent";
-        }
+		    if (gameMode === 'training') return;
+		
+		    const box1 = document.getElementById('box-t1');
+		    const box2 = document.getElementById('box-t2');
+		
+		    box1.style.border = currentTurn === 1 ? "4px solid gold" : "4px solid transparent";
+		    box2.style.border = currentTurn === 2 ? "4px solid gold" : "4px solid transparent";
+		
+		    box1.classList.toggle('active-team-glow', currentTurn === 1);
+		    box2.classList.toggle('active-team-glow', currentTurn === 2);
+		}
 
         function fitPitchNames() {
 		    const names = document.querySelectorAll('#pitch-container .pitch-row > div > span');

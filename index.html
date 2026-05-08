@@ -205,15 +205,16 @@
 		}
         /* --- 4. BOARD --- */
         #board-screen {
-		    display: none;
-		    flex-grow: 1;
-		    padding: 15px;
-		    overflow-y: auto;
-		    align-items: center;
-		    flex-direction: column;
-		    background:
-		        radial-gradient(circle at top, rgba(255,255,255,0.75), transparent 35%),
-		        linear-gradient(180deg, #eef2f3 0%, #dfe6e9 100%);
+    display: none;
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    align-items: center;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at top, rgba(255,255,255,0.80), transparent 35%),
+        linear-gradient(rgba(238,242,243,0.92), rgba(223,230,233,0.96)),
+        url('https://i.postimg.cc/brjVZRFv/6a73cb97-4882-4621-9dcd-782340ccf699.jpg') center/cover no-repeat;
 		}
         .board-title { font-size: 24px; font-weight: 900; margin: 15px 0; color: var(--text-dark); }
         #board-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 30px; }
@@ -271,9 +272,18 @@
 
         /* --- 5. QUESTION SCREEN (ΑΠΟΛΥΤΟ SCROLL FIX ΓΙΑ ΚΙΝΗΤΑ) --- */
         #question-screen { 
-            display: none; justify-content: center; align-items: center; 
-            flex-grow: 1; padding: 10px; box-sizing: border-box; overflow: hidden; 
-        }
+		    display: none;
+		    justify-content: center;
+		    align-items: center;
+		    flex-grow: 1;
+		    padding: 10px;
+		    box-sizing: border-box;
+		    overflow: hidden;
+		    background:
+		        radial-gradient(circle at top, rgba(255,255,255,0.30), transparent 35%),
+		        linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.32)),
+		        url('https://i.postimg.cc/brjVZRFv/6a73cb97-4882-4621-9dcd-782340ccf699.jpg') center/cover no-repeat;
+		}
         
         .question-card { 
             background: white; width: 100%; max-width: 500px; 
@@ -292,20 +302,24 @@
 		}
         
 		#q-category-tag { 
-			position: relative; /* Το αλλάζουμε από absolute σε relative για να σπρώχνει την ερώτηση προς τα κάτω */
-			margin: 0 auto 15px auto; /* Κεντράρισμα και κενό από κάτω */
-			background: var(--text-dark); 
-			color: white; 
-			padding: 6px 15px; 
-			border-radius: 20px; 
-			font-size: 11px; 
-			font-weight: bold; 
-			text-transform: uppercase; 
-			z-index: 10; 
-			box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-			display: inline-block; /* Για να αγκαλιάζει το κείμενο */
-			text-align: center;
-		}        
+		    position: relative;
+		    margin: 0 auto 15px auto;
+		    background: linear-gradient(135deg, #111, #2d3436);
+		    color: #f1c40f;
+		    padding: 8px 18px;
+		    border-radius: 999px;
+		    font-size: 11px;
+		    font-weight: 1000;
+		    text-transform: uppercase;
+		    letter-spacing: 0.7px;
+		    z-index: 10;
+		    border: 2px solid rgba(241,196,15,0.65);
+		    box-shadow:
+		        0 8px 18px rgba(0,0,0,0.18),
+		        inset 0 1px 0 rgba(255,255,255,0.12);
+		    display: inline-block;
+		    text-align: center;
+		}      
 		#q-text { font-size: 20px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; text-align: center; width: 100%; }
 
         .mc-grid { display: none; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
@@ -819,8 +833,23 @@
 
         /* --- ΕΦΑΡΜΟΓΗ ΤΩΝ ANIMATIONS --- */
         .question-card {
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
+		    animation: questionEnter 0.45s cubic-bezier(.2, 1.25, .3, 1) both;
+		}
+		
+		@keyframes questionEnter {
+		    0% {
+		        opacity: 0;
+		        transform: translateY(35px) scale(0.94);
+		    }
+		    70% {
+		        opacity: 1;
+		        transform: translateY(-4px) scale(1.015);
+		    }
+		    100% {
+		        opacity: 1;
+		        transform: translateY(0) scale(1);
+		    }
+		}
 
         .category-card {
             animation: slideUp 0.4s ease-out forwards;

@@ -998,50 +998,76 @@
             .btn-admin, .btn-next, .btn-t5-stop, .btn-t5-strike { font-size: 13px; padding: 12px; }
 
             /* --- JOKER MODAL --- */
-            .joker-result-text { font-size: 20px; padding: 15px; }
-
-            /* --- VAR TV EFFECTS --- */
-            .var-tv-container { height: 200px; border-width: 8px; }
-            .var-checking { font-size: 1.5rem; }
-            #var-phase-1 h2 { font-size: 1.5rem; text-align: center; margin-bottom: 15px; }
-            #var-phase-1 img { max-width: 220px; }
-            #var-phase-2 h2 { font-size: 1.8rem; margin-bottom: 10px; }
-            #var-hint { font-size: 1.1rem; padding: 12px; margin-bottom: 15px; }
-            .close-var-btn { font-size: 1rem; padding: 12px 20px; margin-top: 10px; }
-            
+			#joker-modal {
+			    display: none;
+			    position: fixed;
+			    top: 0;
+			    left: 0;
+			    width: 100%;
+			    height: 100%;
+			    background: rgba(0,0,0,0.92);
+			    z-index: 10005;
+			    justify-content: center;
+			    align-items: center;
+			    flex-direction: column;
+			    text-align: center;
+			}
 			
-			/* --- ΠΕΝΑΛΤΙ (SUDDEN DEATH) --- */
-            .sd-title { font-size: 28px; margin-bottom: 10px; }
-            .penalty-scoreboard { 
-                padding: 12px; 
-                margin-bottom: 15px; 
-                border-radius: 12px; 
-                max-width: 95%;
-            }
-            .pen-name { font-size: 14px; margin-bottom: 8px; letter-spacing: 0; }
-            .pen-vs { font-size: 18px; margin: 0 5px; }
-            .pen-circles { gap: 4px; }
-            .pen-circle { width: 18px; height: 18px; border-width: 2px; }
-            
-            .sd-turn-info { font-size: 13px; padding: 8px 12px; margin-bottom: 10px; width: 90%; text-align: center; box-sizing: border-box; }
-            .pen-q-box { font-size: 16px; padding: 15px; min-height: 80px; margin: 10px 0; }
-            .pen-btn-show { font-size: 15px; padding: 15px; }
-            .pen-btn-action { font-size: 14px; padding: 15px; }
-            #sd-answer { font-size: 20px; padding: 10px; }
-            
-            #penalty-action-box { 
-                font-size: 30px !important; 
-                height: 100px !important; 
-                border-width: 4px !important; 
-
-				/* ==========================================
-			   🥅 PENALTY SCREEN - CLEAN POLISH OVERRIDE
-			   Βάλ' το στο τέλος του <style>
+			.joker-spinner {
+			    font-size: 100px;
+			    display: inline-block;
+			    animation: spin 0.5s infinite linear;
+			    filter: drop-shadow(0 0 20px #f1c40f);
+			}
+			
+			@keyframes spin {
+			    100% { transform: rotate(360deg); }
+			}
+			
+			.joker-result-text {
+			    font-size: 35px;
+			    font-weight: 900;
+			    text-transform: uppercase;
+			    margin-top: 20px;
+			    padding: 20px;
+			    border-radius: 15px;
+			    display: none;
+			    animation: popIn 0.5s forwards;
+			    text-shadow: 2px 2px 10px black;
+			}
+			
+			@keyframes joker-shake {
+			    0% { transform: translate(-50%, -50%) rotate(0deg); }
+			    25% { transform: translate(-52%, -48%) rotate(-3deg); }
+			    50% { transform: translate(-48%, -52%) rotate(3deg); }
+			    100% { transform: translate(-50%, -50%) rotate(0deg); }
+			}
+			
+			.joker-animating {
+			    animation: joker-shake 0.1s infinite;
+			    border: 5px solid #f1c40f !important;
+			}
+			
+			/* ==========================================
+			   🥅 PENALTY SCREEN - FINAL CLEAN VERSION
 			========================================== */
 			
 			.penalty-screen {
+			    display: none;
+			    flex-direction: column;
 			    justify-content: flex-start !important;
-			    padding-top: clamp(70px, 11vh, 120px) !important;
+			    align-items: center;
+			    width: 100vw;
+			    height: 100vh;
+			    position: fixed;
+			    top: 0;
+			    left: 0;
+			    z-index: 9999;
+			    padding: clamp(62px, 9vh, 100px) 20px 24px !important;
+			    box-sizing: border-box;
+			    overflow: hidden;
+			    color: white;
+			
 			    background:
 			        repeating-linear-gradient(
 			            180deg,
@@ -1050,13 +1076,13 @@
 			            #24ae5f 45px,
 			            #24ae5f 90px
 			        ) !important;
+			
 			    border-top: 10px solid rgba(255,255,255,0.65) !important;
 			    box-shadow:
 			        inset 0 180px 120px -130px rgba(255,255,255,0.35),
 			        inset 0 -120px 120px -140px rgba(0,0,0,0.35) !important;
 			}
 			
-			/* Τίτλος */
 			.sd-title {
 			    font-size: clamp(30px, 4vw, 44px) !important;
 			    font-weight: 1000 !important;
@@ -1068,12 +1094,11 @@
 			        0 12px 24px rgba(0,0,0,0.35) !important;
 			}
 			
-			/* Scoreboard */
 			.penalty-scoreboard {
 			    width: min(690px, 92vw) !important;
 			    max-width: 690px !important;
 			    padding: 24px 34px !important;
-			    margin-bottom: 34px !important;
+			    margin-bottom: 30px !important;
 			    border-radius: 18px !important;
 			    background:
 			        linear-gradient(180deg, rgba(8, 29, 19, 0.97), rgba(3, 18, 12, 0.98)) !important;
@@ -1083,7 +1108,6 @@
 			        inset 0 1px 0 rgba(255,255,255,0.06) !important;
 			}
 			
-			/* Ομάδες */
 			.pen-team {
 			    width: 42% !important;
 			}
@@ -1095,7 +1119,6 @@
 			    margin-bottom: 14px !important;
 			}
 			
-			/* VS */
 			.pen-vs {
 			    font-size: 24px !important;
 			    font-weight: 1000 !important;
@@ -1104,7 +1127,6 @@
 			    text-shadow: 0 3px 0 rgba(0,0,0,0.4) !important;
 			}
 			
-			/* Κουκίδες πέναλτι */
 			.pen-circles {
 			    gap: 9px !important;
 			}
@@ -1136,9 +1158,8 @@
 			        inset 0 2px 5px rgba(255,255,255,0.2) !important;
 			}
 			
-			/* Κίτρινο ταμπελάκι */
 			.sd-turn-info {
-			    margin-bottom: 44px !important;
+			    margin-bottom: 34px !important;
 			    padding: 13px 32px !important;
 			    max-width: min(560px, 88vw) !important;
 			    border-radius: 999px !important;
@@ -1150,14 +1171,14 @@
 			    box-shadow:
 			        0 12px 22px rgba(0,0,0,0.20),
 			        inset 0 1px 0 rgba(255,255,255,0.4) !important;
+			    animation: pulseSoft 1.5s infinite;
 			}
 			
-			/* Κουτί ερώτησης */
 			.pen-q-box {
 			    width: min(650px, 90vw) !important;
 			    max-width: 650px !important;
-			    min-height: 150px !important;
-			    padding: 34px 42px !important;
+			    min-height: 145px !important;
+			    padding: 32px 42px !important;
 			    margin: 0 0 22px 0 !important;
 			    border-radius: 14px !important;
 			    background: rgba(255,255,255,0.98) !important;
@@ -1166,20 +1187,19 @@
 			    font-size: clamp(18px, 2vw, 23px) !important;
 			    line-height: 1.45 !important;
 			    font-weight: 850 !important;
+			    text-align: center;
 			    box-shadow:
 			        0 22px 46px rgba(0,0,0,0.24),
 			        0 4px 0 rgba(0,0,0,0.06),
 			        inset 0 1px 0 rgba(255,255,255,0.85) !important;
 			}
 			
-			/* Controls */
 			#sd-controls {
 			    width: min(520px, 84vw) !important;
 			    max-width: 520px !important;
-			    margin-bottom: 16px !important;
+			    margin-bottom: 14px !important;
 			}
 			
-			/* Κουμπί αποκάλυψης */
 			.pen-btn-show {
 			    min-height: 62px !important;
 			    border-radius: 9px !important;
@@ -1197,7 +1217,6 @@
 			    transform: translateY(-2px);
 			}
 			
-			/* Σωστό / Λάθος */
 			#sd-result-btns {
 			    gap: 14px !important;
 			}
@@ -1210,9 +1229,23 @@
 			    letter-spacing: 0.8px !important;
 			}
 			
-			/* Απάντηση */
+			.pen-btn-action.goal {
+			    background: #00b894 !important;
+			    border-bottom: 5px solid #00876c !important;
+			}
+			
+			.pen-btn-action.miss {
+			    background: #d63031 !important;
+			    border-bottom: 5px solid #a32223 !important;
+			}
+			
+			.pen-btn-action:active {
+			    transform: translateY(4px);
+			    border-bottom-width: 0 !important;
+			}
+			
 			.pen-answer-text {
-			    margin-top: 8px !important;
+			    margin-top: 6px !important;
 			    font-size: clamp(22px, 3vw, 32px) !important;
 			    color: #ffdb18 !important;
 			    background: rgba(0,0,0,0.45) !important;
@@ -1220,11 +1253,28 @@
 			    box-shadow: 0 10px 24px rgba(0,0,0,0.22) !important;
 			}
 			
-			/* Popup ΓΚΟΟΟΛ / ΑΠΕΚΡΟΥΣΕ */
 			#penalty-action-box {
+			    display: none;
+			    position: fixed;
+			    top: 50%;
+			    left: 50%;
+			    transform: translate(-50%, -50%);
+			    width: 90%;
+			    max-width: 430px;
+			    height: 145px;
+			    justify-content: center;
+			    align-items: center;
+			    border-radius: 22px;
+			    font-size: 44px;
+			    font-weight: 1000;
+			    z-index: 10000;
+			    border: 6px solid white;
 			    box-shadow:
 			        0 28px 70px rgba(0,0,0,0.42),
 			        inset 0 1px 0 rgba(255,255,255,0.25) !important;
+			}
+			
+			.penalty-pop {
 			    animation: penaltyPop 420ms cubic-bezier(.2, 1.25, .3, 1) both !important;
 			}
 			
@@ -1233,35 +1283,246 @@
 			        opacity: 0;
 			        transform: translate(-50%, -50%) scale(0.78);
 			    }
+			
 			    70% {
 			        opacity: 1;
 			        transform: translate(-50%, -50%) scale(1.05);
 			    }
+			
 			    100% {
+			        opacity: 1;
 			        transform: translate(-50%, -50%) scale(1);
 			    }
 			}
 			
-			/* ==========================================
-			   📱 MOBILE PENALTY FIX
-			========================================== */
+			/* ========================================================= */
+			/* 📱 RESPONSIVE DESIGN - ΚΙΝΗΤΑ */
+			/* ========================================================= */
 			
 			@media (max-width: 600px) {
+			    .home-title {
+			        font-size: 38px;
+			    }
+			
+			    .home-subtitle {
+			        font-size: 16px;
+			        margin-bottom: 25px;
+			    }
+			
+			    .play-now-btn {
+			        font-size: 20px;
+			        padding: 15px 30px;
+			        width: 260px;
+			    }
+			
+			    .training-btn {
+			        font-size: 16px;
+			        padding: 12px 25px;
+			        width: 220px;
+			    }
+			
+			    .buttons-container {
+			        align-items: center;
+			        width: 100%;
+			    }
+			
+			    .home-logo {
+			        width: 250px;
+			        margin-bottom: 30px;
+			    }
+			
+			    .score-box {
+			        width: 43%;
+			        min-width: 0;
+			        padding: 7px 5px;
+			        border-radius: 12px;
+			    }
+			
+			    .score-box h2 {
+			        font-size: 12px;
+			        margin-bottom: 2px;
+			    }
+			
+			    .score-box .points {
+			        font-size: 24px;
+			        line-height: 1;
+			        margin-bottom: 2px;
+			    }
+			
+			    .ll-container {
+			        display: grid;
+			        grid-template-columns: repeat(2, 1fr);
+			        gap: 5px;
+			        margin-top: 5px;
+			    }
+			
+			    .ll-btn {
+			        padding: 4px;
+			        font-size: 11px;
+			        width: 100%;
+			        height: 32px;
+			        box-sizing: border-box;
+			    }
+			
+			    .header-home-btn {
+			        font-size: 11px;
+			        padding: 6px 10px;
+			        top: 10px;
+			        left: 8px;
+			    }
+			
+			    #vs-text {
+			        width: 34px !important;
+			        height: 34px !important;
+			        font-size: 12px !important;
+			        padding: 0 !important;
+			    }
+			
+			    .card-title {
+			        font-size: 15px;
+			    }
+			
+			    .card-icon {
+			        width: 35px;
+			        height: 35px;
+			        font-size: 18px;
+			    }
+			
+			    .pt-btn {
+			        width: 32px;
+			        height: 32px;
+			        font-size: 12px;
+			    }
+			
+			    .builder-box {
+			        padding: 15px;
+			    }
+			
+			    .opt-cat-btn {
+			        padding: 12px 5px;
+			        font-size: 13px;
+			    }
+			
+			    .opt-cat-icon {
+			        font-size: 20px;
+			    }
+			
+			    #q-text {
+			        font-size: 17px;
+			        margin-bottom: 15px;
+			    }
+			
+			    .mc-option {
+			        font-size: 14px;
+			        padding: 12px 15px;
+			    }
+			
+			    .mc-option span.mc-letter {
+			        padding: 4px 8px;
+			        margin-right: 10px;
+			    }
+			
+			    .q-scroll-area {
+			        padding: 10px;
+			    }
+			
+			    .match-title {
+			        font-size: 16px;
+			        margin-bottom: 5px;
+			        text-align: center;
+			    }
+			
+			    .match-teams {
+			        font-size: 20px;
+			        margin-bottom: 20px;
+			        text-align: center;
+			    }
+			
+			    .sm-score-text {
+			        font-size: 40px;
+			        margin-bottom: 10px;
+			    }
+			
+			    .sm-scorers-text {
+			        font-size: 13px;
+			    }
+			
+			    .score-btn-row button {
+			        font-size: 11px;
+			        padding: 10px 4px;
+			    }
+			
+			    .shirt {
+			        width: 22px;
+			        height: 22px;
+			        font-size: 11px;
+			    }
+			
+			    .btn-admin,
+			    .btn-next,
+			    .btn-t5-stop,
+			    .btn-t5-strike {
+			        font-size: 13px;
+			        padding: 12px;
+			    }
+			
+			    .joker-result-text {
+			        font-size: 20px;
+			        padding: 15px;
+			    }
+			
+			    .var-tv-container {
+			        height: 200px;
+			        border-width: 8px;
+			    }
+			
+			    .var-checking {
+			        font-size: 1.5rem;
+			    }
+			
+			    #var-phase-1 h2 {
+			        font-size: 1.5rem;
+			        text-align: center;
+			        margin-bottom: 15px;
+			    }
+			
+			    #var-phase-1 img {
+			        max-width: 220px;
+			    }
+			
+			    #var-phase-2 h2 {
+			        font-size: 1.8rem;
+			        margin-bottom: 10px;
+			    }
+			
+			    #var-hint {
+			        font-size: 1.1rem;
+			        padding: 12px;
+			        margin-bottom: 15px;
+			    }
+			
+			    .close-var-btn {
+			        font-size: 1rem;
+			        padding: 12px 20px;
+			        margin-top: 10px;
+			    }
+			
+			    /* 🥅 Penalty mobile */
 			    .penalty-screen {
-			        padding: 46px 14px 24px !important;
+			        padding: 42px 14px 20px !important;
 			        justify-content: flex-start !important;
 			    }
 			
 			    .sd-title {
 			        font-size: 27px !important;
 			        letter-spacing: 3px !important;
-			        margin-bottom: 18px !important;
+			        margin-bottom: 16px !important;
 			    }
 			
 			    .penalty-scoreboard {
 			        width: 94vw !important;
-			        padding: 16px 14px !important;
-			        margin-bottom: 28px !important;
+			        padding: 15px 14px !important;
+			        margin-bottom: 24px !important;
 			        border-radius: 15px !important;
 			    }
 			
@@ -1289,7 +1550,7 @@
 			    .sd-turn-info {
 			        width: auto !important;
 			        max-width: 88vw !important;
-			        margin-bottom: 34px !important;
+			        margin-bottom: 28px !important;
 			        padding: 10px 18px !important;
 			        font-size: 13px !important;
 			        line-height: 1.25 !important;
@@ -1297,9 +1558,9 @@
 			
 			    .pen-q-box {
 			        width: 90vw !important;
-			        min-height: 125px !important;
-			        padding: 26px 20px !important;
-			        margin-bottom: 22px !important;
+			        min-height: 122px !important;
+			        padding: 24px 20px !important;
+			        margin-bottom: 20px !important;
 			        font-size: 17px !important;
 			        line-height: 1.4 !important;
 			    }
@@ -1329,14 +1590,12 @@
 			    #penalty-action-box {
 			        width: 86vw !important;
 			        max-width: 360px !important;
-			        height: 120px !important;
+			        height: 116px !important;
 			        font-size: 32px !important;
 			        border-radius: 18px !important;
 			    }
 			}
-            }
-        }
-    </style>
+			</style>
 </head>
 <body>
 
@@ -3482,26 +3741,40 @@
             document.getElementById('sd-result-btns').style.display = 'flex';
         }
 
-        function resolveSdTurn(isCorrect) {
-		    if (isCorrect) sfxGoal.play(); else sfxBuzzer.play();
+        function resolveSdTurn(scored) {
+		    const box = document.getElementById("penalty-action-box");
+		    const showBtn = document.getElementById("sd-btn-show");
+		    const resultBtns = document.getElementById("sd-result-btns");
 		
-		    // Κρύβουμε προσωρινά την ερώτηση για το εφέ
-		    document.getElementById('sd-question-box').style.visibility = 'hidden';
-		    document.getElementById('sd-controls').style.visibility = 'hidden';
+		    if (showBtn) showBtn.disabled = true;
+		    if (resultBtns) resultBtns.style.pointerEvents = "none";
 		
-		    const actionBox = document.getElementById('penalty-action-box');
-		    actionBox.innerText = isCorrect ? "⚽ ΓΚΟΟΟΛ !!!" : "🧤 ΑΠΕΚΡΟΥΣΕ !";
-		    actionBox.style.backgroundColor = isCorrect ? "#00b894" : "#d63031";
-		    actionBox.style.display = 'flex';
+		    box.classList.remove("penalty-pop");
+		    box.style.display = "flex";
+		
+		    if (scored) {
+		        box.innerHTML = "⚽ ΓΚΟΟΟΛ !!!";
+		        box.style.background = "#00b894";
+		        box.style.color = "white";
+		    } else {
+		        box.innerHTML = "🧤 ΑΠΕΚΡΟΥΣΕ!";
+		        box.style.background = "#d63031";
+		        box.style.color = "white";
+		    }
+		
+		    void box.offsetWidth;
+		    box.classList.add("penalty-pop");
 		
 		    setTimeout(() => {
-		        actionBox.style.display = 'none';
-		        // Επαναφορά ορατότητας
-		        document.getElementById('sd-question-box').style.visibility = 'visible';
-		        document.getElementById('sd-controls').style.visibility = 'visible';
-		        
-		        finishTurnLogic(isCorrect); 
-		    }, 2000);
+		        box.style.display = "none";
+		        box.classList.remove("penalty-pop");
+		
+		        finishTurnLogic(scored);
+		
+		        if (showBtn) showBtn.disabled = false;
+		        if (resultBtns) resultBtns.style.pointerEvents = "auto";
+		
+		    }, 1500);
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
@@ -4786,12 +5059,13 @@
 		    `;
 		
 		    if (gameMode === '1v1') {
-		        if (wentPens) { 
-		            if (aPen > bPen) {
-		                winner = team1.name;
-		            } else {
-		                winner = team2.name;
-		            }
+		        if (aPen > bPen) {
+				    winner = team1.name;
+				} else if (bPen > aPen) {
+				    winner = team2.name;
+				} else {
+				    winner = "Ισοπαλία!";
+				}
 		
 		            sfxGoal.play();
 		            triggerConfetti();

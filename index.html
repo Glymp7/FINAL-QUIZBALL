@@ -305,21 +305,18 @@
 		#q-category-tag { 
 		    position: relative;
 		    margin: 0 auto 15px auto;
-		    background: linear-gradient(135deg, #111, #2d3436);
-		    color: #f1c40f;
-		    padding: 8px 18px;
-		    border-radius: 999px;
-		    font-size: 11px;
-		    font-weight: 1000;
-		    text-transform: uppercase;
-		    letter-spacing: 0.7px;
-		    z-index: 10;
-		    border: 2px solid rgba(241,196,15,0.65);
-		    box-shadow:
-		        0 8px 18px rgba(0,0,0,0.18),
-		        inset 0 1px 0 rgba(255,255,255,0.12);
+		    background: var(--q-cat-color, #2d3436);
+		    color: white; 
+		    padding: 7px 16px; 
+		    border-radius: 999px; 
+		    font-size: 11px; 
+		    font-weight: 900; 
+		    text-transform: uppercase; 
+		    z-index: 10; 
+		    box-shadow: 0 6px 14px rgba(0,0,0,0.18); 
 		    display: inline-block;
 		    text-align: center;
+		    border: 2px solid rgba(255,255,255,0.55);
 		}      
 		#q-text { font-size: 20px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; text-align: center; width: 100%; }
 
@@ -4454,6 +4451,7 @@
             document.getElementById('board-screen').style.display = 'none';
             document.getElementById('question-screen').style.display = 'flex';
             document.body.style.background = conf.color;
+			document.documentElement.style.setProperty('--q-cat-color', conf.color);
             
             // Επαναφορά όλων των στοιχείων στην αρχική τους κατάσταση
             document.getElementById('q-text').style.display = 'block';

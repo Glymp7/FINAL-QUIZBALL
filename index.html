@@ -4881,6 +4881,8 @@
 		}
 
         function resolveTurn(status) {
+			stopTimer();
+			
 		    if (status !== 'skip') {
 		        let pts = getQuestionPoints();
 		
@@ -5007,8 +5009,10 @@
 		
 		    setTimeout(fitPitchNames, 50);
 		}
-        function goHome() { location.reload(); }
-
+        function goHome() {
+		    const ok = confirm("Σίγουρα θέλεις να γυρίσεις στην αρχική; Θα χαθεί ο αγώνας.");
+		    if (ok) location.reload();
+		}
         function showEndScreen() { 
 		    stopTimer();
 		

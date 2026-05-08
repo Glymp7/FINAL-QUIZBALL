@@ -3336,23 +3336,32 @@
                     
                     // 1. Αν είναι Πολλαπλής Επιλογής (MCQ) - Κλειδώνει και πάει στην επόμενη
                     if (currentQ.type === "mcq") {
-                        document.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
-                        document.getElementById('q-answer-box').innerText = currentQ.a;
-                        document.getElementById('q-answer-box').style.display = 'block';
-                        
-                        document.getElementById('admin-controls').style.display = 'flex';
-                        document.getElementById('t5-admin-controls').style.display = 'none';
-                        document.getElementById('score-admin-controls').style.display = 'none';
-                        document.getElementById('btn-show').style.display = 'none';
-                        document.getElementById('btn-correct').style.display = 'none';
-                        document.getElementById('btn-wrong').style.display = 'none';
-                        
-                        const btnNext = document.getElementById('btn-next');
-                        btnNext.style.display = 'block';
-                        btnNext.style.background = '#d63031';
-                        btnNext.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ - ΕΠΙΣΤΡΟΦΗ ΣΤΟΝ ΠΙΝΑΚΑ ➔";
-                        btnNext.onclick = () => resolveTurn(false);
-                    } 
+					    document.querySelectorAll('#mc-grid .mc-option').forEach(b => b.disabled = true);
+					
+					    const correct = currentQ.correctIdx;
+					    document.getElementById(`opt-${correct}`).classList.add('correct-ans');
+					
+					    document.getElementById('q-answer-box').innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ! Η σωστή απάντηση ήταν: " + currentQ.a;
+					    document.getElementById('q-answer-box').style.display = 'block';
+					
+					    document.getElementById('admin-controls').style.display = 'flex';
+					    document.getElementById('t5-admin-controls').style.display = 'none';
+					    document.getElementById('score-admin-controls').style.display = 'none';
+					    document.getElementById('btn-show').style.display = 'none';
+					    document.getElementById('btn-correct').style.display = 'none';
+					    document.getElementById('btn-wrong').style.display = 'none';
+					
+					    const btnNext = document.getElementById('btn-next');
+					    btnNext.style.display = 'block';
+					    btnNext.style.background = '#d63031';
+					    btnNext.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ - ΛΑΘΟΣ ➔";
+					    btnNext.onclick = () => resolveTurn(false);
+					
+					    // Προαιρετικό auto-return. Αν δεν το θες, σβήσε αυτές τις 3 γραμμές.
+					    setTimeout(() => {
+					        resolveTurn(false);
+					    }, 2500);
+					}
                     // 2. Για Ποιος Λείπει, Player ID, κλπ: Αποκαλύπτει απάντηση, αλλά ΣΩΣΤΟ/ΛΑΘΟΣ αποφασίζει ο Διαιτητής!
                     else {
                         if (isFiftyFifty) {
@@ -3891,8 +3900,12 @@
             document.getElementById('btn-show').style.display = 'block';
             document.getElementById('btn-correct').style.display = 'none';
             document.getElementById('btn-wrong').style.display = 'none';
-            document.getElementById('btn-next').style.display = 'none';
 
+			const btnNext = document.getElementById('btn-next');
+			btnNext.style.display = 'none';
+			btnNext.style.background = 'var(--text-dark)';
+			btnNext.innerText = "ΕΠΙΣΤΡΟΦΗ ΣΤΟΝ ΠΙΝΑΚΑ ➔";
+			btnNext.onclick = () => resolveTurn('skip');
             // ΕΝΕΡΓΟΠΟΙΗΣΗ ΣΩΣΤΟΥ PANEL ΧΕΙΡΙΣΜΟΥ
             if(currentQ.type === "top5") {
                 document.getElementById('t5-admin-controls').style.display = 'flex';
@@ -3906,13 +3919,21 @@
             
             // ΕΙΔΙΚΗ ΛΟΓΙΚΗ ΑΝΑ ΤΥΠΟ ΕΡΩΤΗΣΗΣ
             if (currentQ.type === "mcq") {
-                document.getElementById('mc-grid').style.display = 'flex';
-                for(let i=0; i<4; i++) {
-                    const btn = document.getElementById(`opt-${i}`);
-                    document.getElementById(`opt-txt-${i}`).innerText = currentQ.options[i];
-                    btn.className = "mc-option"; btn.disabled = false; btn.style.visibility = 'visible';
-                }
-            } 
+			    document.getElementById('mc-grid').style.display = 'flex';
+			
+			    // Στις πολλαπλής δεν θέλουμε κουμπί αποκάλυψης.
+			    // Ο παίκτης πατάει απάντηση και φαίνεται αμέσως σωστό/λάθος.
+			    document.getElementById('admin-controls').style.display = 'none';
+			    document.getElementById('btn-show').style.display = 'none';
+			
+			    for(let i = 0; i < 4; i++) {
+			        const btn = document.getElementById(`opt-${i}`);
+			        document.getElementById(`opt-txt-${i}`).innerText = currentQ.options[i];
+			        btn.className = "mc-option";
+			        btn.disabled = false;
+			        btn.style.visibility = 'visible';
+			    }
+			}
             else if (currentQ.type === "score") {
                 document.getElementById('q-text').style.display = 'none'; 
                 document.getElementById('score-match-container').style.display = 'flex'; 
@@ -4241,21 +4262,31 @@
 		}
 
         function checkMcq(btn, idx) {
-			stopTimer();
-            const correct = currentQ.correctIdx;
-            if(idx === correct) {
-                btn.classList.add('correct-ans');
-                document.getElementById('btn-next').onclick = () => resolveTurn(true);
-            } else { 
-                btn.classList.add('wrong-ans'); 
-                document.getElementById(`opt-${correct}`).classList.add('correct-ans'); 
-                document.getElementById('btn-next').onclick = () => resolveTurn(false);
-            }
-            document.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
-            document.getElementById('admin-controls').style.display = 'flex';
-            document.getElementById('btn-show').style.display = 'none';
-            document.getElementById('btn-next').style.display = 'block';
-        }
+		    stopTimer();
+		
+		    const correct = currentQ.correctIdx;
+		    const isCorrect = idx === correct;
+		
+		    if (isCorrect) {
+		        btn.classList.add('correct-ans');
+		    } else { 
+		        btn.classList.add('wrong-ans'); 
+		        document.getElementById(`opt-${correct}`).classList.add('correct-ans'); 
+		    }
+		
+		    document.querySelectorAll('#mc-grid .mc-option').forEach(b => b.disabled = true);
+		
+		    document.getElementById('admin-controls').style.display = 'flex';
+		    document.getElementById('btn-show').style.display = 'none';
+		    document.getElementById('btn-correct').style.display = 'none';
+		    document.getElementById('btn-wrong').style.display = 'none';
+		
+		    const btnNext = document.getElementById('btn-next');
+		    btnNext.style.display = 'block';
+		    btnNext.style.background = isCorrect ? '#00b894' : '#d63031';
+		    btnNext.innerText = isCorrect ? "ΣΩΣΤΟ - ΕΠΙΣΤΡΟΦΗ ➔" : "ΛΑΘΟΣ - ΕΠΙΣΤΡΟΦΗ ➔";
+		    btnNext.onclick = () => resolveTurn(isCorrect);
+		}
 
         function checkFifty(btn, ans) {
             // Αλλάζουμε τη λογική ώστε να βλέπει απλά ότι η απάντηση ΔΕΝ είναι ο fake παίκτης

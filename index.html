@@ -5114,11 +5114,27 @@
 		    } 
 		    
 		    else {
-		        document.getElementById('end-msg').innerHTML = `
-		            <div class="winner-line">ΤΕΛΟΣ ΠΡΟΠΟΝΗΣΗΣ 🎯</div>
-		            <div class="final-score-line">ΣΥΝΟΛΟ ΠΟΝΤΩΝ: ${team1.score}</div>
-		            ${statsHtml}
-		        `;
-		    }
+			    let bestPracticeScore = Number(localStorage.getItem('quizball_practice_high_score') || 0);
+			    let isNewHighScore = false;
+			
+			    if (team1.score > bestPracticeScore) {
+			        bestPracticeScore = team1.score;
+			        localStorage.setItem('quizball_practice_high_score', bestPracticeScore);
+			        isNewHighScore = true;
+			    }
+			
+			    if (isNewHighScore) {
+			        sfxGoal.play();
+			        triggerConfetti();
+			    }
+			
+			    document.getElementById('end-msg').innerHTML = `
+			        <div class="winner-line">ΤΕΛΟΣ ΠΡΟΠΟΝΗΣΗΣ 🎯</div>
+			        <div class="final-score-line">ΣΥΝΟΛΟ ΠΟΝΤΩΝ: ${team1.score}</div>
+			        <div class="final-score-line">🏆 HIGH SCORE: ${bestPracticeScore}</div>
+			        <span class="end-joke">${isNewHighScore ? "ΝΕΟ ΡΕΚΟΡ! 🔥" : ""}</span>
+			        ${statsHtml}
+			    `;
+			}
 		}
     </script>

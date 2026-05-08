@@ -5016,6 +5016,7 @@
 		    document.getElementById('board-screen').style.display = 'none'; 
 		    document.getElementById('question-screen').style.display = 'none'; 
 		    document.getElementById('sudden-death-screen').style.display = 'none'; 
+		    document.getElementById('penalty-intro').style.display = 'none';
 		    
 		    document.getElementById('end-screen').style.display = 'flex'; 
 		    
@@ -5025,7 +5026,7 @@
 		    let aPen = penA.filter(x => x === 1).length;
 		    let bPen = penB.filter(x => x === 1).length;
 		
-		    let wentPens = penA.length > 0 || gameStats.wentToPens;
+		    let wentPens = penA.length > 0 || penB.length > 0 || gameStats.wentToPens;
 		
 		    let bestCategory = "-";
 		    let bestCategoryPoints = 0;
@@ -5059,24 +5060,32 @@
 		    `;
 		
 		    if (gameMode === '1v1') {
-		        if (aPen > bPen) {
-				    winner = team1.name;
-				} else if (bPen > aPen) {
-				    winner = team2.name;
-				} else {
-				    winner = "Ισοπαλία!";
-				}
 		
-		            sfxGoal.play();
-		            triggerConfetti();
+		        if (wentPens) {
+		            if (aPen > bPen) {
+		                winner = team1.name;
+		            } else if (bPen > aPen) {
+		                winner = team2.name;
+		            } else {
+		                winner = "Ισοπαλία!";
+		            }
+		
+		            if (winner !== "Ισοπαλία!") {
+		                sfxGoal.play();
+		                triggerConfetti();
+		            } else {
+		                sfxBoo.play();
+		            }
 		
 		            document.getElementById('end-msg').innerHTML = `
 		                <div class="winner-line">ΠΡΩΤΑΘΛΗΤΗΣ: ${winner}</div>
 		                <div class="final-score-line">ΣΚΟΡ ΠΕΝΑΛΤΙ: ${aPen} - ${bPen}</div>
 		                ${statsHtml}
-		                <span class="end-joke">${quote}</span>
+		                <span class="end-joke">${winner === "Ισοπαλία!" ? "" : quote}</span>
 		            `;
-		        } else {
+		        } 
+		        
+		        else {
 		            if (team1.score > team2.score) {
 		                winner = team1.name;
 		                sfxGoal.play();
@@ -5097,7 +5106,10 @@
 		                <span class="end-joke">${winner === "Ισοπαλία!" ? "" : quote}</span>
 		            `;
 		        }
-		    } else {
+		
+		    } 
+		    
+		    else {
 		        document.getElementById('end-msg').innerHTML = `
 		            <div class="winner-line">ΤΕΛΟΣ ΠΡΟΠΟΝΗΣΗΣ 🎯</div>
 		            <div class="final-score-line">ΣΥΝΟΛΟ ΠΟΝΤΩΝ: ${team1.score}</div>

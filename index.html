@@ -4626,13 +4626,22 @@
 				
 				    // Υπολογισμός Πόντων Joker
 				    if (chosen.isGoal) {
-				        currentTeam.score += 2;
-				        sfxGoal.play();
-				        if (typeof triggerConfetti === "function") triggerConfetti();
-				    } else {
-				        currentTeam.score = Math.max(0, currentTeam.score - 1);
-				        sfxBuzzer.play();
-				    }
+					    let jokerPoints = 2;
+					
+					    if (currentQ && currentQ.isHot) {
+					        jokerPoints += 1;
+					        gameStats.hotPoints++;
+					        gameStats.categoryPoints[currentQ.cat] = (gameStats.categoryPoints[currentQ.cat] || 0) + 1;
+					    }
+					
+					    currentTeam.score += jokerPoints;
+					
+					    sfxGoal.play();
+					    if (typeof triggerConfetti === "function") triggerConfetti();
+					} else {
+					    currentTeam.score = Math.max(0, currentTeam.score - 1);
+					    sfxBuzzer.play();
+					}
 				
 				    // Ενημέρωση UI
 				    document.getElementById('score-t1').innerText = team1.score;

@@ -794,13 +794,174 @@
 		}
 		
 		/* --- ΝΟΜΙΣΜΑ & ΧΤΙΣΙΜΟ BOARD --- */
-        #coin-toss-screen { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 105; background: rgba(45, 52, 54, 0.95); color: white; text-align: center; padding: 20px; box-sizing: border-box; }
-        .coin-icon-wrapper { font-size: 100px; margin: 30px 0; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
-        .coin-spin { animation: flipCoin 2s ease-out forwards; }
-        @keyframes flipCoin { 0% { transform: rotateY(0deg) scale(1); } 50% { transform: rotateY(720deg) scale(1.5); } 100% { transform: rotateY(1440deg) scale(1); } }
-        .coin-winner-title { font-size: 32px; font-weight: 900; color: #f1c40f; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
-        .coin-choice-btn { background: linear-gradient(to bottom, #f1c40f, #e67e22); color: white; padding: 15px 30px; font-size: 18px; font-weight: 900; border: 2px solid white; border-radius: 50px; margin: 10px; cursor: pointer; width: 260px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.2s; text-transform: uppercase; }
-        .coin-choice-btn:active { transform: scale(0.95); }
+        #coin-toss-screen {
+		    display: none;
+		    flex-direction: column;
+		    justify-content: center;
+		    align-items: center;
+		    width: 100%;
+		    height: 100%;
+		    position: absolute;
+		    inset: 0;
+		    z-index: 105;
+		    color: white;
+		    text-align: center;
+		    padding: 20px;
+		    box-sizing: border-box;
+		    background:
+		        linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0.72)),
+		        url('https://i.postimg.cc/brjVZRFv/6a73cb97-4882-4621-9dcd-782340ccf699.jpg') center/cover no-repeat;
+		}
+		
+		.coin-toss-screen-inner {
+		    width: min(90vw, 560px);
+		    padding: 34px 24px;
+		    border-radius: 28px;
+		    background: rgba(0,0,0,0.42);
+		    border: 2px solid rgba(255,255,255,0.16);
+		    box-shadow:
+		        0 28px 80px rgba(0,0,0,0.65),
+		        inset 0 1px 0 rgba(255,255,255,0.12);
+		    backdrop-filter: blur(8px);
+		    animation: matchIntroPop 0.45s cubic-bezier(.2,1.25,.3,1) both;
+		}
+		
+		.coin-top-label {
+		    display: inline-block;
+		    margin-bottom: 18px;
+		    padding: 8px 18px;
+		    border-radius: 999px;
+		    background: linear-gradient(180deg, #f1c40f, #e67e22);
+		    color: #111;
+		    font-size: 12px;
+		    font-weight: 1000;
+		    letter-spacing: 1.5px;
+		    box-shadow: 0 0 24px rgba(241,196,15,0.40);
+		}
+		
+		.coin-main-title {
+		    margin: 0 0 10px 0;
+		    font-size: clamp(30px, 4vw, 46px);
+		    font-weight: 1000;
+		    color: white;
+		    text-shadow: 0 4px 14px rgba(0,0,0,0.55);
+		}
+		
+		.coin-subtitle {
+		    margin: 0 0 18px 0;
+		    font-size: 15px;
+		    font-weight: 800;
+		    color: rgba(255,255,255,0.85);
+		}
+		
+		.coin-icon-wrapper {
+		    font-size: 110px;
+		    margin: 18px 0 22px 0;
+		    display: inline-flex;
+		    justify-content: center;
+		    align-items: center;
+		    width: 140px;
+		    height: 140px;
+		    border-radius: 50%;
+		    background: radial-gradient(circle at 30% 30%, #ffd95a, #f1c40f 45%, #e67e22 100%);
+		    box-shadow:
+		        0 16px 40px rgba(0,0,0,0.38),
+		        0 0 28px rgba(241,196,15,0.22),
+		        inset 0 4px 10px rgba(255,255,255,0.28);
+		    border: 4px solid rgba(255,255,255,0.3);
+		}
+		
+		.coin-spin {
+		    animation: flipCoin 2s ease-out forwards;
+		}
+		
+		@keyframes flipCoin {
+		    0%   { transform: rotateY(0deg) scale(1); }
+		    50%  { transform: rotateY(720deg) scale(1.18); }
+		    100% { transform: rotateY(1440deg) scale(1); }
+		}
+		
+		.coin-winner-title {
+		    font-size: clamp(30px, 4vw, 44px);
+		    font-weight: 1000;
+		    color: #f1c40f;
+		    margin-bottom: 10px;
+		    text-shadow:
+		        0 0 18px rgba(241,196,15,0.55),
+		        2px 2px 6px rgba(0,0,0,0.55);
+		}
+		
+		.coin-choice-text {
+		    font-size: 18px;
+		    font-weight: 700;
+		    margin: 0 0 20px 0;
+		    color: white;
+		}
+		
+		.coin-choice-btn {
+		    background: linear-gradient(180deg, #f1c40f, #e67e22);
+		    color: white;
+		    padding: 16px 24px;
+		    font-size: 20px;
+		    font-weight: 1000;
+		    border: 2px solid rgba(255,255,255,0.9);
+		    border-radius: 999px;
+		    margin: 10px auto;
+		    cursor: pointer;
+		    width: min(100%, 310px);
+		    box-shadow:
+		        0 12px 24px rgba(0,0,0,0.30),
+		        inset 0 1px 0 rgba(255,255,255,0.22);
+		    transition: transform 0.18s ease, filter 0.18s ease;
+		    text-transform: uppercase;
+		    letter-spacing: 0.5px;
+		    display: block;
+		}
+		
+		.coin-choice-btn:hover {
+		    filter: brightness(1.05);
+		    transform: translateY(-2px);
+		}
+		
+		.coin-choice-btn:active {
+		    transform: scale(0.96);
+		}
+		
+		@media (max-width: 600px) {
+		    .coin-toss-screen-inner {
+		        width: 88vw;
+		        padding: 26px 16px;
+		        border-radius: 24px;
+		    }
+		
+		    .coin-main-title {
+		        font-size: 26px;
+		    }
+		
+		    .coin-subtitle {
+		        font-size: 14px;
+		    }
+		
+		    .coin-icon-wrapper {
+		        width: 116px;
+		        height: 116px;
+		        font-size: 88px;
+		    }
+		
+		    .coin-winner-title {
+		        font-size: 28px;
+		    }
+		
+		    .coin-choice-btn {
+		        width: 100%;
+		        font-size: 18px;
+		        padding: 15px 18px;
+		    }
+		
+		    .coin-choice-text {
+		        font-size: 16px;
+		    }
+		}
 
         #builder-screen { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 104; background: var(--bg-main); color: var(--text-dark); padding: 20px; box-sizing: border-box; text-align: center; }
         .builder-box { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 420px; width: 100%; }
@@ -1936,15 +2097,22 @@
     </div>
 
     <div id="coin-toss-screen">
-        <h2 style="margin:0; font-size: 28px;">Κλήρωση νομίσματος...</h2>
-        <div id="coin-icon" class="coin-icon-wrapper">🪙</div>
-        <div id="coin-winner-box" style="display:none; flex-direction: column; align-items: center;">
-            <div id="coin-winner-name" class="coin-winner-title">ΟΜΑΔΑ Α</div>
-            <p style="font-size: 18px; margin-bottom: 30px;">Κέρδισες το στρίψιμο! Τι επιλέγεις;</p>
-            <button class="coin-choice-btn" onclick="selectAdvantage('play_first')">⚽ ΠΑΙΖΩ ΠΡΩΤΟΣ</button>
-            <button class="coin-choice-btn" onclick="selectAdvantage('build_board')">🧱 ΧΤΙΖΩ ΤΟ BOARD</button>
-        </div>
-    </div>
+	    <div class="coin-toss-screen-inner">
+	        <div class="coin-top-label">QUIZBALL COIN TOSS</div>
+	        <h2 class="coin-main-title">Κλήρωση νομίσματος</h2>
+	        <p class="coin-subtitle">Ποιος θα πάρει το πρώτο πλεονέκτημα;</p>
+	
+	        <div id="coin-icon" class="coin-icon-wrapper">🪙</div>
+	
+	        <div id="coin-winner-box" style="display:none; flex-direction: column; align-items: center; width:100%;">
+	            <div id="coin-winner-name" class="coin-winner-title">ΟΜΑΔΑ Α</div>
+	            <p class="coin-choice-text">Κέρδισες το στρίψιμο! Τι επιλέγεις;</p>
+	
+	            <button class="coin-choice-btn" onclick="selectAdvantage('play_first')">⚽ ΠΑΙΖΩ ΠΡΩΤΟΣ</button>
+	            <button class="coin-choice-btn" onclick="selectAdvantage('build_board')">🧱 ΧΤΙΖΩ ΤΟ BOARD</button>
+	        </div>
+	    </div>
+	</div>
 
     <div id="builder-screen">
         <div class="builder-box">
@@ -4375,23 +4543,27 @@
 
         // 1. ΞΕΚΙΝΑΕΙ Η ΡΙΨΗ ΝΟΜΙΣΜΑΤΟΣ
         function start1v1() {
-            gameMode = '1v1';
-            team1.name = document.getElementById('t1-name').value || "Ομάδα Α";
-            team2.name = document.getElementById('t2-name').value || "Ομάδα Β";
-            
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('coin-toss-screen').style.display = 'flex';
-            
-            let coinIcon = document.getElementById('coin-icon');
-            coinIcon.classList.add('coin-spin');
-            
-            setTimeout(() => {
-                coinWinnerId = Math.random() > 0.5 ? 1 : 2;
-                coinIcon.classList.remove('coin-spin');
-                document.getElementById('coin-winner-name').innerText = coinWinnerId === 1 ? team1.name : team2.name;
-                document.getElementById('coin-winner-box').style.display = 'flex';
-            }, 2000);
-        }
+		    gameMode = '1v1';
+		    team1.name = document.getElementById('t1-name').value || "Ομάδα Α";
+		    team2.name = document.getElementById('t2-name').value || "Ομάδα Β";
+		
+		    document.getElementById('setup-screen').style.display = 'none';
+		    document.getElementById('coin-toss-screen').style.display = 'flex';
+		
+		    document.getElementById('coin-winner-box').style.display = 'none';
+		
+		    let coinIcon = document.getElementById('coin-icon');
+		    coinIcon.classList.remove('coin-spin');
+		    void coinIcon.offsetWidth;
+		    coinIcon.classList.add('coin-spin');
+		
+		    setTimeout(() => {
+		        coinWinnerId = Math.random() > 0.5 ? 1 : 2;
+		        coinIcon.classList.remove('coin-spin');
+		        document.getElementById('coin-winner-name').innerText = coinWinnerId === 1 ? team1.name : team2.name;
+		        document.getElementById('coin-winner-box').style.display = 'flex';
+		    }, 2000);
+		}
 
         // 2. ΕΠΙΛΟΓΗ ΠΛΕΟΝΕΚΤΗΜΑΤΟΣ
         function selectAdvantage(choice) {

@@ -120,12 +120,84 @@
 		}
 
         /* --- 2. SETUP SCREEN --- */
-        #setup-screen { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: absolute; z-index: 90; background: rgba(0,0,0,0.9); color: white; }
-        .setup-box { background: white; color: var(--text-dark); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; }
-        .team-input { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
-        .team-input input[type="text"] { flex-grow: 1; margin-left: 10px; padding: 10px; border: 2px solid #dfe6e9; border-radius: 8px; font-size: 16px; font-weight: bold; }
-        .team-input input[type="color"] { width: 40px; height: 40px; border: none; border-radius: 8px; cursor: pointer; }
-        .start-btn { background: var(--c-id); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        #setup-screen {
+	    display: none;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    width: 100%;
+	    height: 100%;
+	    position: absolute;
+	    z-index: 90;
+	    color: white;
+	    background:
+	        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.78)),
+	        url('https://i.postimg.cc/brjVZRFv/6a73cb97-4882-4621-9dcd-782340ccf699.jpg') center/cover no-repeat;
+	}
+	
+	.setup-box {
+	    background: rgba(255,255,255,0.94);
+	    color: var(--text-dark);
+	    padding: 32px;
+	    border-radius: 24px;
+	    width: 90%;
+	    max-width: 430px;
+	    text-align: center;
+	    border: 2px solid rgba(255,255,255,0.35);
+	    box-shadow: 0 28px 70px rgba(0,0,0,0.55);
+	    backdrop-filter: blur(8px);
+	    animation: matchIntroPop 0.45s cubic-bezier(.2,1.25,.3,1) both;
+	}
+        .team-input {
+		    display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		    margin: 16px 0;
+		    background: #f8f9fa;
+		    border: 2px solid #dfe6e9;
+		    border-radius: 16px;
+		    padding: 8px;
+		}
+		
+		.team-input input[type="text"] {
+		    flex-grow: 1;
+		    margin-left: 10px;
+		    padding: 13px 12px;
+		    border: none;
+		    outline: none;
+		    background: transparent;
+		    font-size: 16px;
+		    font-weight: 900;
+		    color: #2d3436;
+		}
+		
+		.team-input input[type="color"] {
+		    width: 44px;
+		    height: 44px;
+		    border: 3px solid white;
+		    border-radius: 12px;
+		    cursor: pointer;
+		    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+		}
+		
+		.start-btn {
+		    background: linear-gradient(180deg, #27ae60, #1f9d55);
+		    color: white;
+		    border: none;
+		    padding: 16px;
+		    width: 100%;
+		    border-radius: 14px;
+		    font-size: 18px;
+		    font-weight: 1000;
+		    margin-top: 18px;
+		    cursor: pointer;
+		    box-shadow: 0 12px 24px rgba(39,174,96,0.28);
+		    letter-spacing: 0.5px;
+		}
+		
+		.start-btn:active {
+		    transform: scale(0.97);
+		}
 
         /* --- 3. HEADER (SCORES & LIFELINES) --- */
         #header {
@@ -1852,7 +1924,10 @@
 
     <div id="setup-screen">
         <div class="setup-box">
-            <h2 style="margin-top:0;">Ρύθμιση Αγώνα</h2>
+            <h2 style="margin-top:0; font-size:26px; font-weight:1000;">⚽ Ρύθμιση Αγώνα</h2>
+			<p style="margin-top:-8px; margin-bottom:22px; color:#636e72; font-weight:800; font-size:13px;">
+			    Δώσε ονόματα και χρώματα στις ομάδες
+			</p>
             <div class="team-input"><input type="color" id="t1-color" value="#e74c3c"><input type="text" id="t1-name" placeholder="Όνομα Ομάδας Α" value="Ομάδα Α"></div>
             <div class="team-input"><input type="color" id="t2-color" value="#0984e3"><input type="text" id="t2-name" placeholder="Όνομα Ομάδας Β" value="Ομάδα Β"></div>
             <button class="start-btn" onclick="start1v1()">ΠΑΜΕ!</button>

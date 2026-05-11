@@ -1760,13 +1760,6 @@
 
     <div id="question-screen">
         <div class="question-card">
-            <!-- ⏳ ΜΠΑΡΑ ΧΡΟΝΟΜΕΤΡΟΥ -->
-            <div id="timer-container" style="width: 100%; height: 8px; background: #dfe6e9; border-radius: 20px 20px 0 0; overflow: hidden; flex-shrink: 0;">
-                <div id="timer-bar" style="height: 100%; width: 100%; background: #00b894; transition: width 1s linear, background-color 0.5s;"></div>
-            </div>
-            <div id="timer-text" style="text-align: center; font-weight: 900; font-size: 18px; color: #2d3436; margin-top: 10px; flex-shrink: 0;">⏳ 30s</div>
-            <!-- ΤΕΛΟΣ ΧΡΟΝΟΜΕΤΡΟΥ -->
-
             <div id="q-category-tag"><span id="tag-text"></span></div>
             
             <div class="q-scroll-area">
@@ -1945,6 +1938,12 @@
 			"Nations XI": { icon: "🗺️", color: "#2c3e50" },
             "Higher or Lower": { icon: "⚖️", color: "#e17055" }
         };
+
+		const STORAGE_KEYS = {
+		    pool: 'quizball_pool_stable_v1',
+		    recent: 'quizball_recently_used_stable_v1',
+		    highScore: 'quizball_practice_high_score'
+		};
 		
 		const SUDDEN_DEATH_QUESTIONS = [
             { q: "Ποιος παίκτης πέτυχε 91 γκολ σε ένα ημερολογιακό έτος το 2012;", a: "Lionel Messi" },
@@ -3287,7 +3286,7 @@
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_dinamo_minsk, a: "Dinamo Minsk", fake: "Dinamo Tbilisi", hint: "Ομάδα από τη Λευκορωσία (το D στο σήμα στα κυριλλικά είναι το χαρακτηριστικό των ομάδων Ντιναμό)." },
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_lech_poznan, a: "Lech Poznań", fake: "Gornik", hint: "Πολωνική ομάδα. Οι οπαδοί της (και της Μάντσεστερ Σίτι) έχουν κάνει διάσημο έναν πανηγυρισμό όπου πιάνονται αγκαλιά με την πλάτη στο γήπεδο." },
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_molde, a: "Molde", fake: "Rosenborg", hint: "Νορβηγική ομάδα, από την οποία ξεκίνησε την καριέρα του ως θαύμα ο Έρλινγκ Χάαλαντ." },
-            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "logos/q_rosenborg.webp", a: "Rosenborg BK", fake: "Bodo/Glimt", hint: "Η ιστορικότερη Νορβηγική ομάδα με άπειρες παρουσίες στους ομίλους του Champions League τη δεκαετία του '90." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_rosenborg, a: "Rosenborg BK", fake: "Bodo/Glimt", hint: "Η ιστορικότερη Νορβηγική ομάδα με άπειρες παρουσίες στους ομίλους του Champions League τη δεκαετία του '90." },
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_noah, a: "Noah", fake: "Astana", hint: "Ομάδα από την Αρμενία, η οποία πρόσφατα απέκλεισε την ΑΕΚ στα προκριματικά του Conference League!" },
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_lask_linz, a: "LASK Linz", fake: "Salzburg", hint: "Αυστριακή ομάδα, παραδοσιακή δύναμη πίσω από την απόλυτη κυριαρχία της Σάλτσμπουργκ." },
             { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: L.q_ga_eagles, a: "GA Eagles", fake: "Willem II", hint: "Ολλανδική ομάδα. Το πλήρες όνομά της είναι 'Go Ahead Eagles' και εξού ο αετός στο σήμα της." },
@@ -3634,7 +3633,7 @@
         let globalPool = [];
         let activeDb = [];
 
-		let recentlyUsedQuestions = JSON.parse(localStorage.getItem('quizball_recently_used_v1') || '[]');
+		let recentlyUsedQuestions = JSON.parse(localStorage.getItem(STORAGE_KEYS.recent) || '[]');
 
 		function getQuestionMemoryKey(q) {
 		    return `${q.cat}|${q.p}|${q.type}|${q.q || ""}|${q.a || q.title || ""}`;
@@ -3646,11 +3645,11 @@
 		    recentlyUsedQuestions.push(key);
 		
 		    // Κρατάει μνήμη για τις τελευταίες 80 ερωτήσεις
-		    if (recentlyUsedQuestions.length > 80) {
-		        recentlyUsedQuestions = recentlyUsedQuestions.slice(-80);
-		    }
+		    if (recentlyUsedQuestions.length > 220) {
+		        recentlyUsedQuestions = recentlyUsedQuestions.slice(-220);
+            }
 		
-		    localStorage.setItem('quizball_recently_used_v1', JSON.stringify(recentlyUsedQuestions));
+		    localStorage.setItem(STORAGE_KEYS.recent, JSON.stringify(recentlyUsedQuestions));
 		}
 		
 		function wasRecentlyUsed(q) {
@@ -3858,103 +3857,10 @@
 
         const sfxGoal = new Audio('https://www.myinstants.com/media/sounds/goal_3.mp3');
         const sfxBoo = new Audio('https://www.myinstants.com/media/sounds/boo-3.mp3');
-		const sfxTick = new Audio('https://www.myinstants.com/media/sounds/tick.mp3'); 
         const sfxBuzzer = new Audio('https://www.myinstants.com/media/sounds/wrong-answer-sound-effect.mp3');
-
-        let timerInterval;
-        let timeLeft;
-        let totalTime;
-
-        function startTimer(seconds) {
-            clearInterval(timerInterval);
-            totalTime = seconds;
-            timeLeft = seconds;
-            
-            const timerBar = document.getElementById('timer-bar');
-            const timerText = document.getElementById('timer-text');
-            
-            timerBar.style.width = '100%';
-            timerBar.style.background = '#00b894'; 
-            timerText.innerText = `⏳ ${timeLeft}s`;
-            timerText.style.color = '#2d3436';
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                let pct = (timeLeft / totalTime) * 100;
-                timerBar.style.width = pct + '%';
-                timerText.innerText = `⏳ ${timeLeft}s`;
-
-                if (timeLeft <= 10) {
-                    timerBar.style.background = '#d63031';
-                    timerText.style.color = '#d63031';
-                } else if (timeLeft <= totalTime / 2) {
-                    timerBar.style.background = '#f1c40f'; 
-                }
-
-                if (timeLeft <= 5 && timeLeft > 0) {
-                    let playPromise = sfxTick.cloneNode().play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => { });
-                    }
-                }
-
-                // ΟΤΑΝ Ο ΧΡΟΝΟΣ ΜΗΔΕΝΙΣΕΙ:
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    
-                    let playPromiseBuzzer = sfxBuzzer.play();
-                    if (playPromiseBuzzer !== undefined) {
-                        playPromiseBuzzer.catch(error => {});
-                    }
-
-                    timerText.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ! ⏰";
-                    
-                    // 1. Αν είναι Πολλαπλής Επιλογής (MCQ) - Κλειδώνει και πάει στην επόμενη
-                    if (currentQ.type === "mcq") {
-					    document.querySelectorAll('#mc-grid .mc-option').forEach(b => b.disabled = true);
-					
-					    const correct = currentQ.correctIdx;
-					    document.getElementById(`opt-${correct}`).classList.add('correct-ans');
-					
-					    document.getElementById('q-answer-box').innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ! Η σωστή απάντηση ήταν: " + currentQ.a;
-					    document.getElementById('q-answer-box').style.display = 'block';
-					
-					    document.getElementById('admin-controls').style.display = 'flex';
-					    document.getElementById('t5-admin-controls').style.display = 'none';
-					    document.getElementById('score-admin-controls').style.display = 'none';
-					    document.getElementById('btn-show').style.display = 'none';
-					    document.getElementById('btn-correct').style.display = 'none';
-					    document.getElementById('btn-wrong').style.display = 'none';
-					
-					    const btnNext = document.getElementById('btn-next');
-					    btnNext.style.display = 'block';
-					    btnNext.style.background = '#d63031';
-					    btnNext.innerText = "ΧΡΟΝΟΣ ΤΕΛΟΣ - ΛΑΘΟΣ ➔";
-					    btnNext.onclick = () => resolveTurn(false);
-					
-					    // Προαιρετικό auto-return. Αν δεν το θες, σβήσε αυτές τις 3 γραμμές.
-					    setTimeout(() => {
-					        resolveTurn(false);
-					    }, 2500);
-					}
-                    // 2. Για Ποιος Λείπει, Player ID, κλπ: Αποκαλύπτει απάντηση, αλλά ΣΩΣΤΟ/ΛΑΘΟΣ αποφασίζει ο Διαιτητής!
-                    else {
-                        if (isFiftyFifty) {
-                            document.querySelectorAll('#fifty-box .mc-option').forEach(b => b.disabled = true);
-                        }
-                        revealAnswer(); 
-                    }
-                }
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
 
         
 		function checkHLAnswer(clickedText) {
-            stopTimer();
             let btn1 = document.getElementById("hl-btn-1");
             let btn2 = document.getElementById("hl-btn-2");
             
@@ -4147,21 +4053,22 @@
         }
 
         function initGlobalPool() {
-            // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.17
-            let saved = localStorage.getItem('quizball_pool_FINAL_BUILDv.20');
-            if (saved) {
-                globalPool = JSON.parse(saved);
-                if(globalPool.length < 25) { 
-                    globalPool = JSON.parse(JSON.stringify(ALL_QUESTIONS));
-                    shuffle(globalPool);
-                }
-            } else {
-                globalPool = JSON.parse(JSON.stringify(ALL_QUESTIONS));
-                shuffle(globalPool);
-            }
-        }
-        initGlobalPool();
-		preloadNationFlags();
+		    let saved = localStorage.getItem(STORAGE_KEYS.pool);
+		
+		    if (saved) {
+		        try {
+		            globalPool = JSON.parse(saved);
+		        } catch (e) {
+		            globalPool = [];
+		        }
+		    }
+		
+		    if (!Array.isArray(globalPool) || globalPool.length < 25) {
+		        globalPool = JSON.parse(JSON.stringify(ALL_QUESTIONS));
+		        shuffle(globalPool);
+		        localStorage.setItem(STORAGE_KEYS.pool, JSON.stringify(globalPool));
+		    }
+		}
 
         function openSetup() {
             document.getElementById('home-screen').style.display = 'none';
@@ -4364,7 +4271,7 @@
 			    q.isHot = q.cat === hotCategory;
 			});
             // Η ΜΝΗΜΗ ΑΛΛΑΞΕ ΣΕ v.19 ΓΙΑ ΑΣΦΑΛΕΙΑ
-            localStorage.setItem('quizball_pool_FINAL_BUILDv.20', JSON.stringify(globalPool));
+            localStorage.setItem(STORAGE_KEYS.pool, JSON.stringify(globalPool));
         }
 
         function renderBoard() {
@@ -4598,15 +4505,6 @@
                 });
             }
        
-            if (currentQ.type === "top5") {
-                document.getElementById('timer-container').style.display = 'none';
-                document.getElementById('timer-text').style.display = 'none';
-                stopTimer();
-            } else {
-                document.getElementById('timer-container').style.display = 'block';
-                document.getElementById('timer-text').style.display = 'block';
-                startTimer(60); 
-            }
         }
 
         
@@ -4629,7 +4527,6 @@
 		    spinner.style.display = 'block';
 		    resultTxt.style.display = 'none';
 		
-		    stopTimer();
 		
 		    setTimeout(() => {
 		        spinner.style.display = 'none';
@@ -4847,7 +4744,6 @@
 		}
 
         function checkMcq(btn, idx) {
-		    stopTimer();
 		
 		    const correct = currentQ.correctIdx;
 		    const isCorrect = idx === correct;
@@ -4918,7 +4814,6 @@
 		}
 
         function resolveTurn(status) {
-			stopTimer();
 			
 		    if (status !== 'skip') {
 		        let pts = getQuestionPoints();
@@ -5051,7 +4946,6 @@
 		    if (ok) location.reload();
 		}
         function showEndScreen() { 
-		    stopTimer();
 		
 		    document.getElementById('header').style.display = 'none';
 		    document.getElementById('board-screen').style.display = 'none'; 
@@ -5151,12 +5045,12 @@
 		    } 
 		    
 		    else {
-			    let bestPracticeScore = Number(localStorage.getItem('quizball_practice_high_score') || 0);
+			    let bestPracticeScore = Number(localStorage.getItem(STORAGE_KEYS.highScore) || 0);
 			    let isNewHighScore = false;
 			
 			    if (team1.score > bestPracticeScore) {
 			        bestPracticeScore = team1.score;
-			        localStorage.setItem('quizball_practice_high_score', bestPracticeScore);
+			        localStorage.setItem(STORAGE_KEYS.highScore, bestPracticeScore);
 			        isNewHighScore = true;
 			    }
 			

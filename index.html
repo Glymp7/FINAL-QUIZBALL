@@ -3639,6 +3639,56 @@ html, body {
 .sm-team { word-break: normal !important; overflow-wrap: normal !important; hyphens: none; padding: 16px 8px 18px !important; font-size: clamp(15px, 4.2vw, 24px) !important; }
 #score-match-container .sm-scorers-text { border: 0 !important; margin: 0 !important; padding: 0 !important; }
 
+/* =====================================================================
+   QUIZBALL UI v11 — πόντοι στο σκορ & ανακοίνωση σειράς
+   ===================================================================== */
+.score-fly {
+    position: fixed; left: 0; top: 0; z-index: 10060; pointer-events: none;
+    font-family: var(--font-display); font-weight: 900; font-size: 54px; line-height: 1;
+    color: var(--gold);
+    text-shadow: 0 4px 0 #8a6a00, 0 10px 24px rgba(0,0,0,.55);
+    white-space: nowrap;
+}
+.score-fly.is-bad { color: #ff5a4f; text-shadow: 0 3px 0 #7a1410, 0 8px 18px rgba(0,0,0,.5); font-size: 40px; }
+.score-box.score-bump { animation: scoreBump .6s cubic-bezier(.2,1.6,.4,1); }
+.score-box.score-bump .points { animation: scoreGlow .9s ease-out; }
+@keyframes scoreBump { 0% { transform: scale(1); } 35% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes scoreGlow { 0% { color: var(--gold); text-shadow: 0 0 22px rgba(245,197,24,.9); } 100% { color: #fff; text-shadow: none; } }
+.score-box.score-wrong { animation: scoreShake .5s ease; }
+.score-box.score-wrong::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: rgba(214, 48, 49, .45); animation: wrongFlash .7s ease-out forwards;
+}
+@keyframes scoreShake { 20% { transform: translateX(-7px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(4px); } }
+@keyframes wrongFlash { from { opacity: 1; } to { opacity: 0; } }
+
+.turn-banner {
+    position: fixed; left: 50%; z-index: 10040; pointer-events: none;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px 10px 12px;
+    border-radius: 999px;
+    background: var(--ink);
+    border: 3px solid var(--tc, var(--gold));
+    box-shadow: 0 14px 30px rgba(0,0,0,.45);
+    color: #fff; white-space: nowrap; max-width: calc(100vw - 32px); box-sizing: border-box;
+    transform: translate(-50%, -20px) scale(.9); opacity: 0;
+}
+.turn-banner .tb-label {
+    background: var(--tc, var(--gold)); color: #fff;
+    font-family: var(--font-display); font-weight: 900; font-size: 13px; letter-spacing: .5px;
+    padding: 4px 10px; border-radius: 999px;
+    text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.turn-banner .tb-name { font-family: var(--font-display); font-weight: 900; font-size: 20px; overflow: hidden; text-overflow: ellipsis; }
+.turn-banner.show { animation: turnBanner 1.9s cubic-bezier(.2,1.2,.4,1) forwards; }
+@keyframes turnBanner {
+    0% { opacity: 0; transform: translate(-50%, -20px) scale(.9); }
+    15% { opacity: 1; transform: translate(-50%, 0) scale(1.04); }
+    25%, 80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -12px) scale(.96); }
+}
+@media (prefers-reduced-motion: reduce) { .score-fly { display: none; } }
+
     </style>
 </head>
 <body>
@@ -6446,6 +6496,7 @@ html, body {
 		
 		        renderBoard();
 		        updateTurnUI();
+		        showTurnBanner(currentTurn, 150);
 		    }, 3200);
 		}
 		// 4. ΟΛΟΚΛΗΡΩΣΗ ΚΑΙ ΕΝΑΡΞΗ ΑΓΩΝΑ
@@ -6921,8 +6972,7 @@ html, body {
 					}
 				
 				    // Ενημέρωση UI
-				    document.getElementById('score-t1').innerText = team1.score;
-				    document.getElementById('score-t2').innerText = team2.score;
+				    const jokerAnimMs = animateScores(0);
 				    
 				    currentTurn = (currentTurn === 1) ? 2 : 1;
 				    currentQ.played = true;
@@ -6932,6 +6982,7 @@ html, body {
 				    document.getElementById('board-screen').style.display = 'flex'; 
 				    renderBoard(); 
 				    updateTurnUI(); 
+				    showTurnBanner(currentTurn, jokerAnimMs);
 				    
 				}, 4000);
 		    }, 2000);
@@ -7232,8 +7283,8 @@ html, body {
 		    isDouble = false;
 		    currentQ.played = true;
 		
-		    document.getElementById('score-t1').innerText = team1.score;
-		    document.getElementById('score-t2').innerText = team2.score;
+		    const answeredWrongBy = (status === false) ? (currentTurn === 1 ? 2 : 1) : 0;
+		    const scoreAnimMs = animateScores(answeredWrongBy);
 		    document.getElementById('question-screen').style.display = 'none';
 		
 		    if (activeDb.every(q => q.played)) {
@@ -7243,8 +7294,90 @@ html, body {
 		        document.getElementById('board-screen').style.display = 'flex';
 		        renderBoard();
 		        updateTurnUI();
+		        showTurnBanner(currentTurn, scoreAnimMs);
 		    }
 		}
+
+        // ---------- Πόντοι που «πετάνε» στο σκορ & ανακοίνωση σειράς ----------
+        function rollNumber(el, from, to, ms) {
+            const t0 = performance.now();
+            const step = now => {
+                const k = Math.min(1, (now - t0) / ms);
+                el.textContent = Math.round(from + (to - from) * k);
+                if (k < 1) requestAnimationFrame(step); else el.textContent = to;
+            };
+            requestAnimationFrame(step);
+        }
+
+        function scoreChip(text, cls, fromRect, toRect, ms) {
+            const chip = document.createElement('div');
+            chip.className = 'score-fly ' + (cls || '');
+            chip.textContent = text;
+            document.body.appendChild(chip);
+            const w = chip.offsetWidth, h = chip.offsetHeight;
+            const x0 = fromRect.left + fromRect.width / 2 - w / 2, y0 = fromRect.top + fromRect.height / 2 - h / 2;
+            const x1 = toRect.left + toRect.width / 2 - w / 2, y1 = toRect.top + toRect.height / 2 - h / 2;
+            const anim = chip.animate([
+                { transform: `translate(${x0}px, ${y0}px) scale(.6)`, opacity: 0 },
+                { transform: `translate(${x0}px, ${y0 - 30}px) scale(1.25)`, opacity: 1, offset: .25 },
+                { transform: `translate(${x1}px, ${y1}px) scale(.55)`, opacity: .9 }
+            ], { duration: ms, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+            anim.onfinish = () => chip.remove();
+        }
+
+        // Επιστρέφει πόσα ms διαρκεί το animation, ώστε η ανακοίνωση σειράς να έρθει μετά
+        function animateScores(wrongTeam) {
+            const header = document.getElementById('header');
+            const visible = gameMode === '1v1' && header && header.style.display !== 'none';
+            let longest = 0;
+            [1, 2].forEach(t => {
+                const el = document.getElementById(`score-t${t}`);
+                const box = document.getElementById(`box-t${t}`);
+                const target = (t === 1 ? team1 : team2).score;
+                const shown = parseInt(el.textContent, 10) || 0;
+                if (!visible) { el.textContent = target; return; }
+                const center = { left: innerWidth / 2 - 1, top: innerHeight / 2 - 1, width: 2, height: 2 };
+                if (target > shown) {
+                    scoreChip(`+${target - shown}`, '', center, el.getBoundingClientRect(), 700);
+                    setTimeout(() => {
+                        rollNumber(el, shown, target, 380);
+                        box.classList.remove('score-bump'); void box.offsetWidth; box.classList.add('score-bump');
+                    }, 650);
+                    longest = Math.max(longest, 1100);
+                } else if (target < shown) {
+                    box.classList.remove('score-wrong'); void box.offsetWidth; box.classList.add('score-wrong');
+                    scoreChip(`−${shown - target}`, 'is-bad', el.getBoundingClientRect(), el.getBoundingClientRect(), 800);
+                    rollNumber(el, shown, target, 380);
+                    longest = Math.max(longest, 800);
+                } else if (wrongTeam === t) {
+                    box.classList.remove('score-wrong'); void box.offsetWidth; box.classList.add('score-wrong');
+                    scoreChip('✕', 'is-bad', el.getBoundingClientRect(), el.getBoundingClientRect(), 800);
+                    longest = Math.max(longest, 700);
+                }
+            });
+            return longest;
+        }
+
+        function showTurnBanner(team, delay) {
+            if (gameMode !== '1v1') return;
+            let b = document.getElementById('turn-banner');
+            if (!b) { b = document.createElement('div'); b.id = 'turn-banner'; b.className = 'turn-banner'; document.body.appendChild(b); }
+            clearTimeout(b._t);
+            b._t = setTimeout(() => {
+                const name = team === 1 ? team1.name : team2.name;
+                b.innerHTML = '';
+                const lbl = document.createElement('span'); lbl.className = 'tb-label'; lbl.textContent = 'Σειρά';
+                const nm = document.createElement('span'); nm.className = 'tb-name'; nm.textContent = name;
+                b.append(lbl, nm);
+                const hex = (document.getElementById(`t${team}-color`) || {}).value || '#f5c518';
+                const rgb = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255);
+                const lum = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+                b.style.setProperty('--tc', lum < 0.12 ? '#6b7785' : hex); // πολύ σκούρο χρώμα -> γκρι για να φαίνεται
+                const hb = document.getElementById('header').getBoundingClientRect();
+                b.style.top = (hb.bottom + 12) + 'px';
+                b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+            }, delay || 0);
+        }
 
         function updateTurnUI() {
 		    if (gameMode === 'training') return;

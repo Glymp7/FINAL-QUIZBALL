@@ -3238,6 +3238,130 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 #home-screen .play-now-btn { animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) 1.7s both, ctaGlow 2.8s ease-in-out 2.8s infinite; }
 #home-screen .training-btn { animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) 1.85s both; }
 
+
+/* =====================================================================
+   QUIZBALL UI v6 — επιλογή ομάδων, νόμισμα με χρώματα, ρεαλιστική απόκρουση
+   ===================================================================== */
+
+/* ---------- ΕΠΙΛΟΓΗ ΟΜΑΔΩΝ ---------- */
+#setup-screen .setup-box {
+    background: rgba(18, 24, 32, .92) !important;
+    color: var(--chalk) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 22px !important;
+    padding: 24px 18px 18px !important;
+    max-width: 460px !important;
+    box-shadow: 0 30px 70px rgba(0,0,0,.6) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.setup-title { margin: 0; font-family: var(--font-display); font-size: clamp(26px, 6.5vw, 32px); font-weight: 900; }
+.setup-sub { margin: 4px 0 18px; color: #9fb0bf; font-size: 15px; }
+.team-card {
+    display: flex; align-items: center; gap: 14px;
+    background: #1c2530;
+    border-radius: 16px;
+    padding: 12px;
+    border-left: 6px solid var(--tc);
+    text-align: left;
+    transition: border-color .2s;
+}
+.shirt-pick {
+    position: relative; flex: 0 0 78px; height: 78px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px; background: rgba(255,255,255,.05);
+    cursor: pointer;
+}
+.shirt-pick svg { width: 64px; height: 64px; color: var(--tc); filter: drop-shadow(0 4px 6px rgba(0,0,0,.4)); transition: color .2s; }
+.shirt-pick svg .shirt-body { fill: currentColor; stroke: rgba(0,0,0,.45); stroke-width: 2; stroke-linejoin: round; }
+.shirt-pick svg .shirt-collar { fill: none; stroke: rgba(255,255,255,.7); stroke-width: 3; stroke-linecap: round; }
+.shirt-pick input[type="color"] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; border: 0; padding: 0;
+}
+.shirt-edit {
+    position: absolute; right: -4px; bottom: -4px; width: 24px; height: 24px; border-radius: 50%;
+    background: #fff; color: var(--ink); font-size: 13px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4); pointer-events: none;
+}
+.team-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.team-fields label { font-size: 12px; color: #9fb0bf; font-weight: 700; }
+#setup-screen .team-fields input[type="text"] {
+    width: 100%; box-sizing: border-box; margin: 0;
+    background: #121820; color: #fff;
+    border: 2px solid rgba(255,255,255,.12); border-radius: 12px;
+    padding: 12px 12px; font-family: var(--font-display); font-weight: 800; font-size: 18px !important;
+    outline: none;
+}
+#setup-screen .team-fields input[type="text"]:focus { border-color: var(--tc); }
+.swatches { display: flex; gap: 7px; flex-wrap: wrap; }
+.swatch {
+    width: 26px; height: 26px; border-radius: 50%; padding: 0; cursor: pointer;
+    border: 2px solid rgba(255,255,255,.25); background: var(--c);
+}
+.swatch.is-on { border-color: #fff; box-shadow: 0 0 0 3px var(--c); }
+.setup-vs {
+    width: 44px; height: 44px; margin: -6px auto; position: relative; z-index: 2;
+    border-radius: 50%; background: var(--gold); color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 900; font-size: 16px;
+    box-shadow: 0 0 0 5px rgba(18,24,32,.92);
+}
+.setup-warn { min-height: 18px; margin: 10px 0 0; color: #ffb4a8; font-size: 13px; font-weight: 700; }
+#setup-screen .start-btn { margin-top: 8px !important; font-family: var(--font-display); font-size: 20px !important; border-radius: 14px !important; }
+.setup-cancel { margin-top: 10px; background: none; border: 0; color: #9fb0bf; font-weight: 700; font-size: 15px; cursor: pointer; padding: 8px; }
+
+/* ---------- ΝΟΜΙΣΜΑ: μόνο χρώματα ---------- */
+.coin-face span { font-size: 0 !important; position: relative; }
+.coin-face span::after {
+    content: ""; position: absolute; inset: 22%;
+    border-radius: 50%; border: 3px solid rgba(255,255,255,.55);
+}
+
+/* ---------- ΠΕΝΑΛΤΙ: ρεαλιστική απόκρουση ---------- */
+/* ο τερματοφύλακας πατάει στη γραμμή του τέρματος (σε συντεταγμένες της σκηνής) */
+.pen-stage > .pen-keeper { left: 50%; bottom: 28%; z-index: 2; transform-origin: 50% 70%; }
+.pen-stage .pen-ball { z-index: 3; }
+.pen-goal .pen-keeper { display: none; }
+
+/* ΓΚΟΛ: η μπάλα στο δίχτυ, ο τερματοφύλακας πέφτει στη λάθος γωνία */
+.pen-stage.is-goal.dir-left .pen-ball { --bx: 22%; --by: 62%; }
+.pen-stage.is-goal.dir-right .pen-ball { --bx: 78%; --by: 62%; }
+.pen-stage.is-goal.dir-mid .pen-ball { --bx: 50%; --by: 70%; }
+.pen-stage.is-goal .pen-ball { animation: shotGoal2 .55s cubic-bezier(.25,.7,.35,1) forwards !important; }
+@keyframes shotGoal2 { to { left: var(--bx); bottom: var(--by); transform: translate(-50%, 0) scale(.5) rotate(540deg); } }
+.pen-stage.is-goal.dir-left > .pen-keeper, .pen-stage.is-goal.dir-mid > .pen-keeper { animation: kDiveRightMiss .5s ease-out .08s forwards !important; }
+.pen-stage.is-goal.dir-right > .pen-keeper { animation: kDiveLeftMiss .5s ease-out .08s forwards !important; }
+@keyframes kDiveRightMiss { to { left: 70%; bottom: 31%; transform: rotate(80deg); } }
+@keyframes kDiveLeftMiss { to { left: 30%; bottom: 31%; transform: rotate(-80deg); } }
+
+/* ΑΠΟΚΡΟΥΣΗ: ο τερματοφύλακας φτάνει τη μπάλα μπροστά από τη γραμμή και τη διώχνει έξω */
+.pen-stage.is-save.dir-left > .pen-keeper { animation: kSaveLeft .38s ease-out forwards !important; }
+.pen-stage.is-save.dir-right > .pen-keeper { animation: kSaveRight .38s ease-out forwards !important; }
+.pen-stage.is-save.dir-mid > .pen-keeper { animation: kSaveMid .38s ease-out forwards !important; }
+@keyframes kSaveLeft { to { left: 30%; bottom: 36%; transform: rotate(-75deg); } }
+@keyframes kSaveRight { to { left: 70%; bottom: 36%; transform: rotate(75deg); } }
+@keyframes kSaveMid { 60% { bottom: 40%; } to { bottom: 33%; } }
+.pen-stage.is-save.dir-left .pen-ball { animation: parryLeft 1.1s cubic-bezier(.3,.6,.4,1) forwards !important; }
+.pen-stage.is-save.dir-right .pen-ball { animation: parryRight 1.1s cubic-bezier(.3,.6,.4,1) forwards !important; }
+.pen-stage.is-save.dir-mid .pen-ball { animation: catchMid .6s cubic-bezier(.3,.6,.4,1) forwards !important; }
+@keyframes parryLeft {
+    0% { left: 50%; bottom: 2%; transform: translate(-50%, 0) scale(1) rotate(0); }
+    34% { left: 25%; bottom: 44%; transform: translate(-50%, 0) scale(.62) rotate(300deg); }   /* τα χέρια του */
+    100% { left: 3%; bottom: 14%; transform: translate(-50%, 0) scale(.7) rotate(620deg); }     /* έξω από το δοκάρι */
+}
+@keyframes parryRight {
+    0% { left: 50%; bottom: 2%; transform: translate(-50%, 0) scale(1) rotate(0); }
+    34% { left: 75%; bottom: 44%; transform: translate(-50%, 0) scale(.62) rotate(-300deg); }
+    100% { left: 97%; bottom: 14%; transform: translate(-50%, 0) scale(.7) rotate(-620deg); }
+}
+@keyframes catchMid {   /* μπλοκάρισμα στο στήθος */
+    0% { left: 50%; bottom: 2%; transform: translate(-50%, 0) scale(1); }
+    60% { left: 50%; bottom: 36%; transform: translate(-50%, 0) scale(.6) rotate(240deg); }
+    100% { left: 50%; bottom: 35%; transform: translate(-50%, 0) scale(.58) rotate(250deg); }
+}
+.pen-stage.is-save .pen-net { animation: none !important; }
+
     </style>
 </head>
 <body>
@@ -3281,14 +3405,34 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 
     <div id="setup-screen">
         <div class="setup-box">
-            <h2 style="margin-top:0; font-size:26px; font-weight:1000;">⚽ Ρύθμιση Αγώνα</h2>
-			<p style="margin-top:-8px; margin-bottom:22px; color:#636e72; font-weight:800; font-size:13px;">
-			    Δώσε ονόματα και χρώματα στις ομάδες
-			</p>
-            <div class="team-input"><input type="color" id="t1-color" value="#e74c3c"><input type="text" id="t1-name" placeholder="Όνομα Ομάδας Α" value="Ομάδα Α"></div>
-            <div class="team-input"><input type="color" id="t2-color" value="#0984e3"><input type="text" id="t2-name" placeholder="Όνομα Ομάδας Β" value="Ομάδα Β"></div>
+            <h2 class="setup-title">Ρύθμιση αγώνα</h2>
+            <p class="setup-sub">Διάλεξε όνομα και χρώμα φανέλας για κάθε ομάδα</p>
+            <div class="team-card" id="team-card-1" style="--tc: #e74c3c">
+                <label class="shirt-pick" title="Διάλεξε οποιοδήποτε χρώμα">
+                    <svg viewBox="0 0 100 100" aria-hidden="true"><path class="shirt-body" d="M34 10 L22 14 L6 30 L18 44 L26 38 L26 92 L74 92 L74 38 L82 44 L94 30 L78 14 L66 10 Q50 22 34 10 Z"/><path class="shirt-collar" d="M38 12 Q50 22 62 12"/></svg>
+                    <span class="shirt-edit">✎</span>
+                    <input type="color" id="t1-color" value="#e74c3c" oninput="pickTeamColor(1, this.value)">
+                </label>
+                <div class="team-fields">
+                    <input type="text" id="t1-name" maxlength="16" autocomplete="off" placeholder="Όνομα ομάδας Α" value="Ομάδα Α">
+                    <div class="swatches" id="swatches-1"><button type="button" class="swatch" style="--c:#e74c3c" data-c="#e74c3c" aria-label="Χρώμα #e74c3c" onclick="pickTeamColor(1, '#e74c3c')"></button><button type="button" class="swatch" style="--c:#f5c518" data-c="#f5c518" aria-label="Χρώμα #f5c518" onclick="pickTeamColor(1, '#f5c518')"></button><button type="button" class="swatch" style="--c:#18b26b" data-c="#18b26b" aria-label="Χρώμα #18b26b" onclick="pickTeamColor(1, '#18b26b')"></button><button type="button" class="swatch" style="--c:#0984e3" data-c="#0984e3" aria-label="Χρώμα #0984e3" onclick="pickTeamColor(1, '#0984e3')"></button><button type="button" class="swatch" style="--c:#6c3fc4" data-c="#6c3fc4" aria-label="Χρώμα #6c3fc4" onclick="pickTeamColor(1, '#6c3fc4')"></button><button type="button" class="swatch" style="--c:#e67e22" data-c="#e67e22" aria-label="Χρώμα #e67e22" onclick="pickTeamColor(1, '#e67e22')"></button><button type="button" class="swatch" style="--c:#111111" data-c="#111111" aria-label="Χρώμα #111111" onclick="pickTeamColor(1, '#111111')"></button><button type="button" class="swatch" style="--c:#f4f7f2" data-c="#f4f7f2" aria-label="Χρώμα #f4f7f2" onclick="pickTeamColor(1, '#f4f7f2')"></button></div>
+                </div>
+            </div>
+            <div class="setup-vs">VS</div>
+            <div class="team-card" id="team-card-2" style="--tc: #0984e3">
+                <label class="shirt-pick" title="Διάλεξε οποιοδήποτε χρώμα">
+                    <svg viewBox="0 0 100 100" aria-hidden="true"><path class="shirt-body" d="M34 10 L22 14 L6 30 L18 44 L26 38 L26 92 L74 92 L74 38 L82 44 L94 30 L78 14 L66 10 Q50 22 34 10 Z"/><path class="shirt-collar" d="M38 12 Q50 22 62 12"/></svg>
+                    <span class="shirt-edit">✎</span>
+                    <input type="color" id="t2-color" value="#0984e3" oninput="pickTeamColor(2, this.value)">
+                </label>
+                <div class="team-fields">
+                    <input type="text" id="t2-name" maxlength="16" autocomplete="off" placeholder="Όνομα ομάδας Β" value="Ομάδα Β">
+                    <div class="swatches" id="swatches-2"><button type="button" class="swatch" style="--c:#e74c3c" data-c="#e74c3c" aria-label="Χρώμα #e74c3c" onclick="pickTeamColor(2, '#e74c3c')"></button><button type="button" class="swatch" style="--c:#f5c518" data-c="#f5c518" aria-label="Χρώμα #f5c518" onclick="pickTeamColor(2, '#f5c518')"></button><button type="button" class="swatch" style="--c:#18b26b" data-c="#18b26b" aria-label="Χρώμα #18b26b" onclick="pickTeamColor(2, '#18b26b')"></button><button type="button" class="swatch" style="--c:#0984e3" data-c="#0984e3" aria-label="Χρώμα #0984e3" onclick="pickTeamColor(2, '#0984e3')"></button><button type="button" class="swatch" style="--c:#6c3fc4" data-c="#6c3fc4" aria-label="Χρώμα #6c3fc4" onclick="pickTeamColor(2, '#6c3fc4')"></button><button type="button" class="swatch" style="--c:#e67e22" data-c="#e67e22" aria-label="Χρώμα #e67e22" onclick="pickTeamColor(2, '#e67e22')"></button><button type="button" class="swatch" style="--c:#111111" data-c="#111111" aria-label="Χρώμα #111111" onclick="pickTeamColor(2, '#111111')"></button><button type="button" class="swatch" style="--c:#f4f7f2" data-c="#f4f7f2" aria-label="Χρώμα #f4f7f2" onclick="pickTeamColor(2, '#f4f7f2')"></button></div>
+                </div>
+            </div>
+            <p class="setup-warn" id="setup-warn"></p>
             <button class="start-btn" onclick="start1v1()">ΠΑΜΕ!</button>
-            <button style="margin-top:15px; background:none; border:none; color:#636e72; font-weight:bold; cursor:pointer;" onclick="goHome()">Ακύρωση</button>
+            <button class="setup-cancel" onclick="goHome()">Ακύρωση</button>
         </div>
     </div>
 
@@ -3566,7 +3710,8 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 
 	    <div class="pen-stage" id="pen-stage">
 	        <div class="pen-line"></div>
-	        <div class="pen-goal"><div class="pen-net"></div><div class="pen-keeper"></div></div>
+	        <div class="pen-goal"><div class="pen-net"></div></div>
+	        <div class="pen-keeper"></div>
 	        <div class="pen-spot"></div>
 	        <div class="pen-ball">⚽</div>
 	        <div class="pen-banner" id="pen-banner"></div>
@@ -5795,7 +5940,22 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 		initGlobalPool();
 		preloadNationFlags();
 		
+		function pickTeamColor(team, color) {
+		    const input = document.getElementById(`t${team}-color`);
+		    input.value = color;
+		    document.getElementById(`team-card-${team}`).style.setProperty('--tc', color);
+		    document.documentElement.style.setProperty(`--t${team}`, color);
+		    document.querySelectorAll(`#swatches-${team} .swatch`).forEach(b =>
+		        b.classList.toggle('is-on', b.dataset.c.toLowerCase() === color.toLowerCase()));
+		    const c1 = document.getElementById('t1-color').value.toLowerCase();
+		    const c2 = document.getElementById('t2-color').value.toLowerCase();
+		    document.getElementById('setup-warn').textContent =
+		        c1 === c2 ? 'Οι δύο ομάδες έχουν το ίδιο χρώμα — καλύτερα να διαλέξετε διαφορετικά.' : '';
+		}
+
 		function openSetup() {
+		    pickTeamColor(1, document.getElementById('t1-color').value);
+		    pickTeamColor(2, document.getElementById('t2-color').value);
 		    document.getElementById('home-screen').style.display = 'none';
 		    document.getElementById('setup-screen').style.display = 'flex';
 		}

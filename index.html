@@ -3536,6 +3536,109 @@ html, body {
     100% { box-shadow: 0 0 0 120px transparent; opacity: 0; }
 }
 
+
+/* =====================================================================
+   QUIZBALL UI v10 — «Βρες το Σκορ» σαν τηλεοπτικό scoreboard
+   ===================================================================== */
+#score-match-container {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 10px !important;
+}
+#score-match-container .match-title {
+    font-family: var(--font-display);
+    font-size: clamp(13px, 3.4vw, 16px) !important;
+    font-weight: 800 !important;
+    letter-spacing: .3px;
+    color: #fff !important;
+    background: var(--ink);
+    border-radius: 999px;
+    padding: 7px 16px;
+    margin: 0 !important;
+    text-align: center;
+}
+#sm-teams { display: none !important; }
+.sm-board {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--ink);
+    box-shadow: 0 14px 30px rgba(0,0,0,.25), inset 0 -4px 0 var(--gold);
+}
+.sm-team {
+    display: flex; align-items: center; justify-content: center;
+    padding: 18px 10px 20px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(17px, 4.6vw, 26px);
+    line-height: 1.1;
+    color: #fff;
+    text-align: center;
+    min-width: 0;
+    word-break: break-word;
+}
+.sm-home { background: linear-gradient(90deg, rgba(255,255,255,.08), transparent); border-right: 1px solid rgba(255,255,255,.08); }
+.sm-away { background: linear-gradient(270deg, rgba(255,255,255,.08), transparent); border-left: 1px solid rgba(255,255,255,.08); }
+.sm-center {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 10px 12px 12px;
+    background: #0a0f15;
+    min-width: 108px;
+}
+.sm-digits { display: flex; align-items: center; gap: 6px; perspective: 400px; }
+.sm-digit {
+    width: clamp(38px, 10vw, 54px); height: clamp(52px, 13vw, 70px);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(#1f2833 0 50%, #19212b 50% 100%);
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(32px, 8.5vw, 48px);
+    font-variant-numeric: tabular-nums;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    position: relative;
+}
+.sm-digit::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0,0,0,.6); }
+.sm-digit.is-hidden { color: rgba(245,197,24,.55); animation: smPulse 1.4s ease-in-out infinite; }
+@keyframes smPulse { 50% { color: rgba(245,197,24,.25); } }
+.sm-digit.flip { animation: smFlip .55s cubic-bezier(.3,1.4,.5,1) both; }
+@keyframes smFlip { 0% { transform: rotateX(90deg); } 100% { transform: rotateX(0); } }
+.sm-dash { color: #8796a5; font-weight: 900; font-size: 26px; }
+.sm-note { margin-top: 6px; color: #c9d3dc; font-size: 12px; font-weight: 700; min-height: 0; text-align: center; }
+.sm-note:empty { display: none; }
+
+#score-match-container .sm-answer-box {
+    width: 100%; box-sizing: border-box;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    padding: 12px 14px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    animation: riseIn .45s cubic-bezier(.2,1.2,.4,1) both;
+}
+#score-match-container .sm-score-text.is-parsed { display: none; }
+.sm-scorer-line {
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    padding: 6px 0;
+    font-size: clamp(15px, 3.8vw, 18px);
+    color: var(--ink);
+    text-align: left;
+}
+.sm-scorer-line + .sm-scorer-line { border-top: 1px solid #eef1f3; }
+.sm-scorer-team { font-family: var(--font-display); font-weight: 900; }
+.sm-scorer-team::before { content: "⚽"; margin-right: 6px; }
+.sm-scorer-names { font-weight: 600; color: #3a4552; }
+
+.sm-board { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) !important; }
+.sm-team { word-break: normal !important; overflow-wrap: normal !important; hyphens: none; padding: 16px 8px 18px !important; font-size: clamp(15px, 4.2vw, 24px) !important; }
+#score-match-container .sm-scorers-text { border: 0 !important; margin: 0 !important; padding: 0 !important; }
+
     </style>
 </head>
 <body>
@@ -3786,6 +3889,14 @@ html, body {
                 <div id="score-match-container">
                     <div id="sm-title" class="match-title"></div>
                     <div id="sm-teams" class="match-teams"></div>
+                    <div class="sm-board">
+                        <div class="sm-team sm-home" id="sm-home"></div>
+                        <div class="sm-center">
+                            <div class="sm-digits"><span class="sm-digit is-hidden" id="sm-h">?</span><span class="sm-dash">-</span><span class="sm-digit is-hidden" id="sm-a">?</span></div>
+                            <div class="sm-note" id="sm-note"></div>
+                        </div>
+                        <div class="sm-team sm-away" id="sm-away"></div>
+                    </div>
                     <div id="sm-answer-box" class="sm-answer-box">
                         <div id="sm-score" class="sm-score-text"></div>
                         <div id="sm-scorers" class="sm-scorers-text"></div>
@@ -4575,6 +4686,11 @@ html, body {
             q_adelaide: "logos/q_adelaide.png",
             q_pereira: "logos/q_pereira.png"
 	   };
+
+        // Οι εικόνες της Wikimedia σε μέγεθος 330px: ίδια ποιότητα στην οθόνη, πολύ πιο ελαφριές για offline
+        Object.keys(L).forEach(k => {
+            L[k] = String(L[k]).replace(/(\/thumb\/.+\/)(\d{3,4})px-/, (m, pre, w) => Number(w) > 330 ? pre + '330px-' : m);
+        });
 
         const ALL_QUESTIONS = [
             // ==========================================
@@ -5737,7 +5853,58 @@ html, body {
             { cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Παρί - Άρσεναλ 1-1 / Πεν. 4-3 (Τελικός UCL 2026). Από Παρί:", lineup: { gk: ["Σαφόνοφ"], def: ["Νούνο Μέντες", "Πάτσο", "Μαρκίνιος", "Χακίμι"], mid: ["Φαμπιάν Ρουίθ", "Βιτίνια", "Ζοάο Νέβες"], fwd: ["Κβαρατσχέλια", "?", "Ντουέ"] }, a: "Ντεμπελέ", fake: "Γκονσάλο Ράμος", hint: "Ο Γάλλος σταρ ισοφάρισε με πέναλτι στο δεύτερο ημίχρονο." },
             { cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Παρί - Άρσεναλ 1-1 / Πεν. 4-3 (Τελικός UCL 2026). Από Άρσεναλ:", lineup: { gk: ["Ράγια"], def: ["Ινκαπιέ", "Γκάμπριελ", "Σαλιμπά", "Μοσκέρα"], mid: ["Λιούις-Σκέλι", "Ράις", "Έντεγκααρντ"], fwd: ["Τροσάρ", "?", "Σάκα"] }, a: "Χάβερτς", fake: "Γκιόκερες", hint: "Γερμανός φορ, άνοιξε το σκορ στο 6ο λεπτό." },
             { cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ισπανία - Αργεντινή 1-0 παρ. (Τελικός Μουντιάλ 2026). Από Ισπανία:", lineup: { gk: ["Σιμόν"], def: ["Κουκουρέγια", "Λαπόρτ", "Κουμπαρσί", "Πόρο"], mid: ["Φαμπιάν Ρουίθ", "?", "Μπαένα"], fwd: ["Όλμο", "Οϊαρθάμπαλ", "Γιαμάλ"] }, a: "Ρόδρι", fake: "Θουμπιμέντι", hint: "Αρχηγός και αμυντικός χαφ· αναδείχθηκε MVP του τουρνουά." },
-            { cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ισπανία - Αργεντινή 1-0 παρ. (Τελικός Μουντιάλ 2026). Από Αργεντινή:", lineup: { gk: ["Μαρτίνες"], def: ["Ταλιαφίκο", "Λισάντρο Μαρτίνες", "Ρομέρο", "Μοντιέλ"], mid: ["Νίκο Γκονσάλες", "Μακ Άλιστερ", "?", "Ντε Πολ"], fwd: ["Άλβαρες", "Μέσι"] }, a: "Έντσο Φερνάντες", fake: "Παρέδες", hint: "Κεντρικός μέσος που αποβλήθηκε στις καθυστερήσεις του τελικού." }
+            { cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ισπανία - Αργεντινή 1-0 παρ. (Τελικός Μουντιάλ 2026). Από Αργεντινή:", lineup: { gk: ["Μαρτίνες"], def: ["Ταλιαφίκο", "Λισάντρο Μαρτίνες", "Ρομέρο", "Μοντιέλ"], mid: ["Νίκο Γκονσάλες", "Μακ Άλιστερ", "?", "Ντε Πολ"], fwd: ["Άλβαρες", "Μέσι"] }, a: "Έντσο Φερνάντες", fake: "Παρέδες", hint: "Κεντρικός μέσος που αποβλήθηκε στις καθυστερήσεις του τελικού." },
+            // 🆕 ΝΕΑ ΣΗΜΑΤΑ (Wikimedia, αποθηκεύονται αυτόματα για offline)
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/e/e8/Volos_F.C._logo.svg/330px-Volos_F.C._logo.svg.png", a: "Βόλος", fake: "Λαμία", hint: "Νέα ελληνική ομάδα (ιδρύθηκε το 2017) από την πόλη της Αργοναυτικής εκστρατείας." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/4/4c/Asteras_Tripolis_FC_logo.svg/330px-Asteras_Tripolis_FC_logo.svg.png", a: "Αστέρας Τρίπολης", fake: "Παναρκαδικός", hint: "Ομάδα της Πελοποννήσου που παίζει στο γήπεδο «Θεόδωρος Κολοκοτρώνης»." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/6/6e/Atromitos_F.C._logo.svg/330px-Atromitos_F.C._logo.svg.png", a: "Ατρόμητος", fake: "Αιγάλεω", hint: "Ομάδα των δυτικών προαστίων της Αθήνας με γαλανόλευκα χρώματα." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f8/OFI_Crete_F.C._logo.svg/330px-OFI_Crete_F.C._logo.svg.png", a: "ΟΦΗ", fake: "Εργοτέλης", hint: "Κρητική ομάδα, κυπελλούχος Ελλάδας το 2026." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/APO_Levadiakos_%28logo%29.svg/330px-APO_Levadiakos_%28logo%29.svg.png", a: "Λεβαδειακός", fake: "Λαμία", hint: "Πράσινη ομάδα της Βοιωτίας." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/6/6a/Panetolikos_F.C._logo.svg/330px-Panetolikos_F.C._logo.svg.png", a: "Παναιτωλικός", fake: "Παναχαϊκή", hint: "Κιτρινομπλέ ομάδα του Αγρινίου, με ιστορία από το 1926." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/2/25/Athlitiki_Enosi_Larissa_F.C._logo.svg/330px-Athlitiki_Enosi_Larissa_F.C._logo.svg.png", a: "ΑΕΛ", fake: "Βόλος", hint: "Η πρώτη επαρχιακή ομάδα που πήρε πρωτάθλημα Ελλάδας (1988)." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://upload.wikimedia.org/wikipedia/en/4/45/PAS_Giannina_emblem_2017.png", a: "ΠΑΣ Γιάννινα", fake: "Ηπειρωτική ΑΕ", hint: "Οι «Άγιαξ της Ηπείρου», με κυανόλευκα χρώματα." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/3/3d/AC_Omonia_logo.svg/330px-AC_Omonia_logo.svg.png", a: "Ομόνοια", fake: "ΑΠΟΕΛ", hint: "Πράσινη ομάδα της Λευκωσίας με το τριφύλλι στο σήμα." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/APOEL_%28logo_with_stars%29.svg/330px-APOEL_%28logo_with_stars%29.svg.png", a: "ΑΠΟΕΛ", fake: "Ανόρθωση", hint: "Γαλαζοκίτρινη ομάδα της Λευκωσίας που έφτασε στα προημιτελικά του Champions League το 2012." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/a/a2/SL_Benfica_logo.svg/330px-SL_Benfica_logo.svg.png", a: "Benfica", fake: "Sporting CP", hint: "Ομάδα της Λισαβόνας με τον αετό στο σήμα της." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f1/FC_Porto.svg/330px-FC_Porto.svg.png", a: "FC Porto", fake: "Boavista", hint: "Πρωταθλήτρια Ευρώπης το 1987 και το 2004." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/9/97/Sporting_Clube_de_Portugal_logo_%282026%29.svg/330px-Sporting_Clube_de_Portugal_logo_%282026%29.svg.png", a: "Sporting CP", fake: "Benfica", hint: "Πράσινο λιοντάρι στο σήμα· από εδώ ξεκίνησε ο Κριστιάνο Ρονάλντο." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/7/71/Celtic_FC_crest.svg/330px-Celtic_FC_crest.svg.png", a: "Celtic", fake: "Hibernian", hint: "Η πρώτη βρετανική ομάδα που κατέκτησε Κύπελλο Πρωταθλητριών (1967)." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/4/43/Rangers_FC.svg/330px-Rangers_FC.svg.png", a: "Rangers", fake: "Aberdeen", hint: "Μπλε ομάδα της Γλασκώβης, ο αιώνιος αντίπαλος στο «Old Firm»." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/3/39/Fenerbah%C3%A7e.svg/330px-Fenerbah%C3%A7e.svg.png", a: "Fenerbahçe", fake: "Galatasaray", hint: "Ομάδα της ασιατικής πλευράς της Κωνσταντινούπολης, με κίτρινα-μπλε χρώματα." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/BesiktasJK-Logo.svg/330px-BesiktasJK-Logo.svg.png", a: "Beşiktaş", fake: "Fenerbahçe", hint: "Οι «Μαύροι Αετοί» της Κωνσταντινούπολης." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Feyenoord_logo_since_2024.svg/330px-Feyenoord_logo_since_2024.svg.png", a: "Feyenoord", fake: "Sparta Rotterdam", hint: "Η πρώτη ολλανδική ομάδα που κέρδισε Κύπελλο Πρωταθλητριών (1970)." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/d/d0/Club_Brugge_KV_logo.svg/330px-Club_Brugge_KV_logo.svg.png", a: "Club Brugge", fake: "Cercle Brugge", hint: "Μπλε-μαύρη ομάδα από την ομώνυμη «Βενετία του Βορρά»." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/a/a1/FC_Shakhtar_Donetsk.svg/330px-FC_Shakhtar_Donetsk.svg.png", a: "Shakhtar Donetsk", fake: "Dynamo Kyiv", hint: "Πορτοκαλί ομάδα των ανθρακωρύχων, κάτοχος του Κυπέλλου UEFA 2009." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Futbolny_Klub_Dynamo_Kyiv_logo.svg/330px-Futbolny_Klub_Dynamo_Kyiv_logo.svg.png", a: "Dynamo Kyiv", fake: "Shakhtar Donetsk", hint: "Ομάδα του Λομπανόφσκι και του Σεβτσένκο." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/c/c2/Red_Star_Belgrade_crest.svg/330px-Red_Star_Belgrade_crest.svg.png", a: "Crvena Zvezda", fake: "Partizan", hint: "Πρωταθλήτρια Ευρώπης το 1991· παίζει στη «Μαρακανά» των Βαλκανίων." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/e/ed/FK_Partizan.svg/330px-FK_Partizan.svg.png", a: "Partizan", fake: "Crvena Zvezda", hint: "Ασπρόμαυρη ομάδα του Βελιγραδίου." },
+            { cat: "Logo Quiz", p: 2, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Logo_GNK_Dinamo_Zagreb_%282019%29.svg/330px-Logo_GNK_Dinamo_Zagreb_%282019%29.svg.png", a: "Dinamo Zagreb", fake: "Hajduk Split", hint: "Η πιο επιτυχημένη ομάδα της Κροατίας· από εδώ ξεκίνησε ο Μόντριτς." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/e/e2/A.E._Kifisia_F.C._logo.svg/330px-A.E._Kifisia_F.C._logo.svg.png", a: "Κηφισιά", fake: "Αθηναϊκή Καλλιθέα", hint: "Ομάδα από τα βόρεια προάστια της Αθήνας που ανέβηκε στη Super League τη δεκαετία του 2020." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://upload.wikimedia.org/wikipedia/en/c/c3/Athens_Kallithea_FC_crest_%282022%29.png", a: "Αθηναϊκή Καλλιθέα", fake: "Κηφισιά", hint: "Ομάδα των νότιων προαστίων, με παίκτη τον Βαλμπουενά." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/3/30/PAS_Lamia_1964_logo.svg/330px-PAS_Lamia_1964_logo.svg.png", a: "Λαμία", fake: "Λεβαδειακός", hint: "Ομάδα της Στερεάς Ελλάδας, από την πρωτεύουσα της Φθιώτιδας." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://upload.wikimedia.org/wikipedia/en/b/b0/Panseraikos_new_emblem.png", a: "Πανσερραϊκός", fake: "Ηρακλής", hint: "Ομάδα της ανατολικής Μακεδονίας, κοντά στα σύνορα με τη Βουλγαρία." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/2/2a/Brentford_FC_crest.svg/330px-Brentford_FC_crest.svg.png", a: "Brentford", fake: "Fulham", hint: "Οι «Μέλισσες» του δυτικού Λονδίνου." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/e/e5/AFC_Bournemouth_%282013%29.svg/330px-AFC_Bournemouth_%282013%29.svg.png", a: "Bournemouth", fake: "Southampton", hint: "Ερυθρόμαυρη ομάδα από τη νότια ακτή της Αγγλίας." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f7/Girona_FC_Logo.svg/330px-Girona_FC_Logo.svg.png", a: "Girona", fake: "Espanyol", hint: "Καταλανική ομάδα που έπαιξε στο Champions League το 2024-25." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/3/38/CA_Osasuna_2024_crest.svg/330px-CA_Osasuna_2024_crest.svg.png", a: "Osasuna", fake: "Real Zaragoza", hint: "Ομάδα της Παμπλόνα, της πόλης με τους ταύρους." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/d/d8/Rayo_Vallecano_logo.svg/330px-Rayo_Vallecano_logo.svg.png", a: "Rayo Vallecano", fake: "Getafe", hint: "Ομάδα εργατικής συνοικίας της Μαδρίτης με τη χαρακτηριστική διαγώνια ρίγα." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/1._FC_Union_Berlin_Logo.svg/330px-1._FC_Union_Berlin_Logo.svg.png", a: "Union Berlin", fake: "Hertha BSC", hint: "Ομάδα από το πρώην Ανατολικό Βερολίνο, που οι οπαδοί της έχτισαν οι ίδιοι το γήπεδο." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/1._FSV_Mainz_05_logo.svg/330px-1._FSV_Mainz_05_logo.svg.png", a: "Mainz 05", fake: "Kaiserslautern", hint: "Ομάδα όπου ξεκίνησαν την προπονητική τους καριέρα ο Κλοπ και ο Τούχελ." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/6/6d/SC_Freiburg_logo.svg/330px-SC_Freiburg_logo.svg.png", a: "Freiburg", fake: "Stuttgart", hint: "Ομάδα του Μέλανα Δρυμού, φιναλίστ του Europa League 2026." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/c/cc/RC_Lens_logo.svg/330px-RC_Lens_logo.svg.png", a: "Lens", fake: "Lille", hint: "Κιτρινοκόκκινη ομάδα της πρώην ανθρακοφόρας περιοχής του γαλλικού βορρά." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/8/8d/FK_Bodo_Glimt_logo.svg/330px-FK_Bodo_Glimt_logo.svg.png", a: "Bodø/Glimt", fake: "Rosenborg", hint: "Νορβηγική ομάδα από πάνω από τον Αρκτικό Κύκλο, παίζει σε συνθετικό χλοοτάπητα." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/d/dd/FC_Midtjylland_logo.svg/330px-FC_Midtjylland_logo.svg.png", a: "Midtjylland", fake: "Brøndby", hint: "Δανέζικη ομάδα γνωστή για τη χρήση στατιστικών στις μεταγραφές." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/SK_Slavia_Praha_full_logo.svg/330px-SK_Slavia_Praha_full_logo.svg.png", a: "Slavia Praha", fake: "Sparta Praha", hint: "Ερυθρόλευκη ομάδα της Πράγας με ένα αστέρι στο σήμα." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/AC-Sparta-LOGO2021.svg/330px-AC-Sparta-LOGO2021.svg.png", a: "Sparta Praha", fake: "Slavia Praha", hint: "Η πιο επιτυχημένη ομάδα της Τσεχίας, με μπορντό χρώματα." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Ferencvarosi_TC.svg/330px-Ferencvarosi_TC.svg.png", a: "Ferencváros", fake: "Újpest", hint: "Πράσινη ομάδα της Βουδαπέστης με τον αετό στο σήμα." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/f/fe/Qaraba%C4%9F_FK_logo.svg/330px-Qaraba%C4%9F_FK_logo.svg.png", a: "Qarabağ", fake: "Neftçi Baku", hint: "Ομάδα του Αζερμπαϊτζάν που παίζει μακριά από την πόλη καταγωγής της." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/BSC_Young_Boys.svg/330px-BSC_Young_Boys.svg.png", a: "Young Boys", fake: "FC Basel", hint: "Κιτρινόμαυρη ομάδα της ελβετικής πρωτεύουσας." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/FC_Basel_crest.svg/330px-FC_Basel_crest.svg.png", a: "FC Basel", fake: "FC Zürich", hint: "Κοκκινομπλέ ομάδα από την πόλη στα σύνορα Ελβετίας, Γαλλίας και Γερμανίας." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/AZ_Alkmaar.svg/330px-AZ_Alkmaar.svg.png", a: "AZ Alkmaar", fake: "FC Twente", hint: "Ολλανδική ομάδα από την πόλη των τυριών." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/e/e3/FC_Twente.svg/330px-FC_Twente.svg.png", a: "FC Twente", fake: "Heracles Almelo", hint: "Ολλανδική ομάδα από το Ένσχεντε, πρωταθλήτρια το 2010." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/7/79/S.C._Braga_logo.svg/330px-S.C._Braga_logo.svg.png", a: "SC Braga", fake: "Vitória Guimarães", hint: "Πορτογαλική ομάδα που παίζει σε γήπεδο σκαμμένο μέσα σε λατομείο." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/5/53/KRC_Genk_logo.svg/330px-KRC_Genk_logo.svg.png", a: "KRC Genk", fake: "Standard Liège", hint: "Βελγική ομάδα όπου ξεκίνησαν ο Κουρτουά και ο Ντε Μπρόινε." },
+            { cat: "Logo Quiz", p: 3, type: "logo", q: "Σε ποια ομάδα ανήκει αυτό το σήμα;", img: "https://thumb.wikimedia.org/wikipedia/en/thumb/d/de/Trabzonspor_Amblem.svg/330px-Trabzonspor_Amblem.svg.png", a: "Trabzonspor", fake: "Göztepe", hint: "Μπορντό-μπλε ομάδα από την ακτή της Μαύρης Θάλασσας." }
 		];
 
         ALL_QUESTIONS.forEach(q => {
@@ -6641,6 +6808,11 @@ html, body {
                 document.getElementById('score-match-container').style.display = 'flex'; 
                 document.getElementById('sm-title').innerText = currentQ.title;
                 document.getElementById('sm-teams').innerText = currentQ.teams;
+                const smParts = String(currentQ.teams).split(' - ');
+                document.getElementById('sm-home').textContent = smParts[0] || '';
+                document.getElementById('sm-away').textContent = smParts.slice(1).join(' - ');
+                ['sm-h', 'sm-a'].forEach(id => { const d = document.getElementById(id); d.textContent = '?'; d.className = 'sm-digit is-hidden'; });
+                document.getElementById('sm-note').textContent = '';
                 
                 // --- ΕΛΕΓΧΟΣ ΓΙΑ ΤΟΝ ΠΙΝΑΚΑ ΚΛΕΨΙΜΑΤΟΣ ---
                 if (isSteal) {
@@ -7028,7 +7200,27 @@ html, body {
             if (currentQ.type === "score") {
                 document.getElementById('sm-answer-box').style.display = 'block';
                 document.getElementById('sm-score').innerText = currentQ.aScore;
-                document.getElementById('sm-scorers').innerText = currentQ.aScorers;
+                const smM = String(currentQ.aScore).match(/^\s*(\d+)\s*-\s*(\d+)\s*(.*)$/);
+                document.getElementById('sm-score').classList.toggle('is-parsed', !!smM);
+                if (smM) {
+                    [['sm-h', smM[1], 0], ['sm-a', smM[2], 180]].forEach(([id, v, delay]) => {
+                        const d = document.getElementById(id);
+                        setTimeout(() => { d.textContent = v; d.className = 'sm-digit'; void d.offsetWidth; d.classList.add('flip'); }, delay);
+                    });
+                    document.getElementById('sm-note').textContent = smM[3].replace(/^[()\s]+|[()\s]+$/g, '');
+                }
+                const smBox = document.getElementById('sm-scorers');
+                smBox.innerHTML = '';
+                String(currentQ.aScorers || '').split(/\n|\s\|\s/).filter(x => x.trim()).forEach(line => {
+                    const i = line.indexOf(':');
+                    const row = document.createElement('div');
+                    row.className = 'sm-scorer-line';
+                    const t = document.createElement('span'); t.className = 'sm-scorer-team';
+                    const n = document.createElement('span'); n.className = 'sm-scorer-names';
+                    if (i > -1) { t.textContent = line.slice(0, i).trim(); n.textContent = line.slice(i + 1).trim(); }
+                    else { n.textContent = line.trim(); }
+                    row.append(t, n); smBox.appendChild(row);
+                });
                 
                 // Κρύβουμε τα απλά κουμπιά και δείχνουμε τα ειδικά κουμπιά βαθμολογίας (1π, 2π, Κλέψιμο)
                 document.getElementById('admin-controls').style.display = 'none';
@@ -7311,7 +7503,23 @@ html, body {
     </script>
     <script>
         if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+                // Μετά τη φόρτωση, ζητάμε από τον service worker να κατεβάσει στο παρασκήνιο
+                // όλα τα σήματα/σημαίες που χρησιμοποιούν οι ερωτήσεις, ώστε να παίζουν και offline.
+                navigator.serviceWorker.ready.then(reg => {
+                    const urls = new Set();
+                    Object.values(L).forEach(u => { if (/^https:/.test(u)) urls.add(u); });
+                    ALL_QUESTIONS.forEach(q => {
+                        if (q.img && /^https:/.test(q.img)) urls.add(q.img);
+                        if (q.type === 'nations' && q.lineup) {
+                            Object.values(q.lineup).flat().forEach(c => urls.add(`https://flagcdn.com/w80/${String(c).toLowerCase()}.png`));
+                        }
+                    });
+                    urls.add('https://flagcdn.com/w80/un.png');
+                    if (reg.active) reg.active.postMessage({ type: 'warm', urls: [...urls] });
+                });
+            });
         }
     </script>
 

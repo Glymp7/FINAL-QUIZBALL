@@ -1,6 +1,6 @@
 // Quizball service worker: κρατάει το παιχνίδι διαθέσιμο και offline.
 // Άλλαξε τον αριθμό έκδοσης όταν ανεβάζεις νέες ερωτήσεις, για να φορτώσουν σίγουρα.
-const CACHE = 'quizball-2026-11-03b';
+const CACHE = 'quizball-2026-11-03c';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './logos/var.png'];
 
 self.addEventListener('install', e => {

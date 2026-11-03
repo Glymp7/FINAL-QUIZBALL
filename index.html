@@ -3362,6 +3362,112 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 }
 .pen-stage.is-save .pen-net { animation: none !important; }
 
+
+/* =====================================================================
+   QUIZBALL UI v7 — «χτίσε το board» & τερματοφύλακας με χέρια/πόδια
+   ===================================================================== */
+
+/* ---------- ΕΠΙΛΟΓΗ ΚΑΤΗΓΟΡΙΩΝ ---------- */
+#builder-screen .builder-box {
+    background: rgba(18, 24, 32, .92) !important;
+    color: var(--chalk) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 22px !important;
+    padding: 22px 16px 18px !important;
+    width: calc(100% - 32px) !important;
+    max-width: 520px !important;
+    box-sizing: border-box;
+    box-shadow: 0 30px 70px rgba(0,0,0,.6) !important;
+    -webkit-backdrop-filter: blur(10px);
+}
+#builder-team-title {
+    font-family: var(--font-display);
+    color: #fff !important;
+    font-size: clamp(22px, 6vw, 28px) !important;
+    font-weight: 900 !important;
+    margin: 0 0 4px !important;
+}
+.builder-box > p:first-of-type { color: #9fb0bf !important; font-size: 13px !important; margin: 6px 0 0 !important; }
+.builder-box > p:first-of-type strong { color: #9fb0bf; font-weight: 700; }
+.builder-box hr { border: 0 !important; border-top: 1px solid rgba(255,255,255,.1) !important; margin: 14px 0 !important; }
+.builder-box > p:nth-of-type(2) { color: #fff !important; font-family: var(--font-display); font-size: 18px !important; margin: 0 !important; }
+.fixed-cat-badge {
+    background: #1c2530 !important; color: #c9d3dc !important;
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: none !important; font-size: 12px !important; font-weight: 700 !important;
+    padding: 6px 10px !important; margin: 3px !important;
+}
+.builder-count { display: block; margin-top: 4px; color: var(--gold); font-weight: 800; font-size: 14px; }
+.builder-grid { gap: 10px !important; margin: 14px 0 18px !important; }
+#opt-btn-score { --cc: #6c5ce7; }
+#opt-btn-gossip { --cc: #ff7675; }
+#opt-btn-retro { --cc: #8e44ad; }
+#opt-btn-combo { --cc: #0984e3; }
+#opt-btn-nations { --cc: #3d7ab8; }
+#opt-btn-hl { --cc: #e17055; }
+.opt-cat-btn {
+    position: relative;
+    background: #1c2530 !important;
+    border: 2px solid rgba(255,255,255,.08) !important;
+    border-bottom: 4px solid var(--cc) !important;
+    color: #fff !important;
+    border-radius: 16px !important;
+    padding: 16px 8px 14px !important;
+    font-family: var(--font-display);
+    font-size: 16px !important; font-weight: 800 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    gap: 8px !important;
+}
+.opt-cat-btn .opt-cat-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--cc) 28%, transparent);
+    font-size: 24px !important;
+}
+.opt-cat-btn:hover { border-color: rgba(255,255,255,.2) !important; border-bottom-color: var(--cc) !important; }
+.opt-cat-btn:active { transform: scale(.97) !important; }
+.opt-cat-btn.selected {
+    background: var(--cc) !important;
+    border-color: #fff !important;
+    border-bottom-color: #fff !important;
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--cc) 45%, transparent) !important;
+}
+.opt-cat-btn.selected .opt-cat-icon { background: rgba(255,255,255,.22); }
+.opt-cat-btn.selected::after {
+    content: "✓"; position: absolute; top: 8px; right: 10px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; color: var(--ink); font-size: 14px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+}
+#btn-finalize-board { font-family: var(--font-display); border-radius: 14px !important; }
+#btn-finalize-board:disabled { background: #2b3642 !important; color: #8796a5 !important; box-shadow: none !important; opacity: 1 !important; }
+
+/* ---------- ΤΕΡΜΑΤΟΦΥΛΑΚΑΣ ---------- */
+.pen-stage > .pen-keeper {
+    width: 54px !important; height: 74px !important; margin-left: -27px !important;
+}
+.pen-keeper::before, .pen-keeper::after { display: none !important; }
+.pen-keeper svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.k-arm { transform-box: view-box; transition: transform .18s ease-out; }
+.k-arm-l { transform-origin: 19px 24px; }
+.k-arm-r { transform-origin: 41px 24px; }
+.k-leg { transform-box: view-box; transition: transform .18s ease-out; }
+.k-leg-l { transform-origin: 25px 56px; }
+.k-leg-r { transform-origin: 35px 56px; }
+/* στη βουτιά τα χέρια τεντώνουν πάνω από το κεφάλι και τα πόδια ανοίγουν */
+.pen-stage.is-save .k-arm-l, .pen-stage.is-goal .k-arm-l { transform: rotate(118deg); }
+.pen-stage.is-save .k-arm-r, .pen-stage.is-goal .k-arm-r { transform: rotate(-118deg); }
+.pen-stage.is-save .k-leg-l, .pen-stage.is-goal .k-leg-l { transform: rotate(16deg); }
+.pen-stage.is-save .k-leg-r, .pen-stage.is-goal .k-leg-r { transform: rotate(-16deg); }
+/* στο μπλοκάρισμα στη μέση τα χέρια μαζεύονται στο στήθος */
+.pen-stage.is-save.dir-mid .k-arm-l { transform: rotate(-55deg); }
+.pen-stage.is-save.dir-mid .k-arm-r { transform: rotate(55deg); }
+.pen-stage.is-save.dir-mid .k-leg-l, .pen-stage.is-save.dir-mid .k-leg-r { transform: none; }
+/* ανάσα σε αναμονή */
+.pen-stage:not(.is-save):not(.is-goal) > .pen-keeper svg { animation: keeperReady 1.4s ease-in-out infinite; }
+@keyframes keeperReady { 50% { transform: translateY(2px) scaleY(.97); } }
+
     </style>
 </head>
 <body>
@@ -3472,7 +3578,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
                 <span class="fixed-cat-badge">🪪 Player ID</span>
             </p>
             <hr style="border:0; border-top: 1px solid #dfe6e9; margin: 15px 0;">
-            <p style="font-weight: 900; margin-bottom: 5px; font-size: 16px;">Επίλεξε 2 έξτρα κατηγορίες:</p>
+            <p style="font-weight: 900; margin-bottom: 5px; font-size: 16px;">Διάλεξε 2 έξτρα κατηγορίες <span class="builder-count" id="builder-count">0 από 2</span></p>
             <div class="builder-grid">
                 <button class="opt-cat-btn" id="opt-btn-score" onclick="toggleOptionalCat('Βρες το Σκορ', this)">
                     <span class="opt-cat-icon">🔢</span>
@@ -3711,7 +3817,18 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 	    <div class="pen-stage" id="pen-stage">
 	        <div class="pen-line"></div>
 	        <div class="pen-goal"><div class="pen-net"></div></div>
-	        <div class="pen-keeper"></div>
+	        <div class="pen-keeper"><svg viewBox="0 0 60 82" aria-hidden="true">
+	            <g class="k-leg k-leg-l"><path d="M25 55 L21 72" stroke="#f1c9a5" stroke-width="6" stroke-linecap="round"/><path d="M21.5 68 L20.5 75" stroke="#121820" stroke-width="6.5" stroke-linecap="round"/><ellipse cx="18.5" cy="78" rx="5.5" ry="3" fill="#0b0f14"/></g>
+	            <g class="k-leg k-leg-r"><path d="M35 55 L39 72" stroke="#f1c9a5" stroke-width="6" stroke-linecap="round"/><path d="M38.5 68 L39.5 75" stroke="#121820" stroke-width="6.5" stroke-linecap="round"/><ellipse cx="41.5" cy="78" rx="5.5" ry="3" fill="#0b0f14"/></g>
+	            <rect x="20" y="47" width="20" height="10" rx="3" fill="#121820"/>
+	            <g class="k-arm k-arm-l"><path d="M19 24 L9 40" stroke="#e67e22" stroke-width="7" stroke-linecap="round"/><circle cx="8" cy="43" r="5" fill="#2ecc71" stroke="#0e6b3a" stroke-width="1.5"/></g>
+	            <g class="k-arm k-arm-r"><path d="M41 24 L51 40" stroke="#e67e22" stroke-width="7" stroke-linecap="round"/><circle cx="52" cy="43" r="5" fill="#2ecc71" stroke="#0e6b3a" stroke-width="1.5"/></g>
+	            <path d="M19 21 Q30 17 41 21 L42 49 L18 49 Z" fill="#f5c518" stroke="#b88a06" stroke-width="1.5" stroke-linejoin="round"/>
+	            <path d="M26 21 L30 26 L34 21" fill="none" stroke="#b88a06" stroke-width="1.5"/>
+	            <text x="30" y="42" text-anchor="middle" font-size="11" font-weight="900" fill="#121820" font-family="Fira Sans Condensed, Arial, sans-serif">1</text>
+	            <circle cx="30" cy="11" r="7.5" fill="#f1c9a5"/>
+	            <path d="M22.5 10 Q23 3 30 3 Q37 3 37.5 10 Q34 6.5 30 6.5 Q26 6.5 22.5 10 Z" fill="#3b2a1e"/>
+	        </svg></div>
 	        <div class="pen-spot"></div>
 	        <div class="pen-ball">⚽</div>
 	        <div class="pen-banner" id="pen-banner"></div>
@@ -6020,6 +6137,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
             selectedOptionals = [];
             document.querySelectorAll('.opt-cat-btn').forEach(b => b.classList.remove('selected'));
             document.getElementById('btn-finalize-board').disabled = true;
+            document.getElementById('builder-count').textContent = '0 από 2';
         }
 
         // 3. ΕΠΙΛΟΓΗ 2 ΚΑΤΗΓΟΡΙΩΝ ΑΠΟ ΤΟΝ BUILDER
@@ -6035,6 +6153,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
                 }
             }
             document.getElementById('btn-finalize-board').disabled = selectedOptionals.length !== 2;
+            document.getElementById('builder-count').textContent = `${selectedOptionals.length} από 2`;
         }
 
         function showMatchIntro() {

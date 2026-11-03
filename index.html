@@ -7414,8 +7414,11 @@ html, body {
 		    if (type === 'x2' && inQuestion) { qbNotice("Το x2 παίζεται στον πίνακα, πριν διαλέξετε ερώτηση"); return; }
 		    if (type === 'fifty' && !inQuestion) { qbNotice("Το 50:50 παίζεται μέσα στην ερώτηση"); return; }
 		    
-		    if (type === 'fifty' && (currentQ.type === 'top5' || currentQ.type === 'score')) { 
-		        qbNotice("Αυτή η βοήθεια δεν παίζεται σε αυτή την κατηγορία"); return; 
+		    if (type === 'fifty' && currentQ.type === 'top5') { 
+		        qbNotice("Στο Top 5 δεν παίζονται βοήθειες"); return; 
+		    }
+		    if (type === 'fifty' && currentQ.type === 'higher_lower') { 
+		        qbNotice("Εδώ υπάρχουν ήδη μόνο δύο επιλογές, το 50:50 δεν αλλάζει κάτι"); return; 
 		    }
 		
 		    llState[type] = false;
@@ -7457,6 +7460,15 @@ html, body {
 		        } else {
 		            // --- ΛΟΓΙΚΗ ΓΙΑ ΑΠΛΕΣ ΕΡΩΤΗΣΕΙΣ ΜΕ FAKE ΑΠΑΝΤΗΣΗ ---
 		            let correctDisplay = currentQ.a;
+		            if (currentQ.type === "score") {
+		                // «Βρες το Σκορ»: το σωστό σκορ απέναντι σε ένα κοντινό λάθος σκορ
+		                const m = String(currentQ.aScore).match(/(\d+)\s*-\s*(\d+)/);
+		                let h = m ? +m[1] : 1, a = m ? +m[2] : 0;
+		                correctDisplay = `${h} - ${a}`;
+		                const cands = [[h + 1, a], [h, a + 1], [h - 1, a], [h, a - 1]].filter(([x, y]) => x >= 0 && y >= 0);
+		                const [fh, fa] = cands[Math.floor(Math.random() * cands.length)];
+		                currentQ.fake = `${fh} - ${fa}`;
+		            }
 		            if (currentQ.type === "combo" && currentQ.a.includes(" / ")) {
 		                let correctArray = currentQ.a.split(" / ");
 		                correctDisplay = correctArray[Math.floor(Math.random() * correctArray.length)];
@@ -7928,19 +7940,19 @@ html, body {
             fifty: { icon: '50:50', cls: 'fifty', title: '50:50',
                 when: 'Μέσα στην ερώτηση',
                 text: 'Φεύγουν δύο λάθος απαντήσεις. Η σωστή απάντηση μετράει πλέον 1 πόντο.',
-                note: 'Δεν παίζεται στο Top 5 και στο «Βρες το Σκορ».' },
+                note: 'Στο «Βρες το Σκορ» διαλέγεις ανάμεσα σε δύο σκορ. Δεν παίζεται στο Top 5 και στο Higher or Lower, που έχει ήδη δύο επιλογές.' },
             x2: { icon: 'x2', cls: 'x2', title: 'Διπλοί πόντοι',
                 when: 'Στον πίνακα, πριν διαλέξεις ερώτηση',
                 text: 'Η επόμενη ερώτηση που θα διαλέξεις μετράει διπλά. Αν απαντήσεις λάθος, δεν χάνεις πόντους.',
-                note: 'Αν το συνδυάσεις με 50:50, οι πόντοι μένουν οι κανονικοί.' },
+                note: 'Αν το συνδυάσεις με 50:50, οι πόντοι μένουν οι κανονικοί. Στο Top 5 δεν μετράει και σου επιστρέφεται.' },
             var: { icon: '📺', cls: 'var', title: 'VAR',
                 when: 'Μέσα στην ερώτηση',
                 text: 'Ο διαιτητής «βλέπει το βίντεο» και σου δίνει ένα στοιχείο για την απάντηση.',
-                note: 'Οι πόντοι της ερώτησης δεν αλλάζουν.' },
+                note: 'Οι πόντοι της ερώτησης δεν αλλάζουν. Δεν παίζεται στο Top 5.' },
             steal: { icon: '', cls: 'steal', title: 'Κλέψιμο',
                 when: 'Στην ερώτηση του αντιπάλου, πριν απαντήσει',
                 text: 'Παίρνετε εσείς την ερώτηση: ο αντίπαλος δεν απαντάει. Σωστή απάντηση = όλοι οι πόντοι της ερώτησης, λάθος = −1. Μετά παίζει ο αντίπαλος, γιατί το κλέψιμο «τρώει» τη δική σας σειρά.',
-                note: 'Σε ερώτηση που κλάπηκε δεν παίζονται βοήθειες. Δεν γίνεται αν ο αντίπαλος έχει βάλει x2 ή έχει ήδη παίξει βοήθεια, ούτε σε Top 5 και «Βρες το Σκορ».' },
+                note: 'Σε ερώτηση που κλάπηκε δεν παίζονται βοήθειες. Δεν γίνεται αν ο αντίπαλος έχει βάλει x2 ή έχει ήδη παίξει βοήθεια, ούτε στο Top 5.' },
             joker: { icon: '🃏', cls: 'joker', title: 'Joker',
                 when: 'Μέσα στην ερώτηση, αντί να απαντήσεις',
                 text: 'Ρίσκο: η ερώτηση κλείνει και γυρίζει ο «κουλοχέρης». Μία στις δύο παίρνεις +2 πόντους, αλλιώς χάνεις 1.',
@@ -8007,7 +8019,7 @@ html, body {
             { icon: '🧑‍⚖️', title: 'Ποιος κρίνει',
               text: 'Η ομάδα απαντάει φωναχτά. Ένας κάνει τον διαιτητή: πατάει «Αποκάλυψη απάντησης» και μετά «Σωστό» ή «Λάθος». Το λάθος δεν αφαιρεί πόντους, απλώς περνάει η σειρά.' },
             { icon: '🛟', title: 'Οι βοήθειες',
-              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Κλέψιμο. Με το Κλέψιμο απαντάτε εσείς την ερώτηση του αντιπάλου (σωστό: όλοι οι πόντοι, λάθος: −1), αλλά χάνετε την επόμενη σειρά σας. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
+              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Κλέψιμο. Παίζονται σε όλες τις κατηγορίες εκτός από το Top 5. Με το Κλέψιμο απαντάτε εσείς την ερώτηση του αντιπάλου (σωστό: όλοι οι πόντοι, λάθος: −1), αλλά χάνετε την επόμενη σειρά σας. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
             { icon: '🥅', title: 'Ισοπαλία; Πέναλτι!',
               text: 'Αν τελειώσει ισόπαλο, πάτε στα πέναλτι με δύσκολες ερωτήσεις: κάθε σωστή είναι γκολ. Πέντε η κάθε ομάδα και, αν χρειαστεί, ξανά ένα-ένα μέχρι να κριθεί.' },
             { icon: '🎯', title: 'Προπόνηση',
@@ -8242,7 +8254,7 @@ html, body {
         const tCol = n => { const el = document.getElementById(`t${n}-color`); return (el && el.value) || (n === 1 ? '#1f6fd1' : '#e04848'); };
         const stealPts = () => getQuestionPoints();
         const inQuestion = () => document.getElementById('question-screen').style.display === 'flex';
-        const NO_STEAL = ['top5', 'score'];
+        const NO_STEAL = ['top5'];
         const STEAL_TOAST = '#11806a';
 
         window.STEAL_ICON = `<svg class="steal-ico" viewBox="0 0 32 32" aria-hidden="true">
@@ -8382,6 +8394,15 @@ html, body {
             stealBy = 0; stealPhase = ''; varThisQ = false;
             _openQuestion(id, conf);
             ensureButtons(); hideStealBtn(); showChip();
+            if (currentQ && currentQ.type === 'top5' && isDouble && gameMode === '1v1') {
+                // Το x2 δεν μετράει στο Top 5: επιστρέφεται στην ομάδα
+                isDouble = false;
+                const st = currentTurn === 1 ? t1LL : t2LL; st.x2 = true;
+                const xb = document.getElementById(`ll-${currentTurn}-x2`); if (xb) xb.classList.remove('used-ll');
+                const bd = document.getElementById(`x2-badge-${currentTurn}`); if (bd) bd.style.display = 'none';
+                updatePointsTag();
+                setTimeout(() => llToast('Στο Top 5 δεν παίζονται βοήθειες: το x2 σας επιστράφηκε', '#d9741c'), 300);
+            }
             const bc = document.getElementById('btn-correct'); if (bc) bc.textContent = 'ΣΩΣΤΟ';
             const bw = document.getElementById('btn-wrong'); if (bw) bw.textContent = 'ΛΑΘΟΣ (0)';
         };
@@ -8389,7 +8410,10 @@ html, body {
         const _revealAnswer = window.revealAnswer;
         window.revealAnswer = function () {
             _revealAnswer();
-            if (stealBy) {
+            if (stealBy && currentQ.type === 'score') {
+                const lbl = document.getElementById('lbl-active-team');
+                if (lbl) lbl.innerText = `ΚΛΕΨΙΜΟ · ΑΠΑΝΤΑΝΕ ΟΙ «${tName(stealBy)}» (ΛΑΘΟΣ: −1)`;
+            } else if (stealBy) {
                 document.getElementById('btn-correct').textContent = `ΣΩΣΤΟ · ${tName(stealBy)} +${stealPts()}`;
                 document.getElementById('btn-wrong').textContent = `ΛΑΘΟΣ · ${tName(stealBy)} −1`;
             }
@@ -8465,6 +8489,7 @@ html, body {
         const _triggerVAR = window.triggerVAR;
         window.triggerVAR = function (team) {
             if (blockedNow()) return;
+            if (currentQ && currentQ.type === 'top5' && inQuestion()) { qbNotice('Στο Top 5 δεν παίζονται βοήθειες'); return; }
             upgradeVar();
             const before = team === 1 ? t1LL.var : t2LL.var;
             _triggerVAR(team);

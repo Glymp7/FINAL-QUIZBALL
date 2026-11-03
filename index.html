@@ -7938,9 +7938,9 @@ html, body {
                 text: 'Ο διαιτητής «βλέπει το βίντεο» και σου δίνει ένα στοιχείο για την απάντηση.',
                 note: 'Οι πόντοι της ερώτησης δεν αλλάζουν.' },
             steal: { icon: '', cls: 'steal', title: 'Κλέψιμο',
-                when: 'Στην ερώτηση του αντιπάλου, πριν την απάντηση',
-                text: 'Αν ο αντίπαλος απαντήσει λάθος, απαντάτε εσείς την ίδια ερώτηση και παίρνετε τους μισούς πόντους (στρογγυλεμένους προς τα πάνω).',
-                note: 'Στις πολλαπλής διαλέγετε από τις απαντήσεις που έμειναν. Δεν παίζεται σε ερώτηση με x2, ούτε σε Top 5, «Βρες το Σκορ» και Higher or Lower.' },
+                when: 'Στην ερώτηση του αντιπάλου, πριν απαντήσει',
+                text: 'Παίρνετε εσείς την ερώτηση: ο αντίπαλος δεν απαντάει. Σωστή απάντηση = όλοι οι πόντοι της ερώτησης, λάθος = −1. Την επόμενη ερώτηση την παίζει ο αντίπαλος.',
+                note: 'Σε ερώτηση που κλάπηκε δεν παίζονται βοήθειες. Δεν γίνεται αν ο αντίπαλος έχει βάλει x2 ή έχει ήδη παίξει βοήθεια, ούτε σε Top 5 και «Βρες το Σκορ».' },
             joker: { icon: '🃏', cls: 'joker', title: 'Joker',
                 when: 'Μέσα στην ερώτηση, αντί να απαντήσεις',
                 text: 'Ρίσκο: η ερώτηση κλείνει και γυρίζει ο «κουλοχέρης». Μία στις δύο παίρνεις +2 πόντους, αλλιώς χάνεις 1.',
@@ -8007,7 +8007,7 @@ html, body {
             { icon: '🧑‍⚖️', title: 'Ποιος κρίνει',
               text: 'Η ομάδα απαντάει φωναχτά. Ένας κάνει τον διαιτητή: πατάει «Αποκάλυψη απάντησης» και μετά «Σωστό» ή «Λάθος». Το λάθος δεν αφαιρεί πόντους, απλώς περνάει η σειρά.' },
             { icon: '🛟', title: 'Οι βοήθειες',
-              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Κλέψιμο, που το παίζεις στην ερώτηση του αντιπάλου. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
+              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Κλέψιμο, με το οποίο παίρνετε εσείς την ερώτηση του αντιπάλου. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
             { icon: '🥅', title: 'Ισοπαλία; Πέναλτι!',
               text: 'Αν τελειώσει ισόπαλο, πάτε στα πέναλτι με δύσκολες ερωτήσεις: κάθε σωστή είναι γκολ. Πέντε η κάθε ομάδα και, αν χρειαστεί, ξανά ένα-ένα μέχρι να κριθεί.' },
             { icon: '🎯', title: 'Προπόνηση',
@@ -8228,17 +8228,22 @@ html, body {
 
     <script>
     /* =====================================================================
-       QUIZBALL v15 — βοήθεια «Κλέψιμο» (αντί για Joker) & νέο VAR
+       QUIZBALL v15/v17 — βοήθεια «Κλέψιμο» & νέο VAR
+       Κλέψιμο: η ομάδα που ΔΕΝ έχει σειρά «παίρνει» την ερώτηση του αντιπάλου.
+       Ο αντίπαλος δεν απαντάει, κανείς δεν παίζει βοήθειες σε αυτή την ερώτηση.
+       Σωστό: όλοι οι πόντοι της ερώτησης. Λάθος: −1. Μετά παίζει ο αντίπαλος.
        ===================================================================== */
     (function () {
-        let stealBy = 0;        // ποια ομάδα έχει «οπλίσει» κλέψιμο στην τρέχουσα ερώτηση
-        let stealPhase = '';    // '' | 'armed' | 'steal' (στις πολλαπλής, όταν απαντάει ο κλέφτης)
+        let stealBy = 0;        // ποια ομάδα έκλεψε την τρέχουσα ερώτηση
+        let stealPhase = '';
+        let varThisQ = false;   // παίχτηκε VAR σε αυτή την ερώτηση;
         const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
         const tName = n => (n === 1 ? team1 : team2).name || ('Ομάδα ' + n);
         const tCol = n => { const el = document.getElementById(`t${n}-color`); return (el && el.value) || (n === 1 ? '#1f6fd1' : '#e04848'); };
-        const stealPts = () => Math.max(1, Math.ceil(getQuestionPoints() / 2));
+        const stealPts = () => getQuestionPoints();
         const inQuestion = () => document.getElementById('question-screen').style.display === 'flex';
-        const NO_STEAL = ['top5', 'score', 'higher_lower'];
+        const NO_STEAL = ['top5', 'score'];
+        const STEAL_TOAST = '#11806a';
 
         window.STEAL_ICON = `<svg class="steal-ico" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M3 22 C 9 10, 19 8, 27 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 5"/>
@@ -8267,7 +8272,7 @@ html, body {
                 const b = document.createElement('button');
                 b.id = 'btn-steal';
                 b.className = 'btn-admin btn-steal-ok';
-                b.onclick = resolveSteal;
+                b.onclick = () => {};
                 ac.insertBefore(b, document.getElementById('btn-next'));
             }
             const tag = document.getElementById('q-category-tag');
@@ -8283,9 +8288,7 @@ html, body {
             if (!c) return;
             if (!stealBy) { c.classList.remove('on'); return; }
             c.style.setProperty('--sc', tCol(stealBy));
-            c.innerHTML = stealPhase === 'steal'
-                ? `${window.STEAL_ICON}<span>Κλέβουν οι <b>«${esc(tName(stealBy))}»</b> · διαλέξτε απάντηση για +${stealPts()}</span>`
-                : `${window.STEAL_ICON}<span>Οι <b>«${esc(tName(stealBy))}»</b> περιμένουν για κλέψιμο · +${stealPts()}</span>`;
+            c.innerHTML = `${window.STEAL_ICON}<span>Απαντάνε οι <b>«${esc(tName(stealBy))}»</b> · +${stealPts()} / −1</span>`;
             c.classList.add('on');
         }
 
@@ -8316,116 +8319,101 @@ html, body {
         }
 
         // ---------- Χρήση ----------
+        function answered() {
+            if (!currentQ) return true;
+            if (currentQ.type === 'mcq') return [...document.querySelectorAll('#mc-grid .mc-option')].some(b => b.disabled);
+            if (currentQ.type === 'higher_lower') return ['hl-btn-1', 'hl-btn-2'].some(id => { const b = document.getElementById(id); return b && b.disabled; });
+            const shown = document.getElementById('btn-show');
+            return !!(shown && shown.style.display === 'none');
+        }
+
         function realSteal(team) {
             if (gameMode !== '1v1') return;
             const st = team === 1 ? t1LL : t2LL;
             if (!st || !st.steal) return;
-            if (!inQuestion() || !currentQ) { llToast('Το Κλέψιμο παίζεται μέσα στην ερώτηση του αντιπάλου', '#11806a'); return; }
-            if (currentTurn === team) { llToast('Το Κλέψιμο το παίζει η ομάδα που ΔΕΝ έχει σειρά', '#11806a'); return; }
-            if (NO_STEAL.includes(currentQ.type)) { llToast('Το Κλέψιμο δεν παίζεται σε αυτή την κατηγορία', '#11806a'); return; }
-            if (isFiftyFifty) { llToast('Με ενεργό 50:50 δεν γίνεται κλέψιμο', '#11806a'); return; }
-            if (isDouble) { llToast('Σε ερώτηση με x2 δεν γίνεται κλέψιμο', '#11806a'); return; }
-            const shown = document.getElementById('btn-show');
-            const answered = (currentQ.type === 'mcq')
-                ? [...document.querySelectorAll('#mc-grid .mc-option')].some(b => b.disabled)
-                : (shown && shown.style.display === 'none');
-            if (answered) { llToast('Αργά! Το Κλέψιμο μπαίνει πριν δοθεί η απάντηση', '#11806a'); return; }
+            if (!inQuestion() || !currentQ) { llToast('Το Κλέψιμο παίζεται μέσα στην ερώτηση του αντιπάλου', STEAL_TOAST); return; }
+            if (currentTurn === team) { llToast('Το Κλέψιμο το παίζει η ομάδα που ΔΕΝ έχει σειρά', STEAL_TOAST); return; }
             if (stealBy) return;
+            if (NO_STEAL.includes(currentQ.type)) { llToast('Το Κλέψιμο δεν παίζεται σε αυτή την κατηγορία', STEAL_TOAST); return; }
+            if (isDouble) { llToast('Σε ερώτηση με x2 δεν γίνεται κλέψιμο', STEAL_TOAST); return; }
+            if (isFiftyFifty || varThisQ) { llToast('Ο αντίπαλος έχει ήδη παίξει βοήθεια, δεν γίνεται κλέψιμο', STEAL_TOAST); return; }
+            if (answered()) { llToast('Αργά! Το Κλέψιμο μπαίνει πριν δοθεί απάντηση', STEAL_TOAST); return; }
 
             st.steal = false;
             document.getElementById(`ll-steal-${team}`).classList.add('used-ll');
-            stealBy = team; stealPhase = 'armed';
+            stealBy = team; stealPhase = 'steal';
             showChip();
             const other = team === 1 ? 2 : 1;
             stealFx(other, team, 'ΚΛΕΨΙΜΟ!',
-                currentQ.type === 'mcq'
-                    ? `Αν οι «${esc(tName(other))}» απαντήσουν λάθος, διαλέγουν οι «${esc(tName(team))}» για +${stealPts()}`
-                    : `Πείτε και οι δύο ομάδες την απάντησή σας πριν την αποκάλυψη. Αν οι «${esc(tName(other))}» κάνουν λάθος και οι «${esc(tName(team))}» το βρουν, παίρνουν +${stealPts()}`);
+                `Την ερώτηση την απαντάνε οι «${esc(tName(team))}». Σωστό +${stealPts()}, λάθος −1. Οι «${esc(tName(other))}» δεν παίζουν.`);
         }
         window.useSteal = function (team) {
             if (window.__llIntro) window.__llIntro(team, 'steal', () => realSteal(team));
             else realSteal(team);
         };
-        function fiftyRefund() {
-            if (!(stealBy && isFiftyFifty)) return;
-            const st = stealBy === 1 ? t1LL : t2LL;
-            st.steal = true;
-            document.getElementById(`ll-steal-${stealBy}`).classList.remove('used-ll');
-            llToast(`Με το 50:50 το κλέψιμο ακυρώθηκε και επιστράφηκε στους «${tName(stealBy)}»`, '#11806a');
-            stealBy = 0; stealPhase = ''; showChip();
+
+        function resolveStolen(ok) {
+            const thief = stealBy, victim = thief === 1 ? 2 : 1;
+            const team = thief === 1 ? team1 : team2;
+            if (ok) {
+                const pts = stealPts();
+                team.score += pts;
+                gameStats[`team${thief}Correct`]++;
+                gameStats.categoryPoints[currentQ.cat] = (gameStats.categoryPoints[currentQ.cat] || 0) + pts;
+                if (currentQ.isHot) gameStats.hotPoints++;
+            } else {
+                team.score = Math.max(0, team.score - 1);
+                gameStats[`team${thief}Wrong`]++;
+            }
+            stealBy = 0; stealPhase = '';
+            currentTurn = victim;           // ο αντίπαλος έχασε την ερώτηση, οπότε παίζει αυτός την επόμενη
+            _resolveTurn('skip');
         }
 
-        function resolveSteal() {
-            if (!stealBy) return;
-            const thief = stealBy, victim = currentTurn;
-            const pts = stealPts();
-            (thief === 1 ? team1 : team2).score += pts;
-            gameStats[`team${thief}Correct`]++;
-            gameStats[`team${victim}Wrong`]++;
-            gameStats.categoryPoints[currentQ.cat] = (gameStats.categoryPoints[currentQ.cat] || 0) + pts;
-            if (currentQ.isHot) gameStats.hotPoints++;
-            stealBy = 0; stealPhase = '';
-            currentTurn = victim === 1 ? 2 : 1;
-            playSfx(sfxGoal);
-            _resolveTurn('skip');
+        function blockedNow() {
+            if (stealBy && inQuestion()) { llToast('Η ερώτηση έχει κλαπεί: δεν παίζονται βοήθειες', STEAL_TOAST); return true; }
+            return false;
         }
 
         // ---------- Σύνδεση με τις υπάρχουσες συναρτήσεις ----------
         const _openQuestion = window.openQuestion;
         window.openQuestion = function (id, conf) {
-            stealBy = 0; stealPhase = '';
+            stealBy = 0; stealPhase = ''; varThisQ = false;
             _openQuestion(id, conf);
             ensureButtons(); hideStealBtn(); showChip();
-            const bc = document.getElementById('btn-correct');
-            if (bc) bc.textContent = 'ΣΩΣΤΟ';
+            const bc = document.getElementById('btn-correct'); if (bc) bc.textContent = 'ΣΩΣΤΟ';
+            const bw = document.getElementById('btn-wrong'); if (bw) bw.textContent = 'ΛΑΘΟΣ (0)';
         };
 
         const _revealAnswer = window.revealAnswer;
         window.revealAnswer = function () {
-            fiftyRefund();
             _revealAnswer();
-            if (stealBy && currentQ && currentQ.type !== 'score') {
-                const b = document.getElementById('btn-steal');
-                b.innerHTML = `${window.STEAL_ICON}<span>ΚΛΕΨΙΜΟ ΠΕΤΥΧΕ · ${esc(tName(stealBy))} +${stealPts()}</span>`;
-                b.style.setProperty('--sc', tCol(stealBy));
-                b.style.display = 'flex';
-                document.getElementById('btn-correct').textContent = 'ΣΩΣΤΟ · ' + tName(currentTurn);
-                document.getElementById('btn-wrong').textContent = 'ΛΑΘΟΣ ΚΑΙ ΟΙ ΔΥΟ';
+            if (stealBy) {
+                document.getElementById('btn-correct').textContent = `ΣΩΣΤΟ · ${tName(stealBy)} +${stealPts()}`;
+                document.getElementById('btn-wrong').textContent = `ΛΑΘΟΣ · ${tName(stealBy)} −1`;
             }
         };
 
+        function relabelNext(ok) {
+            const next = document.getElementById('btn-next');
+            if (!next) return;
+            next.style.background = ok ? tCol(stealBy) : '#d63031';
+            next.innerText = ok ? `ΣΩΣΤΟ · ${tName(stealBy)} +${stealPts()} ➔` : `ΛΑΘΟΣ · ${tName(stealBy)} −1 ➔`;
+        }
         const _checkMcq = window.checkMcq;
         window.checkMcq = function (btn, idx) {
-            fiftyRefund();
-            if (stealBy && stealPhase === 'armed' && idx !== currentQ.correctIdx) {
-                // Λάθος της ομάδας που παίζει: δεν δείχνουμε τη σωστή, παίζει ο κλέφτης
-                btn.classList.add('wrong-ans');
-                btn.disabled = true;
-                stealPhase = 'steal';
-                showChip();
-                const other = stealBy === 1 ? 2 : 1;
-                stealFx(other, stealBy, 'ΛΑΘΟΣ! ΚΛΕΒΟΥΝ…', `Οι «${esc(tName(stealBy))}» διαλέγουν τώρα απάντηση για +${stealPts()}`);
-                return;
-            }
-            if (stealBy && stealPhase === 'steal') {
-                const ok = idx === currentQ.correctIdx;
-                _checkMcq(btn, idx);
-                const next = document.getElementById('btn-next');
-                if (ok) {
-                    next.style.background = tCol(stealBy);
-                    next.innerText = `ΚΛΕΨΙΜΟ ΠΕΤΥΧΕ · +${stealPts()} ➔`;
-                    next.onclick = resolveSteal;
-                } else {
-                    next.innerText = 'ΛΑΘΟΣ ΚΑΙ ΟΙ ΔΥΟ ➔';
-                    next.onclick = () => window.resolveTurn(false);
-                }
-                return;
-            }
             _checkMcq(btn, idx);
+            if (stealBy) relabelNext(idx === currentQ.correctIdx);
+        };
+        const _checkHL = window.checkHLAnswer;
+        if (_checkHL) window.checkHLAnswer = function (txt) {
+            _checkHL(txt);
+            if (stealBy) relabelNext(txt === currentQ.a);
         };
 
         const _resolveTurn = window.resolveTurn;
         window.resolveTurn = function (st) {
+            if (stealBy && st !== 'skip') { resolveStolen(st === true); return; }
             stealBy = 0; stealPhase = '';
             hideStealBtn(); showChip();
             const bw = document.getElementById('btn-wrong'); if (bw) bw.textContent = 'ΛΑΘΟΣ (0)';
@@ -8434,9 +8422,7 @@ html, body {
         };
 
         const _useLL = window.useLL;
-        window.useLL = function (team, type) { _useLL(team, type); fiftyRefund(); };
-        const _checkFifty = window.checkFifty;
-        if (_checkFifty) window.checkFifty = function (b, a) { fiftyRefund(); _checkFifty(b, a); };
+        window.useLL = function (team, type) { if (blockedNow()) return; _useLL(team, type); };
 
         // Νέος αγώνας: κλέψιμο διαθέσιμο, Joker εκτός
         function resetLL() {
@@ -8477,11 +8463,13 @@ html, body {
 
         const _triggerVAR = window.triggerVAR;
         window.triggerVAR = function (team) {
+            if (blockedNow()) return;
             upgradeVar();
             const before = team === 1 ? t1LL.var : t2LL.var;
             _triggerVAR(team);
             const after = team === 1 ? t1LL.var : t2LL.var;
             if (before && !after) {
+                varThisQ = true;
                 const lt = document.getElementById('var-lt-team');
                 if (lt) { lt.textContent = 'Ζήτησε: ' + tName(team); lt.style.setProperty('--c', tCol(team)); }
                 const tc = document.getElementById('var-tc');

@@ -3854,6 +3854,140 @@ html, body {
     .ht-track { transition: none; }
 }
 
+
+/* =====================================================================
+   QUIZBALL UI v15 — Κλέψιμο & νέο VAR
+   ===================================================================== */
+.btn-steal { background: linear-gradient(135deg, #14a085, #0b6e5c) !important; gap: 4px; }
+.steal-ico { width: 18px; height: 18px; flex: none; color: currentColor; }
+.btn-steal .steal-ico { color: #fff; }
+.lli-steal { background: linear-gradient(135deg, #14a085, #0b6e5c); }
+.lli-steal .steal-ico { width: 38px; height: 38px; color: #fff; }
+
+#steal-chip {
+    display: none; align-items: center; gap: 8px;
+    margin: 8px auto 0; padding: 7px 12px; width: fit-content; max-width: 100%; box-sizing: border-box;
+    border-radius: 999px; font-size: 13px; font-weight: 700; color: #fff;
+    background: color-mix(in srgb, var(--sc, #14a085) 85%, #000);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.7), 0 8px 18px rgba(0,0,0,.25);
+    animation: chipPulse 1.8s ease-in-out infinite;
+}
+#steal-chip.on { display: flex; }
+#steal-chip .steal-ico { color: #fff; }
+#steal-chip b { font-weight: 900; }
+@keyframes chipPulse { 50% { box-shadow: 0 0 0 2px rgba(255,255,255,.7), 0 0 0 8px color-mix(in srgb, var(--sc, #14a085) 25%, transparent), 0 8px 18px rgba(0,0,0,.25); } }
+
+#btn-steal {
+    display: none; width: 100%; flex: none; align-items: center; justify-content: center; gap: 8px;
+    background: var(--sc, #14a085) !important; color: #fff;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,.25);
+}
+#btn-steal .steal-ico { color: #fff; }
+
+/* εφέ ΚΛΕΨΙΜΟ! */
+#steal-fx {
+    position: fixed; inset: 0; z-index: 9500; display: none;
+    align-items: center; justify-content: center; padding: 16px;
+    background: radial-gradient(ellipse at center, rgba(8,14,22,.6), rgba(8,14,22,.92));
+}
+#steal-fx.on { display: flex; }
+.sfx-stage { position: relative; width: 100%; max-width: 460px; height: 330px; }
+.sfx-side {
+    position: absolute; top: 34px; width: 46%; padding: 10px 8px; border-radius: 12px; box-sizing: border-box;
+    background: color-mix(in srgb, var(--c) 80%, #000); color: #fff; text-align: center;
+    font-family: var(--font-display); font-weight: 900; font-size: 15px; line-height: 1.15; word-break: break-word;
+    box-shadow: 0 10px 24px rgba(0,0,0,.4);
+}
+.sfx-l { left: 0; } .sfx-r { right: 0; }
+.sfx-ball { position: absolute; top: 96px; left: 18%; font-size: 40px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
+.dir-lr .sfx-ball { animation: sfxBallLR 1s cubic-bezier(.3,.1,.2,1) .1s both; }
+.dir-rl .sfx-ball { animation: sfxBallRL 1s cubic-bezier(.3,.1,.2,1) .1s both; }
+@keyframes sfxBallLR {
+    0% { left: 14%; transform: translateY(0) rotate(0); }
+    55% { left: 46%; transform: translateY(-46px) rotate(360deg); }
+    100% { left: 72%; transform: translateY(0) rotate(720deg); }
+}
+@keyframes sfxBallRL {
+    0% { left: 72%; transform: translateY(0) rotate(0); }
+    55% { left: 46%; transform: translateY(-46px) rotate(-360deg); }
+    100% { left: 14%; transform: translateY(0) rotate(-720deg); }
+}
+.sfx-trail {
+    position: absolute; top: 118px; left: 18%; right: 18%; height: 4px; border-radius: 4px;
+    background: repeating-linear-gradient(90deg, var(--cs) 0 10px, transparent 10px 18px);
+    opacity: 0; animation: sfxTrail 1.1s ease .2s both;
+}
+@keyframes sfxTrail { 30% { opacity: .9; } 100% { opacity: .35; } }
+.sfx-stamp {
+    position: absolute; left: 50%; top: 168px; transform: translateX(-50%) rotate(-6deg);
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(38px, 12vw, 56px); white-space: nowrap;
+    color: #fff; padding: 2px 16px; border-radius: 10px; background: var(--cs);
+    box-shadow: 0 0 0 4px #fff, 0 16px 40px rgba(0,0,0,.5);
+    animation: sfxStamp .45s cubic-bezier(.2,1.8,.4,1) .85s both;
+}
+@keyframes sfxStamp { from { transform: translateX(-50%) rotate(-6deg) scale(2.4); opacity: 0; } }
+.sfx-sub {
+    position: absolute; left: 0; right: 0; top: 252px; color: #e6edf3; font-weight: 700; font-size: 15px; line-height: 1.4; text-align: center;
+    animation: riseIn .4s ease 1.15s both;
+}
+
+/* ---------- VAR ---------- */
+.var-modal {
+    background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+        radial-gradient(ellipse 80% 55% at 50% 35%, rgba(31, 111, 209, .22), transparent 70%),
+        #05090e !important;
+}
+.var-check h2 { font-size: clamp(22px, 6vw, 34px) !important; }
+.var-signal { width: 120px; height: 80px; overflow: visible; }
+.var-signal rect {
+    fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 330; stroke-dashoffset: 330;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,.6));
+    animation: varSignal 1.3s ease-in-out .2s forwards;
+}
+@keyframes varSignal { to { stroke-dashoffset: 0; } }
+.var-monitor { border-color: #1f6fd1 !important; box-shadow: 0 0 0 6px #0c1520, 0 0 50px rgba(31,111,209,.35) !important; }
+.var-scan { background: linear-gradient(to bottom, transparent, rgba(120, 180, 255, .35), transparent) !important; }
+.var-osd {
+    position: absolute; z-index: 2; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 700;
+    color: #fff; background: rgba(0,0,0,.55); padding: 3px 7px; border-radius: 4px; display: flex; align-items: center; gap: 6px;
+    font-variant-numeric: tabular-nums;
+}
+.var-osd-tl { top: 8px; left: 8px; } .var-osd-tr { top: 8px; right: 8px; } .var-osd-bl { bottom: 8px; left: 8px; }
+.var-corner { position: absolute; z-index: 2; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,.85); }
+.var-corner.c1 { top: 30px; left: 18%; border-right: 0; border-bottom: 0; }
+.var-corner.c2 { top: 30px; right: 18%; border-left: 0; border-bottom: 0; }
+.var-corner.c3 { bottom: 30px; left: 18%; border-right: 0; border-top: 0; }
+.var-corner.c4 { bottom: 30px; right: 18%; border-left: 0; border-top: 0; }
+.var-progress span { background: linear-gradient(90deg, #1f6fd1, #5fb0ff) !important; }
+.var-lt {
+    width: 100%; box-sizing: border-box; text-align: left; overflow: hidden;
+    background: #0d151f; border-radius: 16px; border-left: 6px solid #2ecc71;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    animation: varLt .5s cubic-bezier(.2,1.2,.4,1) both;
+}
+@keyframes varLt { from { transform: translateX(-30px); opacity: 0; } }
+.var-lt-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: #fff; }
+.var-lt-badge { font-family: var(--font-display); font-weight: 900; letter-spacing: 2px; background: #05090e; color: #fff; padding: 3px 9px; border-radius: 5px; font-size: 14px; }
+.var-lt-ok { font-weight: 800; color: #0b6e3a; font-size: 13px; }
+.var-lt-team { margin: 12px 16px 0; font-size: 12px; font-weight: 800; color: #fff; display: inline-block; padding: 3px 9px; border-radius: 999px; background: color-mix(in srgb, var(--c, #1f6fd1) 80%, #000); }
+.var-lt-label { margin: 10px 16px 0; font-size: 12px; font-weight: 800; color: #8fa0b0; }
+.var-lt .var-hint {
+    background: none !important; border: 0 !important; border-radius: 0 !important;
+    padding: 6px 16px 18px !important; font-size: clamp(18px, 5vw, 22px) !important; color: #fff; animation: none !important;
+}
+.var-back-btn { margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) {
+    #steal-chip, .sfx-ball, .sfx-stamp, .sfx-trail, .sfx-sub, .var-signal rect, .var-lt { animation: none !important; }
+    .var-signal rect { stroke-dashoffset: 0; }
+}
+
+.btn-steal { gap: 2px !important; padding: 0 3px !important; overflow: hidden; }
+.btn-steal .ll-label { display: inline !important; font-size: 10.5px; font-weight: 900; white-space: nowrap; }
+.btn-steal .steal-ico { width: 14px; height: 14px; }
+@media (max-width: 370px) { .btn-steal .steal-ico { display: none; } }
+
     </style>
 </head>
 <body>
@@ -4037,7 +4171,6 @@ html, body {
                 <button class="ll-btn btn-fifty" id="ll-1-fifty" onclick="useLL(1, 'fifty')" title="50:50">50:50</button>
                 <button class="ll-btn btn-x2" id="ll-1-x2" onclick="useLL(1, 'x2')" title="Διπλοί πόντοι">x2</button>
 				<button class="ll-btn btn-var" id="ll-var-1" onclick="triggerVAR(1)" title="VAR: βοήθεια/hint">📺<span class="ll-label"> VAR</span></button>
-				<button class="ll-btn btn-joker" id="ll-joker-1" onclick="useJoker(1)" title="Joker">🃏<span class="ll-label"> Joker</span></button>
             </div>
         </div>
         <div class="header-center">
@@ -4052,7 +4185,6 @@ html, body {
                 <button class="ll-btn btn-fifty" id="ll-2-fifty" onclick="useLL(2, 'fifty')" title="50:50">50:50</button>
                 <button class="ll-btn btn-x2" id="ll-2-x2" onclick="useLL(2, 'x2')" title="Διπλοί πόντοι">x2</button>
 				<button class="ll-btn btn-var" id="ll-var-2" onclick="triggerVAR(2)" title="VAR: βοήθεια/hint">📺<span class="ll-label"> VAR</span></button>
-				<button class="ll-btn btn-joker" id="ll-joker-2" onclick="useJoker(2)" title="Joker">🃏<span class="ll-label"> Joker</span></button>
             </div>
         </div>
     </div>
@@ -6667,8 +6799,8 @@ html, body {
 		// 4. ΟΛΟΚΛΗΡΩΣΗ ΚΑΙ ΕΝΑΡΞΗ ΑΓΩΝΑ
         function finalizeSetupAndStart() {
             team1.score = 0; team2.score = 0; activeMultiplier = 1; 
-            t1LL = { fifty: true, x2: true, var: true, joker: true };
-            t2LL = { fifty: true, x2: true, var: true, joker: true };
+            t1LL = { fifty: true, x2: true, var: true, steal: true };
+            t2LL = { fifty: true, x2: true, var: true, steal: true };
             document.querySelectorAll('.ll-btn').forEach(btn => btn.classList.remove('used-ll'));
             document.getElementById('x2-badge-1').style.display = 'none';
             document.getElementById('x2-badge-2').style.display = 'none';
@@ -7774,6 +7906,10 @@ html, body {
                 when: 'Μέσα στην ερώτηση',
                 text: 'Ο διαιτητής «βλέπει το βίντεο» και σου δίνει ένα στοιχείο για την απάντηση.',
                 note: 'Οι πόντοι της ερώτησης δεν αλλάζουν.' },
+            steal: { icon: '', cls: 'steal', title: 'Κλέψιμο',
+                when: 'Στην ερώτηση του αντιπάλου, πριν την απάντηση',
+                text: 'Αν ο αντίπαλος απαντήσει λάθος, απαντάτε εσείς την ίδια ερώτηση και παίρνετε τους μισούς πόντους (στρογγυλεμένους προς τα πάνω).',
+                note: 'Στις πολλαπλής διαλέγετε από τις απαντήσεις που έμειναν. Δεν παίζεται σε Top 5, «Βρες το Σκορ» και Higher or Lower.' },
             joker: { icon: '🃏', cls: 'joker', title: 'Joker',
                 when: 'Μέσα στην ερώτηση, αντί να απαντήσεις',
                 text: 'Ρίσκο: η ερώτηση κλείνει και γυρίζει ο «κουλοχέρης». Μία στις δύο παίρνεις +2 πόντους, αλλιώς χάνεις 1.',
@@ -7803,7 +7939,7 @@ html, body {
 
         function llAllowed(team, key) {
             if (typeof gameMode !== 'undefined' && gameMode !== '1v1') return false;
-            if (typeof currentTurn !== 'undefined' && currentTurn !== team) return false;
+            if (typeof currentTurn !== 'undefined' && (key === 'steal' ? currentTurn === team : currentTurn !== team)) return false;
             const st = team === 1 ? t1LL : t2LL;
             return !!(st && st[key]);
         }
@@ -7814,7 +7950,7 @@ html, body {
             const info = LL_INFO[key];
             const ic = m.querySelector('#lli-icon');
             ic.className = 'lli-icon lli-' + info.cls;
-            ic.textContent = info.icon;
+            if (key === 'steal' && window.STEAL_ICON) ic.innerHTML = window.STEAL_ICON; else ic.textContent = info.icon;
             m.querySelector('#lli-title').textContent = info.title;
             m.querySelector('#lli-when').textContent = info.when;
             m.querySelector('#lli-text').textContent = info.text;
@@ -7825,6 +7961,7 @@ html, body {
             m.querySelector('#lli-go').onclick = () => { markSeen(key); close(); run(); };
         }
 
+        window.__llIntro = withIntro;
         const _useLL = window.useLL, _triggerVAR = window.triggerVAR, _useJoker = window.useJoker;
         if (_useLL) window.useLL = function (team, type) { withIntro(team, type, () => _useLL(team, type)); };
         if (_triggerVAR) window.triggerVAR = function (team) { withIntro(team, 'var', () => _triggerVAR(team)); };
@@ -7839,7 +7976,7 @@ html, body {
             { icon: '🧑‍⚖️', title: 'Ποιος κρίνει',
               text: 'Η ομάδα απαντάει φωναχτά. Ένας κάνει τον διαιτητή: πατάει «Αποκάλυψη απάντησης» και μετά «Σωστό» ή «Λάθος». Το λάθος δεν αφαιρεί πόντους, απλώς περνάει η σειρά.' },
             { icon: '🛟', title: 'Οι βοήθειες',
-              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Joker. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
+              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Κλέψιμο, που το παίζεις στην ερώτηση του αντιπάλου. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
             { icon: '🥅', title: 'Ισοπαλία; Πέναλτι!',
               text: 'Αν τελειώσει ισόπαλο, πάτε στα πέναλτι με δύσκολες ερωτήσεις: κάθε σωστή είναι γκολ. Πέντε η κάθε ομάδα και, αν χρειαστεί, ξανά ένα-ένα μέχρι να κριθεί.' },
             { icon: '🎯', title: 'Προπόνηση',
@@ -7919,7 +8056,7 @@ html, body {
         }
         function usedLL(st) {
             if (!st) return 0;
-            return ['fifty', 'x2', 'var', 'joker'].filter(k => st[k] === false).length;
+            return ['fifty', 'x2', 'var', 'steal'].filter(k => st[k] === false).length;
         }
         function bestCat() {
             let best = null, pts = 0;
@@ -8048,6 +8185,279 @@ html, body {
         if (_resolveTurn) window.resolveTurn = function (st) { _resolveTurn(st); if (gameMode === 'training') trPts(); };
         const _startTraining = window.startTraining;
         if (_startTraining) window.startTraining = function () { _startTraining(); trPts(); };
+    })();
+    </script>
+
+    <script>
+    /* =====================================================================
+       QUIZBALL v15 — βοήθεια «Κλέψιμο» (αντί για Joker) & νέο VAR
+       ===================================================================== */
+    (function () {
+        let stealBy = 0;        // ποια ομάδα έχει «οπλίσει» κλέψιμο στην τρέχουσα ερώτηση
+        let stealPhase = '';    // '' | 'armed' | 'steal' (στις πολλαπλής, όταν απαντάει ο κλέφτης)
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const tName = n => (n === 1 ? team1 : team2).name || ('Ομάδα ' + n);
+        const tCol = n => { const el = document.getElementById(`t${n}-color`); return (el && el.value) || (n === 1 ? '#1f6fd1' : '#e04848'); };
+        const stealPts = () => Math.max(1, Math.ceil(getQuestionPoints() / 2));
+        const inQuestion = () => document.getElementById('question-screen').style.display === 'flex';
+        const NO_STEAL = ['top5', 'score', 'higher_lower'];
+
+        window.STEAL_ICON = `<svg class="steal-ico" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M3 22 C 9 10, 19 8, 27 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 5"/>
+            <path d="M23 8 L28 13 L22 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="23" r="6" fill="#fff" stroke="currentColor" stroke-width="2"/>
+            <path d="M9 19.6 L11.6 21.4 L10.6 24.4 L7.4 24.4 L6.4 21.4 Z" fill="currentColor"/></svg>`;
+
+        // ---------- Κουμπιά ----------
+        function ensureButtons() {
+            [1, 2].forEach(n => {
+                const j = document.getElementById(`ll-joker-${n}`);
+                if (j) j.remove();
+                if (!document.getElementById(`ll-steal-${n}`)) {
+                    const b = document.createElement('button');
+                    b.className = 'll-btn btn-steal';
+                    b.id = `ll-steal-${n}`;
+                    b.title = 'Κλέψιμο';
+                    b.innerHTML = `${window.STEAL_ICON}<span class="ll-label"> Κλέψιμο</span>`;
+                    b.onclick = () => window.useSteal(n);
+                    const box = document.getElementById(`ll-box-${n}`);
+                    if (box) box.appendChild(b);
+                }
+            });
+            const ac = document.getElementById('admin-controls');
+            if (ac && !document.getElementById('btn-steal')) {
+                const b = document.createElement('button');
+                b.id = 'btn-steal';
+                b.className = 'btn-admin btn-steal-ok';
+                b.onclick = resolveSteal;
+                ac.insertBefore(b, document.getElementById('btn-next'));
+            }
+            const tag = document.getElementById('q-category-tag');
+            if (tag && !document.getElementById('steal-chip')) {
+                const c = document.createElement('div');
+                c.id = 'steal-chip';
+                tag.insertAdjacentElement('afterend', c);
+            }
+        }
+
+        function showChip() {
+            const c = document.getElementById('steal-chip');
+            if (!c) return;
+            if (!stealBy) { c.classList.remove('on'); return; }
+            c.style.setProperty('--sc', tCol(stealBy));
+            c.innerHTML = stealPhase === 'steal'
+                ? `${window.STEAL_ICON}<span>Κλέβουν οι <b>«${esc(tName(stealBy))}»</b> · διαλέξτε απάντηση για +${stealPts()}</span>`
+                : `${window.STEAL_ICON}<span>Οι <b>«${esc(tName(stealBy))}»</b> περιμένουν για κλέψιμο · +${stealPts()}</span>`;
+            c.classList.add('on');
+        }
+
+        function hideStealBtn() { const b = document.getElementById('btn-steal'); if (b) b.style.display = 'none'; }
+
+        // ---------- Εφέ «ΚΛΕΨΙΜΟ!» ----------
+        function stealFx(from, to, title, sub) {
+            let o = document.getElementById('steal-fx');
+            if (!o) { o = document.createElement('div'); o.id = 'steal-fx'; document.body.appendChild(o); }
+            const left = from === 1 ? from : to, right = left === 1 ? 2 : 1;
+            o.style.setProperty('--c1', tCol(1));
+            o.style.setProperty('--c2', tCol(2));
+            o.style.setProperty('--cs', tCol(to));
+            o.className = 'dir-' + (from === 1 ? 'lr' : 'rl');
+            o.innerHTML = `<div class="sfx-stage">
+                <div class="sfx-side sfx-l" style="--c:var(--c1)"><span>${esc(tName(1))}</span></div>
+                <div class="sfx-side sfx-r" style="--c:var(--c2)"><span>${esc(tName(2))}</span></div>
+                <div class="sfx-trail"></div>
+                <div class="sfx-ball">⚽</div>
+                <div class="sfx-stamp">${title}</div>
+                <div class="sfx-sub">${sub}</div></div>`;
+            void o.offsetWidth;
+            o.classList.add('on');
+            const close = () => { o.classList.remove('on'); o.onclick = null; };
+            o.onclick = close;
+            clearTimeout(o._t);
+            o._t = setTimeout(close, 2600);
+        }
+
+        // ---------- Χρήση ----------
+        function realSteal(team) {
+            if (gameMode !== '1v1') return;
+            const st = team === 1 ? t1LL : t2LL;
+            if (!st || !st.steal) return;
+            if (!inQuestion() || !currentQ) { llToast('Το Κλέψιμο παίζεται μέσα στην ερώτηση του αντιπάλου', '#11806a'); return; }
+            if (currentTurn === team) { llToast('Το Κλέψιμο το παίζει η ομάδα που ΔΕΝ έχει σειρά', '#11806a'); return; }
+            if (NO_STEAL.includes(currentQ.type)) { llToast('Το Κλέψιμο δεν παίζεται σε αυτή την κατηγορία', '#11806a'); return; }
+            if (isFiftyFifty) { llToast('Με ενεργό 50:50 δεν γίνεται κλέψιμο', '#11806a'); return; }
+            const shown = document.getElementById('btn-show');
+            const answered = (currentQ.type === 'mcq')
+                ? [...document.querySelectorAll('#mc-grid .mc-option')].some(b => b.disabled)
+                : (shown && shown.style.display === 'none');
+            if (answered) { llToast('Αργά! Το Κλέψιμο μπαίνει πριν δοθεί η απάντηση', '#11806a'); return; }
+            if (stealBy) return;
+
+            st.steal = false;
+            document.getElementById(`ll-steal-${team}`).classList.add('used-ll');
+            stealBy = team; stealPhase = 'armed';
+            showChip();
+            const other = team === 1 ? 2 : 1;
+            stealFx(other, team, 'ΚΛΕΨΙΜΟ!',
+                currentQ.type === 'mcq'
+                    ? `Αν οι «${esc(tName(other))}» απαντήσουν λάθος, διαλέγουν οι «${esc(tName(team))}» για +${stealPts()}`
+                    : `Πείτε και οι δύο ομάδες την απάντησή σας πριν την αποκάλυψη. Αν οι «${esc(tName(other))}» κάνουν λάθος και οι «${esc(tName(team))}» το βρουν, παίρνουν +${stealPts()}`);
+        }
+        window.useSteal = function (team) {
+            if (window.__llIntro) window.__llIntro(team, 'steal', () => realSteal(team));
+            else realSteal(team);
+        };
+        function fiftyRefund() {
+            if (!(stealBy && isFiftyFifty)) return;
+            const st = stealBy === 1 ? t1LL : t2LL;
+            st.steal = true;
+            document.getElementById(`ll-steal-${stealBy}`).classList.remove('used-ll');
+            llToast(`Με το 50:50 το κλέψιμο ακυρώθηκε και επιστράφηκε στους «${tName(stealBy)}»`, '#11806a');
+            stealBy = 0; stealPhase = ''; showChip();
+        }
+
+        function resolveSteal() {
+            if (!stealBy) return;
+            const thief = stealBy, victim = currentTurn;
+            const pts = stealPts();
+            (thief === 1 ? team1 : team2).score += pts;
+            gameStats[`team${thief}Correct`]++;
+            gameStats[`team${victim}Wrong`]++;
+            gameStats.categoryPoints[currentQ.cat] = (gameStats.categoryPoints[currentQ.cat] || 0) + pts;
+            if (currentQ.isHot) gameStats.hotPoints++;
+            stealBy = 0; stealPhase = '';
+            currentTurn = victim === 1 ? 2 : 1;
+            playSfx(sfxGoal);
+            _resolveTurn('skip');
+        }
+
+        // ---------- Σύνδεση με τις υπάρχουσες συναρτήσεις ----------
+        const _openQuestion = window.openQuestion;
+        window.openQuestion = function (id, conf) {
+            stealBy = 0; stealPhase = '';
+            _openQuestion(id, conf);
+            ensureButtons(); hideStealBtn(); showChip();
+            const bc = document.getElementById('btn-correct');
+            if (bc) bc.textContent = 'ΣΩΣΤΟ';
+        };
+
+        const _revealAnswer = window.revealAnswer;
+        window.revealAnswer = function () {
+            fiftyRefund();
+            _revealAnswer();
+            if (stealBy && currentQ && currentQ.type !== 'score') {
+                const b = document.getElementById('btn-steal');
+                b.innerHTML = `${window.STEAL_ICON}<span>ΚΛΕΨΙΜΟ ΠΕΤΥΧΕ · ${esc(tName(stealBy))} +${stealPts()}</span>`;
+                b.style.setProperty('--sc', tCol(stealBy));
+                b.style.display = 'flex';
+                document.getElementById('btn-correct').textContent = 'ΣΩΣΤΟ · ' + tName(currentTurn);
+                document.getElementById('btn-wrong').textContent = 'ΛΑΘΟΣ ΚΑΙ ΟΙ ΔΥΟ';
+            }
+        };
+
+        const _checkMcq = window.checkMcq;
+        window.checkMcq = function (btn, idx) {
+            fiftyRefund();
+            if (stealBy && stealPhase === 'armed' && idx !== currentQ.correctIdx) {
+                // Λάθος της ομάδας που παίζει: δεν δείχνουμε τη σωστή, παίζει ο κλέφτης
+                btn.classList.add('wrong-ans');
+                btn.disabled = true;
+                stealPhase = 'steal';
+                showChip();
+                const other = stealBy === 1 ? 2 : 1;
+                stealFx(other, stealBy, 'ΛΑΘΟΣ! ΚΛΕΒΟΥΝ…', `Οι «${esc(tName(stealBy))}» διαλέγουν τώρα απάντηση για +${stealPts()}`);
+                return;
+            }
+            if (stealBy && stealPhase === 'steal') {
+                const ok = idx === currentQ.correctIdx;
+                _checkMcq(btn, idx);
+                const next = document.getElementById('btn-next');
+                if (ok) {
+                    next.style.background = tCol(stealBy);
+                    next.innerText = `ΚΛΕΨΙΜΟ ΠΕΤΥΧΕ · +${stealPts()} ➔`;
+                    next.onclick = resolveSteal;
+                } else {
+                    next.innerText = 'ΛΑΘΟΣ ΚΑΙ ΟΙ ΔΥΟ ➔';
+                    next.onclick = () => window.resolveTurn(false);
+                }
+                return;
+            }
+            _checkMcq(btn, idx);
+        };
+
+        const _resolveTurn = window.resolveTurn;
+        window.resolveTurn = function (st) {
+            stealBy = 0; stealPhase = '';
+            hideStealBtn(); showChip();
+            const bw = document.getElementById('btn-wrong'); if (bw) bw.textContent = 'ΛΑΘΟΣ (0)';
+            const bc = document.getElementById('btn-correct'); if (bc) bc.textContent = 'ΣΩΣΤΟ';
+            _resolveTurn(st);
+        };
+
+        const _useLL = window.useLL;
+        window.useLL = function (team, type) { _useLL(team, type); fiftyRefund(); };
+        const _checkFifty = window.checkFifty;
+        if (_checkFifty) window.checkFifty = function (b, a) { fiftyRefund(); _checkFifty(b, a); };
+
+        // Νέος αγώνας: κλέψιμο διαθέσιμο, Joker εκτός
+        function resetLL() {
+            if (typeof t1LL !== 'undefined') { t1LL.steal = true; t1LL.joker = false; }
+            if (typeof t2LL !== 'undefined') { t2LL.steal = true; t2LL.joker = false; }
+            ensureButtons();
+            [1, 2].forEach(n => { const b = document.getElementById(`ll-steal-${n}`); if (b) b.classList.remove('used-ll'); });
+        }
+        ['finalizeSetupAndStart'].forEach(fn => {
+            const f = window[fn];
+            if (typeof f === 'function') window[fn] = function () { const r = f.apply(this, arguments); resetLL(); return r; };
+        });
+
+        // ---------- Νέο VAR ----------
+        function upgradeVar() {
+            const p1 = document.getElementById('var-phase-1'), p2 = document.getElementById('var-phase-2');
+            if (!p1 || p1.dataset.v15) return;
+            p1.dataset.v15 = '1';
+            const mon = p1.querySelector('.var-monitor');
+            if (mon) {
+                mon.insertAdjacentHTML('beforeend', `
+                    <div class="var-osd var-osd-tl"><span class="rec-dot"></span> REPLAY</div>
+                    <div class="var-osd var-osd-tr" id="var-tc">00:00:00</div>
+                    <div class="var-osd var-osd-bl">CAM 4 · ×0.25</div>
+                    <i class="var-corner c1"></i><i class="var-corner c2"></i><i class="var-corner c3"></i><i class="var-corner c4"></i>`);
+            }
+            const h2 = p1.querySelector('h2');
+            if (h2) h2.insertAdjacentHTML('beforebegin', `<svg class="var-signal" viewBox="0 0 120 80" aria-hidden="true">
+                    <rect x="10" y="8" width="100" height="64" rx="6"/></svg>`);
+            p2.innerHTML = `<div class="var-lt">
+                    <div class="var-lt-top"><span class="var-lt-badge">VAR</span><span class="var-lt-ok">✓ Έλεγχος ολοκληρώθηκε</span></div>
+                    <div class="var-lt-team" id="var-lt-team"></div>
+                    <div class="var-lt-label">Στοιχείο από το VAR</div>
+                    <div id="var-hint" class="var-hint"></div>
+                </div>
+                <button class="var-back-btn" onclick="closeVarModal()">Πίσω στην ερώτηση</button>`;
+        }
+
+        const _triggerVAR = window.triggerVAR;
+        window.triggerVAR = function (team) {
+            upgradeVar();
+            const before = team === 1 ? t1LL.var : t2LL.var;
+            _triggerVAR(team);
+            const after = team === 1 ? t1LL.var : t2LL.var;
+            if (before && !after) {
+                const lt = document.getElementById('var-lt-team');
+                if (lt) { lt.textContent = 'Ζήτησε: ' + tName(team); lt.style.setProperty('--c', tCol(team)); }
+                const tc = document.getElementById('var-tc');
+                const t0 = performance.now();
+                clearInterval(window.__varTc);
+                window.__varTc = setInterval(() => {
+                    const ms = performance.now() - t0;
+                    if (ms > 3600) { clearInterval(window.__varTc); return; }
+                    const f = Math.floor(ms / 40) % 25, s = Math.floor(ms / 1000);
+                    if (tc) tc.textContent = `00:${String(87 + s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
+                }, 40);
+            }
+        };
+
+        window.addEventListener('load', () => { ensureButtons(); upgradeVar(); resetLL(); });
     })();
     </script>
 

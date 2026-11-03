@@ -3689,6 +3689,171 @@ html, body {
 }
 @media (prefers-reduced-motion: reduce) { .score-fly { display: none; } }
 
+
+/* =====================================================================
+   QUIZBALL UI v14 — οθόνη τέλους, εξήγηση βοηθειών, «Πώς παίζεται»
+   ===================================================================== */
+#end-screen.fs-v14 {
+    background: linear-gradient(180deg, rgba(6, 12, 20, .72) 0%, rgba(6, 12, 20, .9) 60%, rgba(6, 12, 20, .96) 100%) !important;
+    padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom)) !important;
+}
+#end-screen.fs-v14::before { display: none !important; }
+.fs-wrap {
+    width: 100%; max-width: 480px; margin: auto;
+    display: flex; flex-direction: column; align-items: stretch; gap: 14px;
+    color: #fff; text-align: center;
+}
+.fs-whistle {
+    align-self: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 13px; letter-spacing: .4px;
+    color: #0b1118; background: var(--gold, #f5c518);
+    border-radius: 999px; padding: 6px 14px;
+    animation: riseIn .5s cubic-bezier(.2,1.2,.4,1) both;
+}
+.fs-board {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 6px;
+    padding: 18px 10px 16px; border-radius: 20px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,.45), inset 0 -4px 0 var(--fsw);
+    animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) .1s both;
+}
+.fs-team { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; transition: opacity .3s; }
+.fs-shirt { width: clamp(58px, 17vw, 80px); filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+.fs-shirt svg { width: 100%; display: block; fill: var(--tc); stroke: rgba(255,255,255,.85); stroke-width: 2.5; stroke-linejoin: round; }
+.fs-name {
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(14px, 4vw, 18px); line-height: 1.15;
+    max-width: 100%; word-break: break-word;
+}
+.fs-team.is-lose { opacity: .5; }
+.fs-team.is-lose .fs-shirt { filter: grayscale(.6) drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+.fs-team.is-win .fs-shirt { animation: fsWinShirt 1.6s ease-in-out .6s infinite; }
+@keyframes fsWinShirt { 50% { transform: translateY(-5px) rotate(-3deg); } }
+.fs-crown { position: absolute; top: -16px; font-size: 26px; animation: fsCrown .7s cubic-bezier(.2,1.6,.4,1) .7s both; }
+@keyframes fsCrown { from { transform: translateY(-14px) scale(.3); opacity: 0; } }
+.fs-score { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 4px; }
+.fs-digits { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 900; font-variant-numeric: tabular-nums; }
+.fs-digits span {
+    min-width: clamp(44px, 12vw, 58px); padding: 6px 4px; border-radius: 10px;
+    background: linear-gradient(#1f2833 0 50%, #19212b 50% 100%);
+    color: var(--gold, #f5c518); font-size: clamp(34px, 10vw, 48px); line-height: 1;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.fs-digits i { font-style: normal; color: #8796a5; font-size: 24px; }
+.fs-pens { font-size: 12px; font-weight: 800; color: #c9d3dc; background: rgba(0,0,0,.35); padding: 3px 9px; border-radius: 999px; }
+.fs-headline { font-family: var(--font-display); font-weight: 900; font-size: clamp(19px, 5.4vw, 24px); line-height: 1.2; animation: riseIn .5s ease .25s both; }
+.fs-quote { margin-top: -6px; color: #ffb3b3; font-size: 14px; font-weight: 700; font-style: italic; }
+.fs-sheet {
+    background: rgba(255,255,255,.96); color: var(--ink, #121820);
+    border-radius: 16px; padding: 12px 14px 6px; text-align: left;
+    box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    animation: riseIn .55s cubic-bezier(.2,1.2,.4,1) .35s both;
+}
+.fs-sheet-title { font-family: var(--font-display); font-weight: 900; font-size: 14px; color: #5b6774; margin-bottom: 4px; }
+.fs-row { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; gap: 10px; padding: 8px 0; }
+.fs-row + .fs-row { border-top: 1px solid #eef1f3; }
+.fs-val { font-family: var(--font-display); font-weight: 900; font-size: 18px; text-align: center; color: #7a8692; font-variant-numeric: tabular-nums; }
+.fs-val.lead { color: var(--ink, #121820); }
+.fs-mid { display: flex; flex-direction: column; gap: 5px; }
+.fs-label { font-size: 12px; font-weight: 800; text-align: center; color: #5b6774; }
+.fs-bar { display: flex; height: 7px; border-radius: 99px; overflow: hidden; background: #e8ecef; gap: 2px; }
+.fs-bar span { display: block; height: 100%; transition: width .8s ease; }
+.fs-tiles { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; animation: riseIn .55s cubic-bezier(.2,1.2,.4,1) .45s both; }
+.fs-tile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px; padding: 10px 8px; min-width: 0;
+}
+.fs-tile-ico { font-size: 20px; }
+.fs-tile-num { font-family: var(--font-display); font-weight: 900; font-size: 22px; color: var(--gold, #f5c518); }
+.fs-tile-txt { font-size: 15px; line-height: 1.2; }
+.fs-tile-lbl { font-size: 11px; font-weight: 700; color: #b8c3cd; }
+.fs-btn {
+    margin-top: 4px; width: 100%; border: 0; border-radius: 14px; padding: 16px;
+    font-family: var(--font-display); font-weight: 900; font-size: 17px;
+    color: #0b1118; background: var(--gold, #f5c518);
+    box-shadow: 0 10px 24px rgba(245,197,24,.3); cursor: pointer;
+}
+.fs-btn:active { transform: scale(.98); }
+.fs-solo { padding: 18px; border-radius: 20px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+.fs-solo-score { font-family: var(--font-display); font-weight: 900; font-size: 64px; line-height: 1; color: var(--gold, #f5c518); }
+.fs-solo-lbl { font-weight: 800; color: #c9d3dc; }
+.fs-solo-best { margin-top: 8px; display: inline-block; font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,.35); }
+.fs-solo-best.is-new { background: var(--gold, #f5c518); color: #0b1118; }
+.fs-solo-row { display: flex; justify-content: space-between; padding: 9px 0; font-weight: 800; }
+.fs-solo-row + .fs-solo-row { border-top: 1px solid #eef1f3; }
+
+/* ---------- Εξήγηση βοήθειας ---------- */
+#ll-intro, #howto {
+    position: fixed; inset: 0; z-index: 9000;
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(6, 12, 20, .72);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#ll-intro.is-open, #howto.is-open { display: flex; }
+.lli-card, .ht-card {
+    width: 100%; max-width: 400px; background: #fff; color: var(--ink, #121820);
+    border-radius: 22px; padding: 22px 20px 18px; text-align: center;
+    box-shadow: 0 30px 70px rgba(0,0,0,.5);
+    animation: lliIn .35s cubic-bezier(.2,1.3,.4,1) both;
+}
+@keyframes lliIn { from { transform: translateY(24px) scale(.94); opacity: 0; } }
+.lli-icon {
+    width: 64px; height: 64px; margin: -54px auto 8px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 900; font-size: 22px; color: #fff;
+    border: 4px solid #fff; box-shadow: 0 10px 22px rgba(0,0,0,.25);
+}
+.lli-fifty { background: #1f6fd1; }
+.lli-x2 { background: #d9741c; }
+.lli-var { background: #2c3e50; font-size: 28px; }
+.lli-joker { background: #8e44ad; font-size: 28px; }
+.lli-kicker { font-size: 12px; font-weight: 800; color: #7a8692; }
+.lli-card h3 { margin: 2px 0 8px; font-family: var(--font-display); font-size: 24px; }
+.lli-when { display: inline-block; font-size: 12px; font-weight: 800; background: #eef3f7; color: #3a4552; padding: 5px 10px; border-radius: 999px; }
+.lli-card p { margin: 12px 0 0; font-size: 16px; line-height: 1.45; }
+.lli-card .lli-note { font-size: 13px; color: #6b7785; margin-top: 8px; }
+.lli-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; margin-top: 18px; }
+.lli-actions button, .ht-nav button {
+    border: 0; border-radius: 12px; padding: 14px 10px; font-family: var(--font-display); font-weight: 900; font-size: 15px; cursor: pointer;
+}
+.lli-cancel, .ht-back { background: #eef1f3; color: #3a4552; }
+.lli-go, .ht-next { background: var(--ink, #121820); color: #fff; }
+
+/* ---------- Πώς παίζεται ---------- */
+.ht-card { position: relative; overflow: hidden; padding: 18px 0 18px; }
+.ht-skip { position: absolute; top: 10px; right: 12px; z-index: 2; border: 0; background: none; color: #7a8692; font-weight: 800; font-size: 13px; cursor: pointer; padding: 6px; }
+.ht-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+.ht-slide { flex: 0 0 100%; box-sizing: border-box; padding: 18px 24px 4px; }
+.ht-icon {
+    width: 76px; height: 76px; margin: 0 auto 10px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 38px;
+    background: radial-gradient(circle at 35% 30%, #2e8b57, #12402b);
+    box-shadow: 0 10px 22px rgba(18,64,43,.35);
+}
+.ht-step { font-size: 12px; font-weight: 800; color: #7a8692; }
+.ht-slide h3 { margin: 4px 0 8px; font-family: var(--font-display); font-size: 22px; }
+.ht-slide p { margin: 0; font-size: 15.5px; line-height: 1.5; color: #3a4552; }
+.ht-dots { display: flex; justify-content: center; gap: 7px; margin: 16px 0 14px; }
+.ht-dots i { width: 8px; height: 8px; border-radius: 99px; background: #d5dce2; cursor: pointer; transition: width .25s, background .25s; }
+.ht-dots i.on { width: 22px; background: var(--ink, #121820); }
+.ht-nav { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; padding: 0 20px; }
+.howto-btn {
+    margin: 6px auto 0; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: none; border: 0; color: #fff; font-weight: 800; font-size: 15px; cursor: pointer;
+    padding: 10px 16px; text-shadow: 0 1px 4px rgba(0,0,0,.6);
+    animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) 2s both;
+}
+.howto-btn span {
+    width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.6); font-size: 13px;
+}
+#tr-pts { margin-left: 8px; color: var(--gold, #f5c518); font-weight: 900; }
+@media (prefers-reduced-motion: reduce) {
+    .fs-team.is-win .fs-shirt, .fs-crown, .fs-board, .fs-sheet, .fs-tiles, .fs-headline, .lli-card, .ht-card { animation: none !important; }
+    .ht-track { transition: none; }
+}
+
     </style>
 </head>
 <body>
@@ -7276,7 +7441,7 @@ html, body {
 		            }
 		        }
 		
-		        currentTurn = currentTurn === 1 ? 2 : 1;
+		        if (gameMode === '1v1') currentTurn = currentTurn === 1 ? 2 : 1;
 		    }
 		
 		    isFiftyFifty = false;
@@ -7583,6 +7748,309 @@ html, body {
 			}
 		}
     </script>
+    <script>
+    /* =====================================================================
+       QUIZBALL v14 — νέα οθόνη τέλους, εξήγηση βοηθειών, «Πώς παίζεται»
+       ===================================================================== */
+    (function () {
+        const LS_SEEN = 'quizball_ll_seen_v1';
+        const LS_HOWTO = 'quizball_howto_seen_v1';
+        const mem = {};
+        function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return mem[k] || null; } }
+        function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { mem[k] = v; } }
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+        /* ---------------- Εξήγηση βοήθειας στην πρώτη χρήση ---------------- */
+        const LL_INFO = {
+            fifty: { icon: '50:50', cls: 'fifty', title: '50:50',
+                when: 'Μέσα στην ερώτηση',
+                text: 'Φεύγουν δύο λάθος απαντήσεις. Η σωστή απάντηση μετράει πλέον 1 πόντο.',
+                note: 'Δεν παίζεται στο Top 5 και στο «Βρες το Σκορ».' },
+            x2: { icon: 'x2', cls: 'x2', title: 'Διπλοί πόντοι',
+                when: 'Στον πίνακα, πριν διαλέξεις ερώτηση',
+                text: 'Η επόμενη ερώτηση που θα διαλέξεις μετράει διπλά. Αν απαντήσεις λάθος, δεν χάνεις πόντους.',
+                note: 'Αν το συνδυάσεις με 50:50, οι πόντοι μένουν οι κανονικοί.' },
+            var: { icon: '📺', cls: 'var', title: 'VAR',
+                when: 'Μέσα στην ερώτηση',
+                text: 'Ο διαιτητής «βλέπει το βίντεο» και σου δίνει ένα στοιχείο για την απάντηση.',
+                note: 'Οι πόντοι της ερώτησης δεν αλλάζουν.' },
+            joker: { icon: '🃏', cls: 'joker', title: 'Joker',
+                when: 'Μέσα στην ερώτηση, αντί να απαντήσεις',
+                text: 'Ρίσκο: η ερώτηση κλείνει και γυρίζει ο «κουλοχέρης». Μία στις δύο παίρνεις +2 πόντους, αλλιώς χάνεις 1.',
+                note: 'Στην HOT κατηγορία το +2 γίνεται +3.' }
+        };
+
+        function seenMap() { try { return JSON.parse(lsGet(LS_SEEN) || '{}'); } catch (e) { return {}; } }
+        function markSeen(k) { const m = seenMap(); m[k] = 1; lsSet(LS_SEEN, JSON.stringify(m)); }
+
+        function buildLLModal() {
+            const m = document.createElement('div');
+            m.id = 'll-intro';
+            m.innerHTML = `<div class="lli-card" role="dialog" aria-modal="true" aria-labelledby="lli-title">
+                <div class="lli-icon" id="lli-icon"></div>
+                <div class="lli-kicker">Νέα βοήθεια</div>
+                <h3 id="lli-title"></h3>
+                <div class="lli-when" id="lli-when"></div>
+                <p id="lli-text"></p>
+                <p class="lli-note" id="lli-note"></p>
+                <div class="lli-actions">
+                    <button class="lli-cancel" id="lli-cancel">Όχι τώρα</button>
+                    <button class="lli-go" id="lli-go">Χρησιμοποίησέ τη</button>
+                </div></div>`;
+            document.body.appendChild(m);
+            return m;
+        }
+
+        function llAllowed(team, key) {
+            if (typeof gameMode !== 'undefined' && gameMode !== '1v1') return false;
+            if (typeof currentTurn !== 'undefined' && currentTurn !== team) return false;
+            const st = team === 1 ? t1LL : t2LL;
+            return !!(st && st[key]);
+        }
+
+        function withIntro(team, key, run) {
+            if (seenMap()[key] || !llAllowed(team, key)) { run(); return; }
+            const m = document.getElementById('ll-intro') || buildLLModal();
+            const info = LL_INFO[key];
+            const ic = m.querySelector('#lli-icon');
+            ic.className = 'lli-icon lli-' + info.cls;
+            ic.textContent = info.icon;
+            m.querySelector('#lli-title').textContent = info.title;
+            m.querySelector('#lli-when').textContent = info.when;
+            m.querySelector('#lli-text').textContent = info.text;
+            m.querySelector('#lli-note').textContent = info.note;
+            m.classList.add('is-open');
+            const close = () => m.classList.remove('is-open');
+            m.querySelector('#lli-cancel').onclick = () => { markSeen(key); close(); };
+            m.querySelector('#lli-go').onclick = () => { markSeen(key); close(); run(); };
+        }
+
+        const _useLL = window.useLL, _triggerVAR = window.triggerVAR, _useJoker = window.useJoker;
+        if (_useLL) window.useLL = function (team, type) { withIntro(team, type, () => _useLL(team, type)); };
+        if (_triggerVAR) window.triggerVAR = function (team) { withIntro(team, 'var', () => _triggerVAR(team)); };
+        if (_useJoker) window.useJoker = function (team) { withIntro(team, 'joker', () => _useJoker(team)); };
+
+        /* ---------------- «Πώς παίζεται» ---------------- */
+        const SLIDES = [
+            { icon: '⚽', title: 'Δύο ομάδες, ένας πίνακας',
+              text: 'Παίζετε εναλλάξ. Το νόμισμα του διαιτητή αποφασίζει ποια ομάδα ξεκινάει και ποια διαλέγει τις έξτρα κατηγορίες.' },
+            { icon: '🗂️', title: 'Ο πίνακας',
+              text: '6 σταθερές κατηγορίες και 2 που διαλέγετε εσείς. Κάθε ερώτηση αξίζει 1, 2 ή 3 πόντους. Μία κατηγορία βγαίνει τυχαία HOT 🔥 και δίνει +1 πόντο σε κάθε σωστή.' },
+            { icon: '🧑‍⚖️', title: 'Ποιος κρίνει',
+              text: 'Η ομάδα απαντάει φωναχτά. Ένας κάνει τον διαιτητή: πατάει «Αποκάλυψη απάντησης» και μετά «Σωστό» ή «Λάθος». Το λάθος δεν αφαιρεί πόντους, απλώς περνάει η σειρά.' },
+            { icon: '🛟', title: 'Οι βοήθειες',
+              text: 'Κάθε ομάδα έχει από μία φορά: 50:50, x2, VAR και Joker. Την πρώτη φορά που πατάς μια βοήθεια, θα δεις τι ακριβώς κάνει.' },
+            { icon: '🥅', title: 'Ισοπαλία; Πέναλτι!',
+              text: 'Αν τελειώσει ισόπαλο, πάτε στα πέναλτι με δύσκολες ερωτήσεις: κάθε σωστή είναι γκολ. Πέντε η κάθε ομάδα και, αν χρειαστεί, ξανά ένα-ένα μέχρι να κριθεί.' },
+            { icon: '🎯', title: 'Προπόνηση',
+              text: 'Παίζεις μόνος σου, χωρίς βοήθειες, για να κάνεις όσο πιο ψηλό σκορ μπορείς. Το ρεκόρ σου μένει αποθηκευμένο.' }
+        ];
+
+        function buildHowto() {
+            const o = document.createElement('div');
+            o.id = 'howto';
+            o.innerHTML = `<div class="ht-card" role="dialog" aria-modal="true" aria-label="Πώς παίζεται">
+                <button class="ht-skip" id="ht-skip">Κλείσιμο</button>
+                <div class="ht-track" id="ht-track">${SLIDES.map((s, i) => `
+                    <section class="ht-slide" data-i="${i}">
+                        <div class="ht-icon">${s.icon}</div>
+                        <div class="ht-step">${i + 1} / ${SLIDES.length}</div>
+                        <h3>${s.title}</h3>
+                        <p>${s.text}</p>
+                    </section>`).join('')}</div>
+                <div class="ht-dots" id="ht-dots">${SLIDES.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>
+                <div class="ht-nav">
+                    <button class="ht-back" id="ht-back">Πίσω</button>
+                    <button class="ht-next" id="ht-next">Επόμενο</button>
+                </div></div>`;
+            document.body.appendChild(o);
+
+            let i = 0, x0 = null;
+            const track = o.querySelector('#ht-track');
+            const go = n => {
+                i = Math.max(0, Math.min(SLIDES.length - 1, n));
+                track.style.transform = `translateX(-${i * 100}%)`;
+                o.querySelectorAll('#ht-dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+                o.querySelector('#ht-back').style.visibility = i === 0 ? 'hidden' : 'visible';
+                o.querySelector('#ht-next').textContent = i === SLIDES.length - 1 ? 'Πάμε να παίξουμε!' : 'Επόμενο';
+            };
+            const close = () => { o.classList.remove('is-open'); lsSet(LS_HOWTO, '1'); };
+            o.querySelector('#ht-next').onclick = () => (i === SLIDES.length - 1 ? close() : go(i + 1));
+            o.querySelector('#ht-back').onclick = () => go(i - 1);
+            o.querySelector('#ht-skip').onclick = close;
+            o.querySelectorAll('#ht-dots i').forEach(d => d.onclick = () => go(+d.dataset.i));
+            track.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+            track.addEventListener('touchend', e => {
+                if (x0 == null) return;
+                const dx = e.changedTouches[0].clientX - x0; x0 = null;
+                if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1));
+            });
+            o.addEventListener('click', e => { if (e.target === o) close(); });
+            o._go = go;
+            return o;
+        }
+
+        window.openHowto = function () {
+            const o = document.getElementById('howto') || buildHowto();
+            o._go(0);
+            o.classList.add('is-open');
+        };
+
+        window.addEventListener('load', () => {
+            const box = document.querySelector('#home-screen .buttons-container');
+            if (box && !document.getElementById('howto-btn')) {
+                const b = document.createElement('button');
+                b.id = 'howto-btn';
+                b.className = 'howto-btn';
+                b.type = 'button';
+                b.innerHTML = '<span aria-hidden="true">?</span> Πώς παίζεται';
+                b.onclick = window.openHowto;
+                box.appendChild(b);
+            }
+            if (!lsGet(LS_HOWTO)) setTimeout(window.openHowto, 2600);
+        });
+
+        /* ---------------- Νέα οθόνη τέλους αγώνα ---------------- */
+        const SHIRT = `<svg viewBox="0 0 64 56" aria-hidden="true"><path d="M22 3 L12 6 L2 16 L9 26 L15 22 L15 53 L49 53 L49 22 L55 26 L62 16 L52 6 L42 3 C40 9 36 12 32 12 C28 12 24 9 22 3 Z"/></svg>`;
+
+        function teamColor(n) {
+            const el = document.getElementById(`t${n}-color`);
+            return (el && el.value) || (n === 1 ? '#1f6fd1' : '#e04848');
+        }
+        function usedLL(st) {
+            if (!st) return 0;
+            return ['fifty', 'x2', 'var', 'joker'].filter(k => st[k] === false).length;
+        }
+        function bestCat() {
+            let best = null, pts = 0;
+            Object.keys(gameStats.categoryPoints || {}).forEach(c => {
+                if (gameStats.categoryPoints[c] > pts) { best = c; pts = gameStats.categoryPoints[c]; }
+            });
+            return best ? { name: best, pts, icon: (typeof catConfig !== 'undefined' && catConfig[best] ? catConfig[best].icon : '⭐') } : null;
+        }
+        function statRow(label, a, b, fmt) {
+            const tot = a + b;
+            const pa = tot ? Math.round(a / tot * 100) : 50;
+            const f = fmt || (v => v);
+            return `<div class="fs-row">
+                <div class="fs-val ${a > b ? 'lead' : ''}">${f(a)}</div>
+                <div class="fs-mid"><div class="fs-label">${label}</div>
+                    <div class="fs-bar"><span style="width:${pa}%;background:var(--fs1)"></span><span style="width:${100 - pa}%;background:var(--fs2)"></span></div></div>
+                <div class="fs-val ${b > a ? 'lead' : ''}">${f(b)}</div></div>`;
+        }
+
+        window.showEndScreen = function () {
+            ['header', 'board-screen', 'question-screen', 'sudden-death-screen', 'penalty-intro'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = 'none';
+            });
+            const end = document.getElementById('end-screen');
+            end.style.display = 'flex';
+            end.classList.add('fs-v14');
+
+            const bc = bestCat();
+            const extras = `<div class="fs-tiles">
+                <div class="fs-tile"><span class="fs-tile-ico">🔥</span><span class="fs-tile-num">${gameStats.hotPoints || 0}</span><span class="fs-tile-lbl">HOT πόντοι</span></div>
+                <div class="fs-tile"><span class="fs-tile-ico">${bc ? bc.icon : '⭐'}</span><span class="fs-tile-num fs-tile-txt">${bc ? esc(bc.name) : '—'}</span><span class="fs-tile-lbl">${bc ? 'Καλύτερη κατηγορία · ' + bc.pts + ' π.' : 'Καλύτερη κατηγορία'}</span></div>
+            </div>`;
+
+            if (gameMode !== '1v1') {
+                let best = 0;
+                try { best = Number(localStorage.getItem(STORAGE_KEYS.highScore) || 0); } catch (e) {}
+                const isNew = team1.score > best;
+                if (isNew) { best = team1.score; try { localStorage.setItem(STORAGE_KEYS.highScore, best); } catch (e) {} playSfx(sfxGoal); triggerConfetti(); }
+                const c = gameStats.team1Correct, w = gameStats.team1Wrong, tot = c + w;
+                end.innerHTML = `<div class="fs-wrap">
+                    <div class="fs-whistle">Τέλος προπόνησης</div>
+                    <div class="fs-solo">
+                        <div class="fs-solo-score">${team1.score}</div>
+                        <div class="fs-solo-lbl">πόντοι</div>
+                        <div class="fs-solo-best ${isNew ? 'is-new' : ''}">${isNew ? 'Νέο ρεκόρ!' : 'Ρεκόρ: ' + best}</div>
+                    </div>
+                    <div class="fs-sheet fs-sheet-solo">
+                        <div class="fs-solo-row"><span>Σωστές</span><strong>${c}</strong></div>
+                        <div class="fs-solo-row"><span>Λάθη</span><strong>${w}</strong></div>
+                        <div class="fs-solo-row"><span>Ευστοχία</span><strong>${tot ? Math.round(c / tot * 100) : 0}%</strong></div>
+                    </div>
+                    ${extras}
+                    <button class="fs-btn" onclick="location.reload()">Νέο παιχνίδι</button>
+                </div>`;
+                return;
+            }
+
+            const aPen = penA.filter(x => x === 1).length, bPen = penB.filter(x => x === 1).length;
+            const pens = penA.length > 0 || penB.length > 0 || gameStats.wentToPens;
+            let win = 0;
+            if (pens) win = aPen > bPen ? 1 : bPen > aPen ? 2 : 0;
+            else win = team1.score > team2.score ? 1 : team2.score > team1.score ? 2 : 0;
+
+            const c1 = teamColor(1), c2 = teamColor(2);
+            const winName = win === 1 ? team1.name : win === 2 ? team2.name : '';
+            const quote = (typeof kazouraQuotes !== 'undefined' && kazouraQuotes.length) ? kazouraQuotes[Math.floor(Math.random() * kazouraQuotes.length)] : '';
+
+            // Στα πέναλτι το σκορ του αγώνα έχει ήδη +1 για τον νικητή· δείχνουμε το κανονικό σκορ αγώνα.
+            let s1 = team1.score, s2 = team2.score;
+            if (pens && win === 1) s1 = Math.max(0, s1 - 1);
+            if (pens && win === 2) s2 = Math.max(0, s2 - 1);
+
+            const t1c = gameStats.team1Correct, t2c = gameStats.team2Correct;
+            const t1w = gameStats.team1Wrong, t2w = gameStats.team2Wrong;
+            const acc = (c, w) => (c + w) ? Math.round(c / (c + w) * 100) : 0;
+
+            const teamBox = (n, name, col) => `<div class="fs-team ${win === n ? 'is-win' : win ? 'is-lose' : ''}" style="--tc:${col}">
+                ${win === n ? '<div class="fs-crown" aria-hidden="true">🏆</div>' : ''}
+                <div class="fs-shirt">${SHIRT}</div>
+                <div class="fs-name">${esc(name)}</div></div>`;
+
+            end.innerHTML = `<div class="fs-wrap" style="--fs1:${c1};--fs2:${c2};--fsw:${win === 1 ? c1 : win === 2 ? c2 : '#f5c518'}">
+                <div class="fs-whistle">Τελικό σφύριγμα</div>
+                <div class="fs-board">
+                    ${teamBox(1, team1.name, c1)}
+                    <div class="fs-score">
+                        <div class="fs-digits"><span>${s1}</span><i>–</i><span>${s2}</span></div>
+                        ${pens ? `<div class="fs-pens">Πέναλτι ${aPen}–${bPen}</div>` : ''}
+                    </div>
+                    ${teamBox(2, team2.name, c2)}
+                </div>
+                <div class="fs-headline">${win ? `Η ομάδα «${esc(winName)}» είναι η νικήτρια!` : 'Ισοπαλία!'}</div>
+                ${win && quote ? `<div class="fs-quote">${quote}</div>` : ''}
+                <div class="fs-sheet">
+                    <div class="fs-sheet-title">Φύλλο αγώνα</div>
+                    ${statRow('Σωστές', t1c, t2c)}
+                    ${statRow('Λάθη', t1w, t2w)}
+                    ${statRow('Ευστοχία', acc(t1c, t1w), acc(t2c, t2w), v => v + '%')}
+                    ${statRow('Βοήθειες', usedLL(t1LL), usedLL(t2LL), v => v + '/4')}
+                </div>
+                ${extras}
+                <button class="fs-btn" onclick="location.reload()">Νέο παιχνίδι</button>
+            </div>`;
+
+            if (win) {
+                playSfx(sfxGoal);
+                try {
+                    if (typeof confetti === 'function') {
+                        const col = win === 1 ? c1 : c2;
+                        confetti({ particleCount: 140, spread: 80, origin: { y: 0.35 }, colors: [col, '#ffffff', '#f5c518'] });
+                        setTimeout(() => confetti({ particleCount: 90, spread: 110, origin: { y: 0.3 }, colors: [col, '#ffffff'] }), 500);
+                    } else triggerConfetti();
+                } catch (e) {}
+            } else playSfx(sfxBoo);
+        };
+
+        /* ---------------- Προπόνηση: πόντοι στην μπάρα ---------------- */
+        function trPts() {
+            const bar = document.getElementById('training-header');
+            if (!bar) return;
+            let el = document.getElementById('tr-pts');
+            if (!el) { el = document.createElement('span'); el.id = 'tr-pts'; bar.appendChild(el); }
+            el.textContent = team1.score + (team1.score === 1 ? ' πόντος' : ' πόντοι');
+        }
+        const _resolveTurn = window.resolveTurn;
+        if (_resolveTurn) window.resolveTurn = function (st) { _resolveTurn(st); if (gameMode === 'training') trPts(); };
+        const _startTraining = window.startTraining;
+        if (_startTraining) window.startTraining = function () { _startTraining(); trPts(); };
+    })();
+    </script>
+
     <script>
         if ('serviceWorker' in navigator && location.protocol !== 'file:') {
             window.addEventListener('load', () => {

@@ -3988,6 +3988,34 @@ html, body {
 .btn-steal .steal-ico { width: 14px; height: 14px; }
 @media (max-width: 370px) { .btn-steal .steal-ico { display: none; } }
 
+
+/* ---------- v16: επιβεβαίωση & ρεβάνς ---------- */
+#qb-confirm {
+    position: fixed; inset: 0; z-index: 10100; display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(6, 12, 20, .72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#qb-confirm.is-open { display: flex; }
+.qbc-card {
+    width: 100%; max-width: 360px; background: #fff; color: var(--ink, #121820);
+    border-radius: 20px; padding: 22px 18px 16px; text-align: center;
+    box-shadow: 0 30px 70px rgba(0,0,0,.5); animation: lliIn .3s cubic-bezier(.2,1.3,.4,1) both;
+}
+.qbc-card h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 22px; }
+.qbc-card p { margin: 0; color: #4a5562; font-size: 15px; line-height: 1.45; }
+.qbc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.qbc-actions button { border: 0; border-radius: 12px; padding: 14px 10px; font-family: var(--font-display); font-weight: 900; font-size: 15px; cursor: pointer; }
+#qbc-cancel { background: var(--ink, #121820); color: #fff; }
+#qbc-ok { background: #eef1f3; color: #3a4552; }
+#qbc-ok.is-danger { background: #fdecec; color: #c0392b; }
+.fs-actions { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-top: 4px; }
+.fs-actions .fs-btn { margin-top: 0; }
+.fs-btn-2 {
+    border: 2px solid rgba(255,255,255,.35); border-radius: 14px; padding: 14px 10px; background: rgba(255,255,255,.06);
+    color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 15px; cursor: pointer;
+}
+.fs-hint { font-size: 12px; color: #9fb0bf; margin-top: -4px; }
+.ll-toast { width: max-content !important; font-size: 15px !important; padding: 11px 18px !important; line-height: 1.3; }
+
     </style>
 </head>
 <body>
@@ -7198,12 +7226,12 @@ html, body {
         
 		function useJoker(teamId) {
 		    if (gameMode !== '1v1') return;
-		    if (currentTurn !== teamId) { alert("Δεν είναι η σειρά σας!"); return; }
+		    if (currentTurn !== teamId) { qbNotice("Δεν είναι η σειρά σας"); return; }
 		    let llState = (teamId === 1) ? t1LL : t2LL;
 		    if (!llState.joker) return;
 		    
 		    let inQuestion = document.getElementById('question-screen').style.display === 'flex';
-		    if (!inQuestion) { alert("Το Joker παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
+		    if (!inQuestion) { qbNotice("Το Joker παίζεται μέσα στην ερώτηση"); return; }
 		
 		    llState.joker = false;
 		    document.getElementById(`ll-joker-${teamId}`).classList.add('used-ll');
@@ -7294,9 +7322,9 @@ html, body {
             // Αν έχει ήδη πατηθεί, μην κάνεις τίποτα
             if (team === 1 && t1LL.var === false) return;
             if (team === 2 && t2LL.var === false) return;
-            if (gameMode === '1v1' && currentTurn !== team) { alert("Δεν είναι η σειρά σας!"); return; }
+            if (gameMode === '1v1' && currentTurn !== team) { qbNotice("Δεν είναι η σειρά σας"); return; }
             if (document.getElementById('question-screen').style.display !== 'flex' || !currentQ) {
-                alert("Το VAR παίζεται ΜΕΣΑ στην ερώτηση!"); return;
+                qbNotice("Το VAR παίζεται μέσα στην ερώτηση"); return;
             }
 
             // Καίμε το κουμπί
@@ -7377,17 +7405,17 @@ html, body {
 
         function useLL(teamId, type) {
 		    if (gameMode !== '1v1') return;
-		    if (currentTurn !== teamId) { alert("Δεν είναι η σειρά σας!"); return; }
+		    if (currentTurn !== teamId) { qbNotice("Δεν είναι η σειρά σας"); return; }
 		    
 		    let llState = (teamId === 1) ? t1LL : t2LL;
 		    if (!llState[type]) return;
 		    
 		    let inQuestion = document.getElementById('question-screen').style.display === 'flex';
-		    if (type === 'x2' && inQuestion) { alert("⭐ Ο Διπλασιασμός παίζεται στον Πίνακα!"); return; }
-		    if (type === 'fifty' && !inQuestion) { alert("Το 50/50 παίζεται ΜΕΣΑ στην ερώτηση!"); return; }
+		    if (type === 'x2' && inQuestion) { qbNotice("Το x2 παίζεται στον πίνακα, πριν διαλέξετε ερώτηση"); return; }
+		    if (type === 'fifty' && !inQuestion) { qbNotice("Το 50:50 παίζεται μέσα στην ερώτηση"); return; }
 		    
 		    if (type === 'fifty' && (currentQ.type === 'top5' || currentQ.type === 'score')) { 
-		        alert("Αυτή η βοήθεια δεν λειτουργεί σε αυτή την κατηγορία!"); return; 
+		        qbNotice("Αυτή η βοήθεια δεν παίζεται σε αυτή την κατηγορία"); return; 
 		    }
 		
 		    llState[type] = false;
@@ -7753,8 +7781,11 @@ html, body {
 		    setTimeout(fitPitchNames, 50);
 		}
         function goHome() {
-		    const ok = confirm("Σίγουρα θέλεις να γυρίσεις στην αρχική; Θα χαθεί ο αγώνας.");
-		    if (ok) location.reload();
+		    qbConfirm({
+		        title: 'Έξοδος στην αρχική;',
+		        text: gameMode === 'training' ? 'Η προπόνηση θα σταματήσει και οι πόντοι της θα χαθούν.' : 'Ο αγώνας θα σταματήσει και το σκορ θα χαθεί.',
+		        ok: 'Έξοδος', cancel: 'Συνέχεια', danger: true
+		    }).then(yes => { if (yes) location.reload(); });
 		}
         function showEndScreen() { 
 		
@@ -8109,7 +8140,10 @@ html, body {
                         <div class="fs-solo-row"><span>Ευστοχία</span><strong>${tot ? Math.round(c / tot * 100) : 0}%</strong></div>
                     </div>
                     ${extras}
-                    <button class="fs-btn" onclick="location.reload()">Νέο παιχνίδι</button>
+                    <div class="fs-actions">
+                        <button class="fs-btn" onclick="qbRematch()">Ξανά προπόνηση</button>
+                        <button class="fs-btn-2" onclick="location.reload()">Αρχική</button>
+                    </div>
                 </div>`;
                 return;
             }
@@ -8158,7 +8192,11 @@ html, body {
                     ${statRow('Βοήθειες', usedLL(t1LL), usedLL(t2LL), v => v + '/4')}
                 </div>
                 ${extras}
-                <button class="fs-btn" onclick="location.reload()">Νέο παιχνίδι</button>
+                <div class="fs-actions">
+                    <button class="fs-btn" onclick="qbRematch()">Ρεβάνς</button>
+                    <button class="fs-btn-2" onclick="location.reload()">Νέο παιχνίδι</button>
+                </div>
+                <div class="fs-hint">Η ρεβάνς κρατάει ονόματα και χρώματα, με νέο νόμισμα και νέες ερωτήσεις.</div>
             </div>`;
 
             if (win) {
@@ -8461,6 +8499,55 @@ html, body {
     })();
     </script>
 
+    <script>
+    /* QUIZBALL v16 — μηνύματα στο στυλ του παιχνιδιού, παράθυρο επιβεβαίωσης, ρεβάνς */
+    window.qbNotice = function (msg) { llToast(msg, '#2b3642'); };
+
+    window.qbConfirm = function (o) {
+        return new Promise(res => {
+            let m = document.getElementById('qb-confirm');
+            if (!m) {
+                m = document.createElement('div');
+                m.id = 'qb-confirm';
+                m.innerHTML = `<div class="qbc-card" role="alertdialog" aria-modal="true" aria-labelledby="qbc-title">
+                    <h3 id="qbc-title"></h3><p id="qbc-text"></p>
+                    <div class="qbc-actions"><button id="qbc-cancel"></button><button id="qbc-ok"></button></div></div>`;
+                document.body.appendChild(m);
+            }
+            m.querySelector('#qbc-title').textContent = o.title || '';
+            m.querySelector('#qbc-text').textContent = o.text || '';
+            const ok = m.querySelector('#qbc-ok'), cancel = m.querySelector('#qbc-cancel');
+            ok.textContent = o.ok || 'OK'; cancel.textContent = o.cancel || 'Άκυρο';
+            ok.className = o.danger ? 'is-danger' : '';
+            const done = v => { m.classList.remove('is-open'); res(v); };
+            ok.onclick = () => done(true);
+            cancel.onclick = () => done(false);
+            m.onclick = e => { if (e.target === m) done(false); };
+            m.classList.add('is-open');
+            setTimeout(() => cancel.focus(), 50);
+        });
+    };
+
+    window.qbRematch = function () {
+        penA = []; penB = []; penRound = 0;
+        isDouble = false; isFiftyFifty = false; currentQ = null;
+        team1.score = 0; team2.score = 0;
+        gameStats = { team1Correct: 0, team2Correct: 0, team1Wrong: 0, team2Wrong: 0, categoryPoints: {}, hotPoints: 0, wentToPens: false };
+        const end = document.getElementById('end-screen');
+        end.style.display = 'none';
+        ['score-t1', 'score-t2'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = '0'; });
+        if (gameMode === 'training') {
+            ['board-screen', 'question-screen'].forEach(id => document.getElementById(id).style.display = 'none');
+            startTraining();
+            return;
+        }
+        selectedOptionals = [];
+        document.querySelectorAll('.opt-cat-btn').forEach(b => b.classList.remove('selected'));
+        const bc = document.getElementById('builder-count'); if (bc) bc.textContent = '0 από 2';
+        const fb = document.getElementById('btn-finalize-board'); if (fb) fb.disabled = true;
+        start1v1();
+    };
+    </script>
     <script>
         if ('serviceWorker' in navigator && location.protocol !== 'file:') {
             window.addEventListener('load', () => {

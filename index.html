@@ -3145,12 +3145,131 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
     #home-screen::before, #home-screen::after { animation: none !important; }
 }
 
+
+/* =====================================================================
+   QUIZBALL UI v5 — νέο animated logo
+   ===================================================================== */
+.qb-logo {
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: clamp(26px, 6vh, 54px);
+    user-select: none; -webkit-user-select: none;
+}
+.qb-ball-wrap { position: relative; width: clamp(84px, 24vw, 120px); height: clamp(110px, 30vw, 150px); display: flex; align-items: flex-end; justify-content: center; }
+.qb-ball {
+    width: 100%; aspect-ratio: 1; position: relative; z-index: 2;
+    animation: qbDrop 1.1s cubic-bezier(.3,0,.4,1) both, qbFloat 3.6s ease-in-out 2.2s infinite;
+    filter: drop-shadow(0 0 22px rgba(245,197,24,.35));
+}
+.qb-ball-svg { width: 100%; height: 100%; display: block; animation: qbSpin 1.1s cubic-bezier(.3,0,.4,1) both, qbIdleSpin 14s linear 2.2s infinite; }
+.qb-ball-shadow {
+    position: absolute; bottom: -6px; left: 50%; width: 70%; height: 12px; margin-left: -35%;
+    border-radius: 50%; background: rgba(0,0,0,.5); filter: blur(4px); z-index: 1;
+    animation: qbShadow 1.1s cubic-bezier(.3,0,.4,1) both, qbShadowFloat 3.6s ease-in-out 2.2s infinite;
+}
+@keyframes qbDrop {
+    0% { transform: translateY(-110vh); }
+    55% { transform: translateY(0) scale(1.08, .88); }
+    70% { transform: translateY(-34%) scale(.96, 1.04); }
+    85% { transform: translateY(0) scale(1.04, .94); }
+    93% { transform: translateY(-8%); }
+    100% { transform: translateY(0); }
+}
+@keyframes qbSpin { from { transform: rotate(-540deg); } to { transform: rotate(0); } }
+@keyframes qbIdleSpin { to { transform: rotate(360deg); } }
+@keyframes qbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes qbShadow { 0% { opacity: 0; transform: scale(.3); } 55%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes qbShadowFloat { 50% { transform: scale(.8); opacity: .7; } }
+
+.qb-word {
+    display: flex;
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(50px, 15vw, 92px);
+    line-height: .9;
+    letter-spacing: 1px;
+    transform: skewX(-8deg);
+}
+.qb-word span {
+    display: inline-block;
+    color: transparent;
+    background: linear-gradient(100deg, #ffffff 0 42%, #ffffff 42%, #dfe9f2 46%, #ffffff 50%, #ffffff 100%);
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text; background-clip: text;
+    filter: drop-shadow(0 4px 0 #0b1a12) drop-shadow(0 10px 18px rgba(0,0,0,.55));
+    animation: qbLetter .55s cubic-bezier(.2,1.5,.4,1) calc(1s + var(--i) * 70ms) both,
+               qbShine 4.5s ease-in-out calc(2.4s + var(--i) * 90ms) infinite;
+}
+.qb-word span.qb-gold {
+    background-image: linear-gradient(100deg, #f5c518 0 42%, #fff6c9 46%, #f5c518 50%, #e79a12 100%);
+}
+@keyframes qbLetter {
+    from { opacity: 0; transform: translateY(40px) scale(.4) rotate(-10deg); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes qbShine {
+    0%, 70% { background-position: 100% 0; }
+    85%, 100% { background-position: 0% 0; }
+}
+.qb-swoosh { width: clamp(220px, 70vw, 400px); height: 18px; margin-top: 6px; }
+.qb-swoosh svg { width: 100%; height: 100%; overflow: visible; }
+.qb-swoosh path {
+    fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 320; stroke-dashoffset: 320;
+    filter: drop-shadow(0 0 8px rgba(245,197,24,.6));
+    animation: qbSwoosh .7s ease-out 1.65s forwards;
+}
+@keyframes qbSwoosh { to { stroke-dashoffset: 0; } }
+.qb-tag {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(12px, 3.2vw, 16px);
+    letter-spacing: 5px;
+    color: rgba(255,255,255,.8);
+    animation: fadeInFull .6s ease 2s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .qb-ball, .qb-ball-svg, .qb-ball-shadow, .qb-word span, .qb-swoosh path, .qb-tag { animation: none !important; opacity: 1 !important; stroke-dashoffset: 0 !important; }
+}
+/* τα κουμπιά εμφανίζονται αφού «προσγειωθεί» το logo */
+#home-screen .play-now-btn { animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) 1.7s both, ctaGlow 2.8s ease-in-out 2.8s infinite; }
+#home-screen .training-btn { animation: riseIn .6s cubic-bezier(.2,1.2,.4,1) 1.85s both; }
+
     </style>
 </head>
 <body>
 
     <div id="home-screen">
-        <img src="https://i.postimg.cc/SQ3t5CLk/fd346e66-2c16-4f9e-a792-1260bbc277b1.png" class="home-logo" alt="Quizball Logo">
+        <div class="qb-logo" role="img" aria-label="Quizball">
+            <div class="qb-ball-wrap">
+                <div class="qb-ball"><svg class="qb-ball-svg" viewBox="-50 -50 100 100" aria-hidden="true">
+                    <defs>
+                        <radialGradient id="qbShade" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#e9eef2"/><stop offset="1" stop-color="#9aa7b2"/></radialGradient>
+                        <clipPath id="qbClip"><circle r="47"/></clipPath>
+                    </defs>
+                    <circle r="47" fill="url(#qbShade)"/>
+                    <g clip-path="url(#qbClip)" fill="#121820">
+                        <polygon points="0,-15 14.3,-4.6 8.8,12.1 -8.8,12.1 -14.3,-4.6"/>
+                        <polygon points="0,-52 14,-41 9,-27 -9,-27 -14,-41"/>
+                        <polygon points="49,-17 52,0 40,11 28,1 33,-14" />
+                        <polygon points="31,42 18,52 5,44 9,30 25,28"/>
+                        <polygon points="-31,42 -25,28 -9,30 -5,44 -18,52"/>
+                        <polygon points="-49,-17 -33,-14 -28,1 -40,11 -52,0"/>
+                    </g>
+                    <g stroke="#121820" stroke-width="2.2" fill="none" clip-path="url(#qbClip)">
+                        <path d="M0,-15 L0,-27 M14.3,-4.6 L28,1 M8.8,12.1 L17,29 M-8.8,12.1 L-17,29 M-14.3,-4.6 L-28,1"/>
+                    </g>
+                    <circle r="47" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+                </svg></div>
+                <div class="qb-ball-shadow"></div>
+            </div>
+            <div class="qb-word"><span style="--i:0">Q</span><span style="--i:1">U</span><span style="--i:2">I</span><span style="--i:3">Z</span><span style="--i:4" class="qb-gold">B</span><span style="--i:5" class="qb-gold">A</span><span style="--i:6" class="qb-gold">L</span><span style="--i:7" class="qb-gold">L</span></div>
+            <div class="qb-swoosh"><svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 18 C 90 2, 210 2, 296 14"/></svg></div>
+            <div class="qb-tag">ULTIMATE FOOTBALL QUIZ</div>
+        </div>
         <div class="buttons-container">
             <button class="play-now-btn" onclick="openSetup()">🏁 ΠΑΙΞΕ ΤΩΡΑ!</button>
             <button class="training-btn" onclick="startTraining()">🎯 ΠΡΟΠΟΝΗΣΗ</button>
@@ -4201,9 +4320,9 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Ποια αγγλική ομάδα εδρεύει στο Γιορκσάιρ, έχει για παρατσούκλι «Τα Παγώνια» και αγωνίζεται στο «Elland Road»;", options: ["Σέφιλντ", "Λιντς", "Χαλ", "Σάντερλαντ"], correctIdx: 1, a: "Λιντς", hint: "Η ομάδα αυτή είχε για χρόνια προπονητή τον 'Ελ Λόκο' Μαρσέλο Μπιέλσα." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια πόλη του γαλλικού βορρά εδρεύει η ομάδα που φέρει το προσωνύμιο \"Les Dogues\" (Οι Μαστίφ) και αγωνίζεται στο στάδιο Πιέρ Μορουά;", options: ["Λιλ", "Μετς", "Στρασβούργο", "Λανς"], correctIdx: 0, a: "Λιλ", hint: "Η πόλη βρίσκεται στον γαλλικό βορρά, σε απόσταση αναπνοής από τα σύνορα με το Βέλγιο." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Ποια ιταλική ομάδα, γνωστή και ως «Ιπτάμενα Γαϊδούρια», πρωταγωνίστησε για χρόνια στη Serie A παίζοντας στο Μπεντεγκόντι μαζί με την Ελλάς Βερόνα;", options: ["Βιτσέντζα", "Κιέβο", "Πάντοβα", "Μάντοβα"], correctIdx: 1, a: "Κιέβο", hint: "Πρόκειται για ομάδα που αποτελεί ουσιαστικά προάστιο μιας μεγαλύτερης ιταλικής πόλης του Βένετο." },
-            { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια πόλη της Ισπανίας βρίσκεται το «RCDE Stadium», έδρα της Εσπανιόλ;", options: ["Μαδρίτη", "Βαρκελώνη", "Βαλένθια", "Σεβίλλη"], correctIdx: 1, a: "Βαρκελώνη", hint: "Αυτή η πόλη φιλοξενεί το διάσημο ημιτελές έργο 'Sagrada Familia'." },
+            { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια πόλη βρίσκεται το γήπεδο «Σαν Μαμές», έδρα της Αθλέτικ;", options: ["Σαν Σεμπαστιάν", "Μπιλμπάο", "Βιτόρια", "Παμπλόνα"], correctIdx: 1, a: "Μπιλμπάο", hint: "Η μεγαλύτερη πόλη της Χώρας των Βάσκων, γνωστή και για το μουσείο Γκούγκενχαϊμ." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Ποια αγγλική ομάδα της ανατολικής Αγγλίας εδρεύει στο «Portman Road» και φέρει το παρατσούκλι «The Tractor Boys»;", options: ["Νόριτς", "Ίπσουιτς", "Κόλτσεστερ", "Λούτον"], correctIdx: 1, a: "Ίπσουιτς", hint: "Η πόλη αυτή αποτελεί το διοικητικό κέντρο της αγγλικής κομητείας του Suffolk." },
-            { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια πόλη της Αιτωλοακαρνανίας βρίσκεται το γήπεδο της ομάδας που φοράει κυανοκίτρινα και έχει ως έμβλημα τον μυθικό ήρωα Τίτορμο;", options: ["Μεσολόγγι", "Αγρίνιο", "Άρτα", "Πάτρα"], correctIdx: 1, a: "Αγρίνιο", hint: "Είναι η μεγαλύτερη πόλη της περιοχής, παρότι δεν είναι η πρωτεύουσα του νομού της." },
+            { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια πόλη εδρεύει ο Αστέρας Τρίπολης;", options: ["Καλαμάτα", "Σπάρτη", "Τρίπολη", "Άργος"], correctIdx: 2, a: "Τρίπολη", hint: "Πρωτεύουσα της Αρκαδίας, στο κέντρο της Πελοποννήσου." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Ποια ιταλική ομάδα της Απουλίας, γνωστή και ως οι \"Giallorossi του Νότου\", αγωνίζεται στο στάδιο «Via del Mare»;", options: ["Μπάρι", "Λέτσε", "Τάραντο", "Παλέρμο"], correctIdx: 1, a: "Λέτσε", hint: "Η πόλη αυτή αποκαλείται συχνά λόγω της μπαρόκ αρχιτεκτονικής της ως η 'Φλωρεντία του Νότου'." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Σε ποια γαλλική πόλη του νότου εδρεύει η ομάδα που φοράει βιολετί χρώματα και αγωνίζεται στο «Stadium Municipal»;", options: ["Μπορντό", "Τουλούζ", "Μονπελιέ", "Ναντ"], correctIdx: 1, a: "Τουλούζ", hint: "Η πόλη ονομάζεται αλλιώς 'La Ville Rose' (Η Ροζ Πόλη) λόγω του χαρακτηριστικού χρώματος των τούβλων της." },
             { cat: "Γεωγραφία", p: 2, type: "mcq", q: "Ποια ισπανική ομάδα εδρεύει στην παραθαλάσσια πόλη Σαν Σεμπαστιάν της Χώρας των Βάσκων και παίζει στο \"Anoeta\";", options: ["Αθλέτικ Μπιλμπάο", "Ρεάλ Σοσιεδάδ", "Εϊμπάρ", "Αλαβές"], correctIdx: 1, a: "Ρεάλ Σοσιεδάδ", hint: "Οι οπαδοί της τοπικής ομάδας αποκαλούνται και 'Txuri-Urdin' (Ασπρόμπλε)." },
@@ -4286,7 +4405,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποιος Ιταλός αστέρας έχασε το τελευταίο κρίσιμο πέναλτι στον τελικό του Μουντιάλ 1994 απέναντι στη Βραζιλία;", options: ["Φράνκο Μπαρέζι", "Ρομπέρτο Μπάτζιο", "Πάολο Μαλντίνι", "Τζανλούκα Βιάλι"], correctIdx: 1, a: "Ρομπέρτο Μπάτζιο", hint: "Έμεινε στην ιστορία ως ο εκπληκτικός παίκτης με τη 'Θεϊκή Κοτσίδα' (Il Divin Codino)." },
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποια λονδρέζικη ομάδα κατέκτησε το πρώτο Champions League της ιστορίας της το 2012 απέναντι στην Μπάγερν;", options: ["Άρσεναλ", "Τσέλσι", "Τότεναμ", "Γουέστ Χαμ"], correctIdx: 1, a: "Τσέλσι", hint: "Το σήκωσε κερδίζοντας μέσα στο ίδιο το γήπεδο της Μπάγερν, την Allianz Arena, στη διαδικασία των πέναλτι." },
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποιος Γερμανός επιθετικός είναι ο πρώτος σκόρερ στην ιστορία των Παγκοσμίων Κυπέλλων;", options: ["Γιούργκεν Κλίνσμαν", "Μίροσλαβ Κλόζε", "Ρούντι Φέλερ", "Γκερντ Μίλερ"], correctIdx: 1, a: "Μίροσλαβ Κλόζε", hint: "Έφτασε τα 16 γκολ, σκοράροντας μάλιστα στον ιστορικό διασυρμό της Βραζιλίας με 7-1." },
-            { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποια αγγλική ομάδα αγωνίζεται στο ιστορικό γήπεδο που είναι γνωστό και ως «Το Θέατρο των Ονείρων»;", options: ["Μάντσεστερ Σίτι", "Μάντσεστερ Γιουνάιτεντ", "Λίβερπουλ", "Άρσεναλ"], correctIdx: 1, a: "Μάντσεστερ Γιουνάιτεντ", hint: "Το όνομα αυτό αποδόθηκε στο Ολντ Τράφορντ από τον θρύλο της ομάδας Μπόμπι Τσάρλτον." },
+            { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποια χώρα διοργάνωσε το Euro 2024;", options: ["Γαλλία", "Γερμανία", "Αγγλία", "Ιταλία"], correctIdx: 1, a: "Γερμανία", hint: "Ο τελικός Ισπανία - Αγγλία έγινε στο Ολυμπιακό Στάδιο του Βερολίνου." },
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποιος θρύλος του ποδοσφαίρου είναι γνωστός ως «Ιπτάμενος Ολλανδός» και συνέδεσε το όνομά του με το Total Football;", options: ["Μάρκο Φαν Μπάστεν", "Γιόχαν Κρόιφ", "Ρουντ Γκούλιτ", "Φράνκ Ράικαρντ"], correctIdx: 1, a: "Γιόχαν Κρόιφ", hint: "Το αγαπημένο του νούμερο στη φανέλα ήταν το 14, τόσο στην Εθνική όσο και στον Άγιαξ." },
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποια χώρα κατέκτησε το Euro 2016 νικώντας τη διοργανώτρια Γαλλία στον τελικό;", options: ["Ισπανία", "Πορτογαλία", "Γερμανία", "Ιταλία"], correctIdx: 1, a: "Πορτογαλία", hint: "Ο αρχηγός της τραυματίστηκε νωρίς στον τελικό, αλλά έδινε παθιασμένες οδηγίες από τον πάγκο." },
             { cat: "Ιστορία", p: 1, type: "mcq", q: "Ποιος Άγγλος παίκτης φόρεσε τη θρυλική φανέλα με το νούμερο 7 στη Μάντσεστερ Γιουνάιτεντ, αμέσως μετά τον Ερίκ Καντονά;", options: ["Ντέιβιντ Μπέκαμ", "Κριστιάνο Ρονάλντο", "Ράιαν Γκιγκς", "Πολ Σκόουλς"], correctIdx: 0, a: "Ντέιβιντ Μπέκαμ", hint: "Φημιζόταν για τις 'τηλεκατευθυνόμενες' εκτελέσεις φάουλ και για την pop-star ζωή του." },
@@ -4670,7 +4789,6 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ολυμπιακός - ΑΕΚ 1-3 (Πρωτάθλημα 2023). Από ΑΕΚ:", lineup: { gk: ["Αθανασιάδης"], def: ["?", "Μουκουντί", "Βίντα", "Ρότα"], mid: ["Γκατσίνοβιτς", "Σιμάνσκι", "Πινέδα", "Άμραμπατ"], fwd: ["Τσούμπερ", "Γκαρσία"] }, a: "Χατζισαφί", fake: "Μοχαμάντι", hint: "Ιρανός αριστερός μπακ, με απίστευτη προσφορά στην ομάδα τη σεζόν του νταμπλ." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "ΑΕΚ - Ολυμπιακός 1-0 (Πρωτάθλημα 2024). Από ΑΕΚ:", lineup: { gk: ["Αθανασιάδης"], def: ["Χατζισαφί", "Μουκουντί", "Βίντα", "Ρότα"], mid: ["Γκατσίνοβιτς", "?", "Πινέδα", "Άμραμπατ"], fwd: ["Γκαρσία", "Τσούμπερ"] }, a: "Γιόνσον", fake: "Λιούμπισιτς", hint: "Ο Δανός μέσος που συνέθεσε το απόλυτο δίδυμο μαζί με τον Σιμάνσκι στον άξονα." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Παναθηναϊκός - Ολυμπιακός 1-1 (Πρωτάθλημα 2022). Από Παναθηναϊκό:", lineup: { gk: ["Μπρινιόλι"], def: ["Χουάνκαρ", "Μάγκνουσον", "Σένκεφελντ", "Σάντσες"], mid: ["Μπερνάρ", "?", "Τσέριν"], fwd: ["Βέρμπιτς", "Σπόραρ", "Παλάσιος"] }, a: "Πέρεθ", fake: "Κουρμπέλης", hint: "Ισπανός αμυντικός μέσος (Ρούμπεν), ο 'εγκέφαλος' της ομάδας του Ιβάν Γιοβάνοβιτς." },
-			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Μακάμπι Τελ Αβίβ - Ολυμπιακός 1-6 (Conference 2024). Από Ολυμπιακό:", lineup: { gk: ["Τζολάκης"], def: ["Ορτέγκα", "Κάρμο", "Ρέτσος", "Ροντινέι"], mid: ["?", "Έσε", "Τσικίνιο"], fwd: ["Ποντένσε", "Ελ Κααμπί", "Φορτούνης"] }, a: "Όρτα", fake: "Μασούρας", hint: "Πορτογάλος μέσος που είχε έρθει τον Ιανουάριο με τη μορφή δανεισμού." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "ΠΑΟΚ - ΑΕΚ 3-2 (Το ντέρμπι τίτλου 2024). Από ΠΑΟΚ:", lineup: { gk: ["Κοτάρσκι"], def: ["Μπάμπα", "Κουλιεράκης", "Κεντζιόρα", "Σάστρε"], mid: ["Σβαμπ", "Μεϊτέ", "Κωνσταντέλιας"], fwd: ["?", "Μπράντον", "Ζίβκοβιτς"] }, a: "Τάισον", fake: "Οζντόεφ", hint: "Ο Βραζιλιάνος εξτρέμ που έδωσε την ασίστ στον Ζίβκοβιτς στο νικητήριο γκολ." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Παναθηναϊκός - Άρης 1-0 (Τελικός Κυπέλλου 2024). Από Παναθηναϊκό:", lineup: { gk: ["Λοντίγκιν"], def: ["Χουάνκαρ", "Αράο", "Γεντβάι", "Κώτσιρας"], mid: ["Τσέριν", "Πέρεθ", "Μπακασέτας"], fwd: ["?", "Ιωαννίδης", "Μαντσίνι"] }, a: "Μπερνάρ", fake: "Σπόραρ", hint: "Βραζιλιάνος βιρτουόζος μεσοεπιθετικός, ήταν και το τελευταίο του ματς πριν επιστρέψει στην πατρίδα του." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ολυμπιακός - ΑΕΚ 1-2 (Τελικός Κυπέλλου 2016). Από ΑΕΚ:", lineup: { gk: ["Ανέστης"], def: ["Ντίντακ", "Κολοβέτσιος", "Άρθο", "Γκάλο"], mid: ["Γιόχανσον", "?", "Σιμόες"], fwd: ["Βάργκας", "Αραβίδης", "Τζεμπούρ"] }, a: "Μάνταλος", fake: "Μπακάκης", hint: "Ο αρχηγός της ΑΕΚ που άνοιξε το σκορ σε εκείνον τον τελικό με κεφαλιά." },
@@ -4707,7 +4825,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Μονακό - Μάντσεστερ Σίτι 3-1 (Φάση '16 UCL 2017). Από Μονακό:", lineup: { gk: ["Σούμπασιτς"], def: ["Μεντί", "Τζέμερσον", "Ράτζι", "Σιντιμπέ"], mid: ["Λεμάρ", "Μπακαγιόκο", "Φαμπίνιο", "?"], fwd: ["Εμπαπέ", "Ζερμέν"] }, a: "Μπερνάρντο Σίλβα", fake: "Φαλκάο", hint: "Ο Πορτογάλος μεσοεπιθετικός που εντυπωσίασε τον Πεπ Γκουαρδιόλα και τον πήρε αμέσως στη Σίτι." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Τσέλσι - Ρεάλ Μαδρίτης 2-0 (Ημιτελικός UCL 2021). Από Τσέλσι:", lineup: { gk: ["Μεντί"], def: ["Ρίντιγκερ", "Τιάγκο Σίλβα", "Κρίστενσεν"], mid: ["Τσίλγουελ", "?", "Ζορζίνιο", "Αθπιλικουέτα"], fwd: ["Μάουντ", "Βέρνερ", "Χάβερτς"] }, a: "Καντέ", fake: "Πούλισικ", hint: "Ο ακούραστος Γάλλος μέσος που είχε βγει MVP και στα δύο ματς των ημιτελικών." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Μάντσεστερ Σίτι - Ρεάλ 4-3 (Ημιτελικός UCL 2022). Από Σίτι:", lineup: { gk: ["Έντερσον"], def: ["Ζιντσένκο", "Λαπόρτ", "Ντίας", "Στόουνς"], mid: ["?", "Ρόδρι", "Ντε Μπρόινε"], fwd: ["Φόντεν", "Γκαμπριέλ Ζεσούς", "Μαχρέζ"] }, a: "Μπερνάρντο Σίλβα", fake: "Στέρλινγκ", hint: "Ο Πορτογάλος αριστεροπόδαρος 'μάγος' που πέτυχε ένα απίθανο γκολ στο 'παραθυράκι' του Κουρτουά." },
-			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Μακάμπι Τελ Αβίβ - Ολυμπιακός 1-6 (Conference 2024). Από Ολυμπιακό:", lineup: { gk: ["Τζολάκης"], def: ["Ορτέγκα", "Κάρμο", "Ρέτσος", "Ροντινέι"], mid: ["Όρτα", "Έσε", "?"], fwd: ["Ποντένσε", "Ελ Κααμπί", "Φορτούνης"] }, a: "Τσικίνιο", fake: "Ιμπόρα", hint: "Κινητικός χαφ που βοηθούσε πολύ στη σύνδεση κέντρου και επίθεσης." },
+			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Μακάμπι Τελ Αβίβ - Ολυμπιακός 1-6 (Conference 2024). Από Ολυμπιακό:", lineup: { gk: ["Τζολάκης"], def: ["Ορτέγκα", "Κάρμο", "Ρέτσος", "Ροντινέι"], mid: ["Ιμπόρα", "Έσε", "?"], fwd: ["Ποντένσε", "Ελ Κααμπί", "Φορτούνης"] }, a: "Τσικίνιο", fake: "Μασούρας", hint: "Κινητικός χαφ που βοηθούσε πολύ στη σύνδεση κέντρου και επίθεσης." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ολυμπιακός - Μίλαν 3-1 (Europa League 2018). Από Ολυμπιακό:", lineup: { gk: ["Σα"], def: ["Κούτρης", "Βούκοβιτς", "Σισέ", "Ελαμπντελαουί"], mid: ["Γκιγιέρμε", "Μπουχαλάκης", "?"], fwd: ["Ποντένσε", "Γκερέρο", "Φορτούνης"] }, a: "Καμαρά", fake: "Νάτχο", hint: "Δυναμικός χαφ που έδινε ένταση και τρεξίματα στο κέντρο." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ολυμπιακός - Μάντσεστερ Γιουνάιτεντ 2-0 (Champions League 2014). Από Ολυμπιακό:", lineup: { gk: ["Ρομπέρτο"], def: ["Χολέμπας", "Μανωλάς", "Μαρκάνο", "Σαλίνο"], mid: ["Μανιάτης", "Εντινγκά", "?"], fwd: ["Κάμπελ", "Ολαϊτάν", "Πέρες"] }, a: "Τσόρι Ντομίνγκες", fake: "Φουστέρ", hint: "Δημιουργικός μεσοεπιθετικός που οργάνωνε το παιχνίδι πίσω από την επίθεση." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Άρσεναλ - Ολυμπιακός 1-2 (Champions League 2015). Από Ολυμπιακό:", lineup: { gk: ["Ρομπέρτο"], def: ["Μαζουακού", "Μποτία", "Σιόβας", "Ελαμπντελαουί"], mid: ["Καμπιάσο", "Μιλιβόγεβιτς", "?"], fwd: ["Σεμπά", "Φινμπόγκασον", "Πάρντο"] }, a: "Φορτούνης", fake: "Ντομίνγκες", hint: "Δημιουργικός Έλληνας μεσοεπιθετικός, πολύ σημαντικός στα στημένα και στην τελική πάσα." },
@@ -4726,7 +4844,7 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Γαλλία - Ελβετία 3-3 / Πεν. 4-5 (Το Σοκ στο Euro 2020). Από Γαλλία:", lineup: { gk: ["Γιορίς"], def: ["Κιμπεμπέ", "Λενγκλέ", "Βαράν"], mid: ["?", "Καντέ", "Πογκμπά", "Παβάρ"], fwd: ["Γκριεζμάν", "Μπενζεμά", "Εμπαπέ"] }, a: "Ραμπιό", fake: "Κομάν", hint: "Λόγω τραυματισμών, ο Ντεσάν τον έβαλε να παίξει όλη την πλευρά ως 'full-back' (αριστερός χαφ)." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Γαλλία - Αργεντινή 4-3 (Φάση '16 Μουντιάλ 2018). Από Γαλλία:", lineup: { gk: ["Γιορίς"], def: ["Ερναντέζ", "Ουμτιτί", "Βαράν", "?"], mid: ["Ματουιντί", "Καντέ", "Πογκμπά"], fwd: ["Εμπαπέ", "Γκριεζμάν", "Ζιρού"] }, a: "Παβάρ", fake: "Τολισό", hint: "Ο δεξιός μπακ που πέτυχε ένα από τα πιο όμορφα γκολ στην ιστορία των Μουντιάλ με εξωτερικό φάλτσο!" },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Γερμανία - Νότια Κορέα 0-2 (Ο Αποκλεισμός Σοκ 2018). Από Γερμανία:", lineup: { gk: ["Νόιερ"], def: ["Έκτορ", "Χούμελς", "Σίλε", "Κίμιχ"], mid: ["?", "Κρόος", "Κεντίρα", "Οζίλ", "Γκορέτσκα"], fwd: ["Βέρνερ"] }, a: "Ρόις", fake: "Μίλερ", hint: "Ο αρχηγός της Ντόρτμουντ, που έπαιξε βασικός αριστερός εξτρέμ σε αυτό το ιστορικό κάζο." },
-			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Βραζιλία - Βέλγιο 1-2 (Προημιτελικός Μουντιάλ 2018). Από Βέλγιο:", lineup: { gk: ["Κουρτουά"], def: ["Βερτόνγκεν", "Κομπανί", "Αλντερβάιρελντ"], mid: ["Τσαντλί", "Βίτσελ", "Φελαϊνί", "Μενιέ"], fwd: ["Αζάρ", "Λουκάκου", "?"] }, a: "Ντε Μπρόινε", fake: "Μέρτενς", hint: "Ο κοκκινομάλλης 'μαέστρος' που σκόραρε το 2ο γκολ με φοβερό σουτ εκτός περιοχής." },
+			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Βραζιλία - Βέλγιο 1-2 (Προημιτελικός Μουντιάλ 2018). Από Βέλγιο:", lineup: { gk: ["Κουρτουά"], def: ["Βερτόνγκεν", "Κομπανί", "Αλντερβάιρελντ"], mid: ["Τσαντλί", "Βίτσελ", "Φελαϊνί", "Μενιέ"], fwd: ["Αζάρ", "?", "Λουκάκου"] }, a: "Ντε Μπρόινε", fake: "Μέρτενς", hint: "Ο κοκκινομάλλης 'μαέστρος' που σκόραρε το 2ο γκολ με φοβερό σουτ εκτός περιοχής." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Κροατία - Αγγλία 2-1 (Ημιτελικός Μουντιάλ 2018). Από Κροατία:", lineup: { gk: ["Σούμπασιτς"], def: ["Στρίνιτς", "Βίντα", "Λόβρεν", "Βρσάλικο"], mid: ["Πέρισιτς", "Ράκιτιτς", "Μπρόζοβιτς", "Μόντριτς", "Ρέμπιτς"], fwd: ["?"] }, a: "Μάντζουκιτς", fake: "Κράμαριτς", hint: "Ο θηριώδης επιθετικός (Super Mario) που πέτυχε το νικητήριο γκολ στην παράταση." },
 			{ cat: "Ποιος Λείπει;", p: 2, type: "pitch", q: "Ουαλία - Βέλγιο 3-1 (Προημιτελικός Euro 2016). Από Ουαλία:", lineup: { gk: ["Χένεσι"], def: ["Ντέιβις", "Γουίλιαμς", "Τσέστερ"], mid: ["Τέιλορ", "Ράμσεϊ", "Λέντλεϊ", "Άλεν", "Γκάντερ"], fwd: ["Μπέιλ", "?"] }, a: "Ρόμπσον-Κάνου", fake: "Βόουκς", hint: "Ο επιθετικός που έβαλε ένα μυθικό γκολ 'αδειάζοντας' 3 Βέλγους με μια ντρίμπλα του Κρόιφ μέσα στην περιοχή." },
 			
@@ -5827,6 +5945,18 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
         function generateGameSession() {
             activeDb = [];
             
+            // Κλειδιά όλων των ερωτήσεων αυτού του αγώνα, ώστε να μην πέσει
+            // η ίδια απάντηση/ερώτηση δύο φορές (π.χ. σε Γεωγραφία και Ιστορία)
+            const sessionKeys = new Set();
+            const normKey = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+            const sessionKey = q => {
+                if (q.type === 'top5') return 'q:' + normKey(q.q);
+                if (q.type === 'score') return 's:' + normKey(q.title);
+                if (q.type === 'pitch' || q.type === 'nations') return 'p:' + normKey(q.q) + '|' + normKey(q.a);
+                return 'a:' + normKey(q.a);
+            };
+            let guard = 0;
+
             const getQ = (cat, points, count) => {
                 let result = [];
                 for(let i=0; i<count; i++) {
@@ -5887,7 +6017,13 @@ input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στ�
                             isDuplicate = result.some(r => r.a === q.a);
                         }
 
+                        if (!isDuplicate && sessionKeys.has(sessionKey(q)) && guard < 400) {
+                            isDuplicate = true;
+                        }
+                        guard++;
+
                         if (!isDuplicate) {
+						    sessionKeys.add(sessionKey(q));
 						    rememberQuestion(q);
 						    result.push({...q, played: false, id: Math.random()});
 						} else {

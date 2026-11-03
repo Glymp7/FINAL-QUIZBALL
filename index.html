@@ -7940,7 +7940,7 @@ html, body {
             steal: { icon: '', cls: 'steal', title: 'Κλέψιμο',
                 when: 'Στην ερώτηση του αντιπάλου, πριν την απάντηση',
                 text: 'Αν ο αντίπαλος απαντήσει λάθος, απαντάτε εσείς την ίδια ερώτηση και παίρνετε τους μισούς πόντους (στρογγυλεμένους προς τα πάνω).',
-                note: 'Στις πολλαπλής διαλέγετε από τις απαντήσεις που έμειναν. Δεν παίζεται σε Top 5, «Βρες το Σκορ» και Higher or Lower.' },
+                note: 'Στις πολλαπλής διαλέγετε από τις απαντήσεις που έμειναν. Δεν παίζεται σε ερώτηση με x2, ούτε σε Top 5, «Βρες το Σκορ» και Higher or Lower.' },
             joker: { icon: '🃏', cls: 'joker', title: 'Joker',
                 when: 'Μέσα στην ερώτηση, αντί να απαντήσεις',
                 text: 'Ρίσκο: η ερώτηση κλείνει και γυρίζει ο «κουλοχέρης». Μία στις δύο παίρνεις +2 πόντους, αλλιώς χάνεις 1.',
@@ -8324,6 +8324,7 @@ html, body {
             if (currentTurn === team) { llToast('Το Κλέψιμο το παίζει η ομάδα που ΔΕΝ έχει σειρά', '#11806a'); return; }
             if (NO_STEAL.includes(currentQ.type)) { llToast('Το Κλέψιμο δεν παίζεται σε αυτή την κατηγορία', '#11806a'); return; }
             if (isFiftyFifty) { llToast('Με ενεργό 50:50 δεν γίνεται κλέψιμο', '#11806a'); return; }
+            if (isDouble) { llToast('Σε ερώτηση με x2 δεν γίνεται κλέψιμο', '#11806a'); return; }
             const shown = document.getElementById('btn-show');
             const answered = (currentQ.type === 'mcq')
                 ? [...document.querySelectorAll('#mc-grid .mc-option')].some(b => b.disabled)

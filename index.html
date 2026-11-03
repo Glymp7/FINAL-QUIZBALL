@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@600;800;900&family=Fira+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 	<meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Quizball">
+    <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/NyLgv48K/Gemini-Generated-Image-yv9x7iyv9x7iyv9x.png">
 	
@@ -2569,6 +2572,445 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
+
+/* =====================================================================
+   QUIZBALL UI v3 — βοήθειες, πέναλτι, iPhone
+   ===================================================================== */
+:root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+html, body { overscroll-behavior: none; }
+body { padding-top: 0 !important; -webkit-text-size-adjust: 100%; }
+button, .pt-btn, .mc-option, .hl-btn, .opt-cat-btn {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+}
+input[type="text"] { font-size: 16px !important; } /* χωρίς auto-zoom στο iPhone */
+
+/* Ασφαλείς περιοχές (notch / Dynamic Island / home indicator) */
+#header { padding-top: calc(10px + var(--safe-top)) !important; padding-left: calc(clamp(8px, 2vw, 24px) + var(--safe-left)) !important; padding-right: calc(clamp(8px, 2vw, 24px) + var(--safe-right)) !important; }
+#training-header { height: calc(60px + var(--safe-top)) !important; padding-top: var(--safe-top) !important; box-sizing: border-box; }
+#training-header .header-home-btn { top: calc(10px + var(--safe-top)) !important; }
+#home-screen, #setup-screen, #coin-toss-screen, #builder-screen, #match-intro-screen, #end-screen {
+    padding-top: var(--safe-top) !important;
+    padding-bottom: var(--safe-bottom) !important;
+    box-sizing: border-box;
+}
+#board-screen { padding-bottom: calc(24px + var(--safe-bottom)) !important; }
+.admin-controls { padding-bottom: calc(12px + var(--safe-bottom)) !important; }
+#question-screen { padding-bottom: max(6px, var(--safe-bottom)) !important; }
+#end-screen, #builder-screen, #setup-screen, #coin-toss-screen { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/* ---------- Toast βοηθειών ---------- */
+.ll-toast {
+    position: fixed;
+    left: 50%;
+    top: calc(var(--safe-top) + 96px);
+    transform: translate(-50%, -20px);
+    z-index: 10050;
+    padding: 12px 20px;
+    border-radius: 999px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: 0.3px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .35s cubic-bezier(.2,1.4,.4,1);
+    white-space: nowrap;
+}
+.ll-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* 50:50 — οι λάθος επιλογές «σβήνουν» */
+.mc-option.fifty-out { animation: fiftyOut .45s ease forwards; pointer-events: none; }
+@keyframes fiftyOut {
+    0% { opacity: 1; transform: none; }
+    40% { opacity: .9; transform: translateX(-6px); }
+    100% { opacity: 0; transform: translateX(30px) scale(.92); }
+}
+.fifty-label {
+    align-self: center;
+    background: #1f6fd1;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+}
+#fifty-box[style*="flex"] { display: flex !important; flex-direction: column; }
+
+/* x2 σήμα στο scoreboard */
+.x2-badge {
+    background: #d9741c !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    padding: 4px 9px !important;
+    font-family: var(--font-display);
+    font-weight: 900;
+    box-shadow: 0 0 0 3px var(--ink), 0 0 18px rgba(217,116,28,.8) !important;
+}
+
+/* ---------- VAR ---------- */
+.var-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
+    box-sizing: border-box;
+    background:
+        radial-gradient(ellipse 70% 50% at 50% 30%, rgba(46, 204, 113, .16), transparent 70%),
+        #070b10;
+    color: #fff;
+    text-align: center;
+}
+.var-modal[style*="flex"] { display: flex !important; }
+.var-phase { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 560px; gap: 16px; }
+.var-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-display); font-weight: 900; font-size: 15px; letter-spacing: 2px;
+    background: #fff; color: #070b10; padding: 6px 14px; border-radius: 6px;
+}
+.var-tag-ok { background: #2ecc71; color: #062b16; }
+.rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #e53935; animation: recBlink 1s steps(2) infinite; }
+@keyframes recBlink { 50% { opacity: .15; } }
+.var-check h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4.5vw, 40px);
+    font-weight: 900;
+    line-height: 1.15;
+}
+.var-monitor {
+    position: relative;
+    width: min(100%, 420px);
+    aspect-ratio: 16 / 10;
+    border-radius: 14px;
+    border: 3px solid #2b3642;
+    background: #000;
+    overflow: hidden;
+    box-shadow: 0 0 0 6px #10161d, 0 0 40px rgba(46, 204, 113, .25);
+}
+.var-monitor img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.85) contrast(1.05); }
+.var-scan {
+    position: absolute; left: 0; right: 0; height: 30%;
+    background: linear-gradient(to bottom, transparent, rgba(46, 204, 113, .35), transparent);
+    animation: varScan 1.6s linear infinite;
+}
+.var-monitor::after {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(to bottom, rgba(255,255,255,.04) 0 2px, transparent 2px 4px);
+    pointer-events: none;
+}
+@keyframes varScan { from { top: -30%; } to { top: 100%; } }
+.var-progress { width: min(100%, 420px); height: 6px; border-radius: 999px; background: rgba(255,255,255,.12); overflow: hidden; }
+.var-progress span { display: block; height: 100%; width: 0; background: #2ecc71; border-radius: inherit; }
+.var-progress.run span { animation: varFill 3.5s linear forwards; }
+@keyframes varFill { to { width: 100%; } }
+.var-sub { margin: 0; color: #9fb0bf; font-size: 15px; }
+.var-hint {
+    width: 100%;
+    box-sizing: border-box;
+    background: #111a23;
+    border: 2px solid #2ecc71;
+    border-radius: 16px;
+    padding: clamp(18px, 3vw, 28px);
+    font-size: clamp(18px, 2.6vw, 24px);
+    line-height: 1.5;
+    font-weight: 600;
+    animation: popIn .4s ease both;
+}
+.var-back-btn {
+    width: 100%;
+    max-width: 360px;
+    padding: 16px;
+    border: 0;
+    border-radius: 14px;
+    background: #fff;
+    color: #070b10;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+/* ---------- JOKER ---------- */
+#joker-modal {
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(125, 60, 152, .45), transparent 70%), #0b0712 !important;
+    padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom)) !important;
+    box-sizing: border-box;
+    gap: 18px;
+}
+.joker-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 6vw, 46px);
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-shadow: 0 0 24px rgba(245,197,24,.45);
+}
+#joker-modal .joker-spinner {
+    animation: none !important;
+    filter: none !important;
+    font-size: inherit !important;
+    width: 150px;
+    height: 150px;
+    border-radius: 22px;
+    background: linear-gradient(#1a1225, #0f0a17);
+    border: 4px solid var(--gold);
+    box-shadow: inset 0 18px 18px -10px rgba(0,0,0,.8), inset 0 -18px 18px -10px rgba(0,0,0,.8), 0 0 40px rgba(245,197,24,.3);
+    overflow: hidden;
+    position: relative;
+}
+.joker-strip { display: flex; flex-direction: column; transition: transform 2s cubic-bezier(.12,.8,.2,1); }
+.joker-strip span { height: 150px; flex: 0 0 150px; display: flex; align-items: center; justify-content: center; font-size: 84px; }
+#joker-modal .joker-result-text {
+    text-transform: none !important;
+    text-shadow: none !important;
+    font-size: inherit !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    width: min(100%, 440px);
+}
+.joker-card {
+    border-radius: 20px;
+    padding: 22px 20px;
+    color: #fff;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    animation: popIn .45s cubic-bezier(.2,1.3,.4,1) both;
+}
+.joker-card .jc-icon { font-size: 64px; line-height: 1; }
+.joker-card .jc-title { font-family: var(--font-display); font-size: clamp(24px, 5vw, 34px); font-weight: 900; margin-top: 8px; }
+.joker-card .jc-delta {
+    display: inline-block; margin-top: 12px; padding: 6px 16px; border-radius: 999px;
+    background: rgba(0,0,0,.25); font-family: var(--font-display); font-weight: 900; font-size: 22px;
+}
+
+/* ---------- ΠΕΝΑΛΤΙ ---------- */
+.pen-intro {
+    position: fixed; inset: 0; z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
+    background: rgba(5, 12, 9, .92);
+    box-sizing: border-box;
+}
+.pen-intro[style*="flex"] { display: flex !important; }
+.pen-intro-card {
+    text-align: center; color: #fff;
+    animation: popIn .5s cubic-bezier(.2,1.3,.4,1) both;
+}
+.pen-intro-score {
+    display: inline-block;
+    font-family: var(--font-display); font-size: clamp(40px, 10vw, 72px); font-weight: 900;
+    background: var(--ink); border: 3px solid var(--gold); border-radius: 16px; padding: 4px 22px;
+    font-variant-numeric: tabular-nums;
+}
+.pen-intro-card h1 { font-family: var(--font-display); font-size: clamp(38px, 9vw, 64px); margin: 16px 0 4px; color: var(--gold); }
+.pen-intro-card p { margin: 0; font-size: clamp(17px, 3.6vw, 22px); color: #d6e2da; }
+.pen-intro-ball { font-size: 56px; margin-top: 18px; animation: penBounce .9s ease-in-out infinite; }
+@keyframes penBounce { 50% { transform: translateY(-14px); } }
+
+.penalty-screen {
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    padding: calc(12px + var(--safe-top)) 14px calc(14px + var(--safe-bottom)) !important;
+    justify-content: flex-start !important;
+    gap: 12px;
+    overflow-y: auto !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+    background:
+        radial-gradient(ellipse 90% 45% at 50% 0%, rgba(255,255,255,.18), transparent 70%),
+        repeating-linear-gradient(180deg, var(--pitch-mid) 0 56px, var(--pitch-stripe) 56px 112px) !important;
+}
+.penalty-screen::before, .penalty-screen::after { display: none !important; }
+.sd-title, .pen-vs { display: none !important; }
+
+.pen-board {
+    width: 100%; max-width: 640px;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
+    background: var(--ink); border-bottom: 3px solid var(--gold);
+    border-radius: 14px; padding: 10px 12px; box-sizing: border-box;
+    flex-shrink: 0;
+}
+.pen-board .pen-team { width: auto !important; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; border-radius: 10px; padding: 6px 4px; transition: background .25s; }
+.pen-board .pen-team.is-turn { background: rgba(245,197,24,.14); box-shadow: inset 0 -3px 0 var(--gold); }
+.pen-board .pen-name {
+    font-family: var(--font-display) !important; font-size: clamp(14px, 3.4vw, 19px) !important; font-weight: 800 !important;
+    margin: 0 !important; color: #dfe7ef !important; text-shadow: none !important;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pen-team-1 .pen-name { border-bottom: 3px solid var(--t1); padding-bottom: 2px; }
+.pen-team-2 .pen-name { border-bottom: 3px solid var(--t2); padding-bottom: 2px; }
+.pen-total {
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 7vw, 44px); color: #fff;
+    font-variant-numeric: tabular-nums; padding: 0 6px;
+}
+.pen-board .pen-circles { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px !important; max-width: 160px; }
+.pen-board .pen-circle {
+    width: 22px !important; height: 22px !important; margin: 0 !important;
+    border-radius: 50% !important; border: 2px solid rgba(255,255,255,.35) !important;
+    background: transparent !important; box-shadow: none !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; color: #fff;
+}
+.pen-board .pen-circle.pen-scored { background: #18b26b !important; border-color: #18b26b !important; }
+.pen-board .pen-circle.pen-scored::after { content: "✓"; }
+.pen-board .pen-circle.pen-missed { background: #d63031 !important; border-color: #d63031 !important; }
+.pen-board .pen-circle.pen-missed::after { content: "✕"; }
+
+.pen-stage {
+    position: relative;
+    width: 100%; max-width: 520px;
+    height: clamp(150px, 26vh, 230px);
+    flex-shrink: 0;
+}
+.pen-goal {
+    position: absolute; left: 12%; right: 12%; top: 6%; height: 66%;
+    border: 6px solid #f4f7f2; border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 6px 0 rgba(0,0,0,.18);
+}
+.pen-net {
+    position: absolute; inset: 0;
+    background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.28) 0 1px, transparent 1px 14px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.28) 0 1px, transparent 1px 14px),
+        rgba(0,0,0,.18);
+}
+.pen-line { position: absolute; left: 0; right: 0; top: 72%; height: 3px; background: rgba(255,255,255,.75); }
+.pen-spot { position: absolute; left: 50%; bottom: 6%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: rgba(255,255,255,.85); }
+.pen-keeper {
+    position: absolute; left: 50%; bottom: 0; width: 34px; height: 58px; margin-left: -17px;
+    transform-origin: 50% 100%;
+}
+.pen-keeper::before { /* κεφάλι */
+    content: ""; position: absolute; left: 50%; top: 0; width: 16px; height: 16px; margin-left: -8px;
+    border-radius: 50%; background: #f1c9a5;
+}
+.pen-keeper::after { /* σώμα με χέρια */
+    content: ""; position: absolute; left: 0; top: 16px; width: 34px; height: 42px;
+    border-radius: 10px 10px 4px 4px;
+    background: linear-gradient(90deg, #f5c518 0 18%, transparent 18% 82%, #f5c518 82%), #e67e22;
+}
+.pen-ball {
+    position: absolute; left: 50%; bottom: 2%; font-size: 34px; line-height: 1;
+    transform: translate(-50%, 0);
+    filter: drop-shadow(0 6px 4px rgba(0,0,0,.35));
+}
+.pen-banner {
+    position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%) scale(.6);
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(36px, 9vw, 64px);
+    padding: 4px 22px; border-radius: 12px; color: #fff; opacity: 0; white-space: nowrap; pointer-events: none;
+}
+.pen-stage.is-goal .pen-banner { background: #18b26b; animation: bannerIn 1.8s ease .55s both; }
+.pen-stage.is-save .pen-banner { background: #d63031; animation: bannerIn 1.8s ease .55s both; }
+@keyframes bannerIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+    30%, 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+/* σουτ */
+.pen-stage.dir-left .pen-ball { --bx: 24%; }
+.pen-stage.dir-right .pen-ball { --bx: 76%; }
+.pen-stage.dir-mid .pen-ball { --bx: 50%; }
+.pen-stage.is-goal .pen-ball { animation: shotGoal .6s cubic-bezier(.3,.7,.4,1) forwards; }
+.pen-stage.is-save .pen-ball { animation: shotSave 1s ease-out forwards; }
+@keyframes shotGoal {
+    to { left: var(--bx); bottom: 52%; transform: translate(-50%, 0) scale(.55) rotate(540deg); }
+}
+@keyframes shotSave {
+    55% { left: var(--bx); bottom: 40%; transform: translate(-50%, 0) scale(.6) rotate(360deg); }
+    100% { left: calc(var(--bx) + (50% - var(--bx)) * .4); bottom: 4%; transform: translate(-50%, 0) scale(.8) rotate(420deg); }
+}
+/* τερματοφύλακας: στο γκολ πέφτει λάθος, στην απόκρουση σωστά */
+.pen-stage.is-goal.dir-left .pen-keeper, .pen-stage.is-goal.dir-mid .pen-keeper { animation: diveRight .5s ease-out .05s forwards; }
+.pen-stage.is-goal.dir-right .pen-keeper { animation: diveLeft .5s ease-out .05s forwards; }
+.pen-stage.is-save.dir-left .pen-keeper { animation: diveLeft .45s ease-out forwards; }
+.pen-stage.is-save.dir-right .pen-keeper { animation: diveRight .45s ease-out forwards; }
+.pen-stage.is-save.dir-mid .pen-keeper { animation: keeperJump .45s ease-out forwards; }
+@keyframes diveLeft { to { transform: translateX(-120%) rotate(-70deg); } }
+@keyframes diveRight { to { transform: translateX(120%) rotate(70deg); } }
+@keyframes keeperJump { 50% { transform: translateY(-30%); } to { transform: translateY(-10%); } }
+.pen-stage.is-goal .pen-net { animation: netShake .5s ease .55s 2; }
+@keyframes netShake { 50% { transform: translateY(-6px) scale(1.02); } }
+
+#sd-turn-display.sd-turn-info {
+    font-family: var(--font-display);
+    background: var(--gold) !important; color: var(--ink) !important;
+    border-radius: 999px !important; padding: 8px 18px !important; margin: 0 !important;
+    font-size: clamp(15px, 3.6vw, 19px) !important; font-weight: 900; text-align: center;
+    max-width: 100%; box-sizing: border-box; animation: none !important;
+}
+#sd-question-box.pen-q-box {
+    width: 100% !important; max-width: 640px !important; box-sizing: border-box;
+    margin: 0 !important;
+    background: #fbfcfa !important; color: var(--ink) !important;
+    border: 0 !important; border-radius: 16px !important;
+    padding: clamp(16px, 3vw, 24px) !important;
+    font-family: var(--font-display);
+    font-size: clamp(19px, 4.4vw, 28px) !important; font-weight: 800 !important; line-height: 1.3 !important;
+    text-align: center; text-shadow: none !important;
+    box-shadow: 0 16px 36px rgba(0,0,0,.35) !important;
+    min-height: 0 !important;
+}
+#sd-answer.pen-answer-text {
+    font-family: var(--font-display);
+    background: var(--ink); color: var(--gold) !important; text-shadow: none !important;
+    border-radius: 12px; padding: 10px 20px; margin: 0 !important;
+    font-size: clamp(22px, 5vw, 32px) !important;
+}
+#sd-controls { width: 100% !important; max-width: 640px !important; margin: 0 !important; }
+.pen-btn-show {
+    font-family: var(--font-display);
+    background: var(--ink) !important; border: 2px solid rgba(255,255,255,.25) !important;
+    border-radius: 14px !important; padding: 16px !important; font-size: 18px !important; font-weight: 900 !important;
+    box-shadow: none !important;
+}
+.pen-btn-action {
+    font-family: var(--font-display);
+    border-radius: 14px !important; font-size: 19px !important; font-weight: 900 !important; padding: 16px 10px !important;
+}
+#penalty-action-box { display: none !important; }
+
+/* Πολύ μικρές οθόνες (iPhone SE) */
+@media (max-height: 700px) {
+    .pen-stage { height: 130px; }
+    .pen-ball { font-size: 28px; }
+}
+
+/* v3 μικροδιορθώσεις κινητού */
+.ll-toast { white-space: normal; text-align: center; max-width: calc(100vw - 32px); box-sizing: border-box; }
+.var-monitor { background: #0b1a12; }
+.var-monitor img { object-fit: contain; }
+.pen-btn-action { white-space: nowrap; }
+@media (max-width: 420px) {
+    .pen-board { gap: 6px; padding: 8px; }
+    .pen-board .pen-circle { width: 18px !important; height: 18px !important; font-size: 11px; }
+    .pen-board .pen-circles { gap: 4px !important; flex-wrap: nowrap; }
+    .pen-btn-action { font-size: 17px !important; }
+}
+
+/* Οθόνες που μπορεί να μην χωράνε (iPhone SE): κεντράρισμα χωρίς κόψιμο */
+#end-screen, #setup-screen, #builder-screen, #coin-toss-screen { justify-content: flex-start !important; }
+#end-screen > :first-child, #setup-screen > :first-child, #builder-screen > :first-child, #coin-toss-screen > :first-child { margin-top: auto !important; }
+#end-screen > :last-child, #setup-screen > :last-child, #builder-screen > :last-child, #coin-toss-screen > :last-child { margin-bottom: auto !important; }
+
+.opt-cat-btn.selected, .opt-cat-btn.selected * { color: #fff !important; opacity: 1 !important; }
+
     </style>
 </head>
 <body>
@@ -2723,23 +3165,20 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
     </div>
 
 	<!-- 📺 VAR MODAL ΜΕ ΤΗΝ ΕΙΚΟΝΑ -->
-    <div id="var-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-
-        <!-- ΦΑΣΗ 1: Εικόνα Διαιτητή & Αναμονή -->
-        <div id="var-phase-1" style="display: flex; flex-direction: column; align-items: center;">
-            <h2 style="color: white; margin-bottom: 30px; font-size: 2.5rem; letter-spacing: 2px;">Ο ΔΙΑΙΤΗΤΗΣ ΠΑΕΙ ΣΤΟ VAR...</h2>
-            <img src="logos/var.png" alt="VAR" style="max-width: 350px; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);">
+    <!-- 📺 VAR -->
+    <div id="var-modal" class="var-modal" style="display: none;">
+        <div id="var-phase-1" class="var-phase var-check">
+            <div class="var-tag"><span class="rec-dot"></span> VAR</div>
+            <h2>Ο διαιτητής πηγαίνει στο VAR</h2>
+            <div class="var-monitor"><img src="logos/var.png" alt="Έλεγχος VAR"><div class="var-scan"></div></div>
+            <div class="var-progress" id="var-progress"><span></span></div>
+            <p class="var-sub">Γίνεται έλεγχος της φάσης…</p>
         </div>
-
-        <!-- ΦΑΣΗ 2: Η απόφαση (Το Hint) -->
-        <div id="var-phase-2" style="display: none; flex-direction: column; align-items: center; width: 90%; max-width: 600px;">
-            <h2 style="color: #00ff00; margin-bottom: 20px; font-size: 2.5rem;">ΑΠΟΦΑΣΗ VAR</h2>
-            <div id="var-hint" style="color: white; font-size: 1.5rem; line-height: 1.6; background: #222; padding: 30px; border-radius: 15px; border: 3px solid #00ff00; margin-bottom: 30px; width: 100%;">
-                Εδώ θα μπει το hint
-            </div>
-            <button onclick="closeVarModal()" style="padding: 15px 40px; font-size: 1.3rem; font-weight: bold; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase;">Επιστροφη στην ερωτηση</button>
+        <div id="var-phase-2" class="var-phase var-decision" style="display: none;">
+            <div class="var-tag var-tag-ok">✓ ΑΠΟΦΑΣΗ VAR</div>
+            <div id="var-hint" class="var-hint"></div>
+            <button class="var-back-btn" onclick="closeVarModal()">Πίσω στην ερώτηση</button>
         </div>
-
     </div>
 
     <div id="question-screen">
@@ -2843,61 +3282,56 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
         </div>
     </div>
 	
-	<div id="penalty-intro" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; flex-direction:column; text-align:center;">
-	    <h1 style="color:#f1c40f; font-size:50px; text-transform:uppercase; animation: pulse 1s infinite;">Ισοπαλία!</h1>
-	    <h2 style="color:white; font-size:30px;">Ο αγώνας οδηγείται στα πέναλτι...</h2>
-    <div style="font-size:80px; margin-top:20px;">⚽</div>
-    </div>
-	<!-- ΠΕΝΑΛΤΙ SCREEN V2 -->
+	<div id="penalty-intro" class="pen-intro" style="display:none;">
+	    <div class="pen-intro-card">
+	        <div class="pen-intro-score" id="pen-intro-score">0 - 0</div>
+	        <h1>Ισοπαλία!</h1>
+	        <p>Ο αγώνας κρίνεται στα πέναλτι</p>
+	        <div class="pen-intro-ball">⚽</div>
+	    </div>
+	</div>
+
+	<!-- 🥅 ΠΕΝΑΛΤΙ -->
 	<div id="sudden-death-screen" class="penalty-screen">
-	    
-	    <div class="sd-title">🥅 ΠΕΝΑΛΤΙ 🥅</div>
-	    
-	    <!-- Scoreboard Πέναλτι -->
-	    <div class="penalty-scoreboard">
-	        <div class="pen-team">
+	    <div class="pen-board">
+	        <div class="pen-team pen-team-1" id="pen-team-1">
 	            <div class="pen-name" id="pen-name-1">ΟΜΑΔΑ Α</div>
-	            <div class="pen-circles" id="pen-circles-1">
-	                <div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div>
-	            </div>
+	            <div class="pen-circles" id="pen-circles-1"></div>
 	        </div>
-	        <div class="pen-vs">VS</div>
-	        <div class="pen-team">
+	        <div class="pen-total" id="pen-total">0 - 0</div>
+	        <div class="pen-team pen-team-2" id="pen-team-2">
 	            <div class="pen-name" id="pen-name-2">ΟΜΑΔΑ Β</div>
-	            <div class="pen-circles" id="pen-circles-2">
-	                <div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div><div class="pen-circle"></div>
-	            </div>
+	            <div class="pen-circles" id="pen-circles-2"></div>
 	        </div>
 	    </div>
-	
-	    <!-- Ποιος παίζει -->
+
+	    <div class="pen-stage" id="pen-stage">
+	        <div class="pen-line"></div>
+	        <div class="pen-goal"><div class="pen-net"></div><div class="pen-keeper"></div></div>
+	        <div class="pen-spot"></div>
+	        <div class="pen-ball">⚽</div>
+	        <div class="pen-banner" id="pen-banner"></div>
+	    </div>
+
 	    <div id="sd-turn-display" class="sd-turn-info">ΟΜΑΔΑ Α, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...</div>
-	
-	    <!-- Η Ερώτηση (Τώρα είναι ΜΕΣΑ στο screen) -->
-	    <div id="sd-question-box" class="pen-q-box">
-	        Ερώτηση...
-	    </div>
-	    
-	    <!-- Τα Κουμπιά (Τώρα είναι ΜΕΣΑ στο screen) -->
-	    <div id="sd-controls" style="width: 100%; max-width: 500px; margin-bottom: 15px;">
+	    <div id="sd-question-box" class="pen-q-box">Ερώτηση...</div>
+	    <div id="sd-answer" class="pen-answer-text"></div>
+
+	    <div id="sd-controls">
 	        <button class="pen-btn-show" id="sd-btn-show" onclick="revealSdAnswer()">ΑΠΟΚΑΛΥΨΗ ΑΠΑΝΤΗΣΗΣ</button>
-	        
-	        <div id="sd-result-btns" style="display:none; gap:15px; justify-content: center; width: 100%;">
-	            <button class="pen-btn-action miss" onclick="resolveSdTurn(false)">❌ ΑΠΕΚΡΟΥΣΕ</button>
-	            <button class="pen-btn-action goal" onclick="resolveSdTurn(true)">⚽ ΓΚΟΟΟΛ</button>
+	        <div id="sd-result-btns" style="display:none; gap:12px; justify-content: center; width: 100%;">
+	            <button class="pen-btn-action miss" onclick="resolveSdTurn(false)">✋ ΑΠΟΚΡΟΥΣΗ</button>
+	            <button class="pen-btn-action goal" onclick="resolveSdTurn(true)">⚽ ΓΚΟΛ</button>
 	        </div>
 	    </div>
-	
-	    <div id="sd-answer" class="pen-answer-text"></div>
-	
-	    <!-- Το Popup για το animation (Πάντα τελευταίο και FIXED) -->
-	    <div id="penalty-action-box" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; height:150px; justify-content:center; align-items:center; border-radius:20px; font-size:45px; font-weight:900; z-index:10000; border:6px solid white;"></div>
-	
-	</div> <!-- ΕΔΩ ΚΛΕΙΝΕΙ ΤΟ sudden-death-screen -->
+
+	    <div id="penalty-action-box"></div>
+	</div>
 
     <!-- JOKER MODAL -->
     <div id="joker-modal">
-        <div class="joker-spinner" id="joker-spinner">🎰</div>
+        <div class="joker-title">🃏 JOKER</div>
+        <div class="joker-spinner" id="joker-spinner"><div class="joker-strip" id="joker-strip"></div></div>
         <div id="joker-result" class="joker-result-text"></div>
     </div>
 
@@ -2930,120 +3364,105 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		};
 		
 		const SUDDEN_DEATH_QUESTIONS = [
-		    { q: "Τελικός UCL 2024. Ποιος σκόραρε πρώτος: Καρβαχάλ ή Βινίσιους;", a: "Καρβαχάλ" },
-		    { q: "Τελικός UCL 2024. Ποιος έβγαλε την ασίστ στο γκολ του Καρβαχάλ: Κρόος ή Μόντριτς;", a: "Κρόος" },
-		    { q: "Τελικός UCL 2023. Ποιος ήταν βασικός φορ της Ίντερ: Τζέκο ή Λουκάκου;", a: "Τζέκο" },
-		    { q: "Τελικός UCL 2023. Ποιος ήταν τερματοφύλακας της Ίντερ: Ονάνα ή Χαντάνοβιτς;", a: "Ονάνα" },
-		    { q: "Τελικός UCL 2022. Ποιος έκανε τεράστιο ματς στο τέρμα της Ρεάλ: Κουρτουά ή Νάβας;", a: "Κουρτουά" },
-		    { q: "Τελικός UCL 2022. Ποιος ήταν βασικός δεξιός μπακ της Ρεάλ: Καρβαχάλ ή Λούκας Βάθκεθ;", a: "Καρβαχάλ" },
-		    { q: "Τελικός UCL 2021. Ποιος σκόραρε για την Τσέλσι: Χάβερτς ή Μάουντ;", a: "Χάβερτς" },
-		    { q: "Τελικός UCL 2021. Ποιος έδωσε την ασίστ στο γκολ της Τσέλσι: Μάουντ ή Βέρνερ;", a: "Μάουντ" },
-		    { q: "Τελικός UCL 2020. Ποιος σκόραρε με κεφαλιά: Κομάν ή Γκνάμπρι;", a: "Κομάν" },
-		    { q: "Τελικός UCL 2020. Ποιος ήταν προπονητής της Παρί: Τούχελ ή Ποτσετίνο;", a: "Τούχελ" },
-		
-		    { q: "Λίβερπουλ - Μπαρτσελόνα 4-0. Ποιος εκτέλεσε γρήγορα το κόρνερ στο 4ο γκολ: Άρνολντ ή Ρόμπερτσον;", a: "Άρνολντ" },
-		    { q: "Λίβερπουλ - Μπαρτσελόνα 4-0. Ποιος έβαλε δύο γκολ: Οριγκί ή Μανέ;", a: "Οριγκί" },
-		    { q: "Μπαρτσελόνα - Παρί 6-1. Ποιος πέτυχε το τελευταίο γκολ: Σέρτζι Ρομπέρτο ή Νεϊμάρ;", a: "Σέρτζι Ρομπέρτο" },
-		    { q: "Μπαρτσελόνα - Παρί 6-1. Ποιος σκόραρε δύο φορές στα τελευταία λεπτά: Νεϊμάρ ή Μέσι;", a: "Νεϊμάρ" },
-		    { q: "Ρόμα - Μπαρτσελόνα 3-0. Ποιος έβαλε το γκολ πρόκρισης: Μανωλάς ή Ντε Ρόσι;", a: "Μανωλάς" },
-		    { q: "Ρόμα - Μπαρτσελόνα 3-0. Ποιος ήταν τερματοφύλακας της Ρόμα: Άλισον ή Σέζνι;", a: "Άλισον" },
-		    { q: "Ρεάλ - Σίτι 3-1 το 2022. Ποιος έβαλε τα δύο γκολ της ανατροπής: Ροντρίγκο ή Βινίσιους;", a: "Ροντρίγκο" },
-		    { q: "Ρεάλ - Σίτι 3-1 το 2022. Ποιος έβαλε το πέναλτι στην παράταση: Μπενζεμά ή Μόντριτς;", a: "Μπενζεμά" },
-		    { q: "Σίτι - Ρεάλ 4-0 το 2023. Ποιος σκόραρε δύο φορές: Μπερνάρντο Σίλβα ή Ντε Μπρόινε;", a: "Μπερνάρντο Σίλβα" },
-		    { q: "Σίτι - Ρεάλ 4-0 το 2023. Ποιος ήταν βασικός στόπερ της Ρεάλ: Μιλιτάο ή Ρίντιγκερ;", a: "Μιλιτάο" },
-		
-		    { q: "Ολυμπιακός - Φιορεντίνα 1-0. Ποιος έκανε την ασίστ στο γκολ: Έσε ή Όρτα;", a: "Έσε" },
-		    { q: "Ολυμπιακός - Φιορεντίνα 1-0. Ποιος ήταν βασικός τερματοφύλακας: Τζολάκης ή Πασχαλάκης;", a: "Τζολάκης" },
-		    { q: "Μακάμπι - Ολυμπιακός 1-6. Ποιος σκόραρε δύο φορές: Ελ Κααμπί ή Φορτούνης;", a: "Ελ Κααμπί" },
-		    { q: "Μακάμπι - Ολυμπιακός 1-6. Ποιος σκόραρε στην παράταση: Γιόβετιτς ή Μασούρας;", a: "Γιόβετιτς" },
-		    { q: "Ολυμπιακός - Μίλαν 3-1. Ποιος πέτυχε γκολ με πέναλτι: Φορτούνης ή Γκιγιέρμε;", a: "Φορτούνης" },
-		    { q: "Ολυμπιακός - Μίλαν 3-1. Ποιος πέτυχε αυτογκόλ για τη Μίλαν: Ζαπάτα ή Μουσάκιο;", a: "Ζαπάτα" },
-		    { q: "Ολυμπιακός - Γιουνάιτεντ 2-0 το 2014. Ποιος έβαλε το πρώτο γκολ: Ντομίνγκες ή Κάμπελ;", a: "Ντομίνγκες" },
-		    { q: "Ολυμπιακός - Γιουνάιτεντ 2-0 το 2014. Ποιος έβαλε το δεύτερο γκολ: Κάμπελ ή Μήτρογλου;", a: "Κάμπελ" },
-		    { q: "Άρσεναλ - Ολυμπιακός 2-3 το 2015. Ποιος έβαλε το νικητήριο: Φινμπόγκασον ή Πάρντο;", a: "Φινμπόγκασον" },
-		
-		    { q: "Τελικός Euro 2024. Ποιος σκόραρε πρώτος: Νίκο Γουίλιαμς ή Γιαμάλ;", a: "Νίκο Γουίλιαμς" },
-		    { q: "Τελικός Euro 2024. Ποιος σκόραρε το νικητήριο: Ογιαρθάμπαλ ή Μοράτα;", a: "Ογιαρθάμπαλ" },
-		    { q: "Τελικός Euro 2024. Ποιος έδωσε ασίστ στο νικητήριο: Κουκουρέγια ή Καρβαχάλ;", a: "Κουκουρέγια" },
-		    { q: "Ημιτελικός Euro 2024, Ισπανία - Γαλλία. Ποιος έβαλε γκολάρα: Γιαμάλ ή Όλμο;", a: "Γιαμάλ" },
-		    { q: "Ημιτελικός Euro 2024, Ισπανία - Γαλλία. Ποιος σκόραρε για τη Γαλλία: Κόλο Μουανί ή Ζιρού;", a: "Κόλο Μουανί" },
-		    { q: "Τελικός Euro 2020. Ποιος σκόραρε για την Αγγλία: Λουκ Σο ή Στέρλινγκ;", a: "Λουκ Σο" },
-		    { q: "Τελικός Euro 2020. Ποιος ισοφάρισε για την Ιταλία: Μπονούτσι ή Μπαρέλα;", a: "Μπονούτσι" },
-		    { q: "Τελικός Euro 2020. Ποιος απέκρουσε το τελευταίο πέναλτι: Ντοναρούμα ή Σιρίγκου;", a: "Ντοναρούμα" },
-		    { q: "Τελικός Euro 2016. Ποιος τραυματίστηκε και βγήκε νωρίς: Ρονάλντο ή Νανί;", a: "Ρονάλντο" },
-		    { q: "Τελικός Euro 2016. Ποιος έβαλε το γκολ της Πορτογαλίας: Έντερ ή Κουαρέσμα;", a: "Έντερ" },
-		
-		    { q: "Τελικός Μουντιάλ 2022. Ποιος έκανε χατ-τρικ: Εμπαπέ ή Μέσι;", a: "Εμπαπέ" },
-		    { q: "Τελικός Μουντιάλ 2022. Ποιος έβαλε το τελευταίο πέναλτι της Αργεντινής: Μοντιέλ ή Ντι Μαρία;", a: "Μοντιέλ" },
-		    { q: "Τελικός Μουντιάλ 2022. Ποιος σκόραρε για την Αργεντινή στην κανονική διάρκεια: Ντι Μαρία ή Λαουτάρο;", a: "Ντι Μαρία" },
-		    { q: "Τελικός Μουντιάλ 2018. Ποιος έβαλε αυτογκόλ: Μάντζουκιτς ή Λόβρεν;", a: "Μάντζουκιτς" },
-		    { q: "Τελικός Μουντιάλ 2018. Ποιος σκόραρε με πέναλτι για τη Γαλλία: Γκριεζμάν ή Πογκμπά;", a: "Γκριεζμάν" },
-		    { q: "Τελικός Μουντιάλ 2014. Ποιος έδωσε την ασίστ στον Γκέτσε: Σίρλε ή Μίλερ;", a: "Σίρλε" },
-		    { q: "Γαλλία - Αργεντινή 4-3 το 2018. Ποιος έβαλε το τρομερό βολέ: Παβάρ ή Ερναντέζ;", a: "Παβάρ" },
-		    { q: "Βραζιλία - Βέλγιο 1-2 το 2018. Ποιος σκόραρε το δεύτερο του Βελγίου: Ντε Μπρόινε ή Αζάρ;", a: "Ντε Μπρόινε" },
-		    { q: "Γερμανία - Νότια Κορέα 0-2 το 2018. Ποιος τερματοφύλακας ανέβηκε στην αντίπαλη περιοχή στο τέλος: Νόιερ ή Τερ Στέγκεν;", a: "Νόιερ" },
-		    { q: "Μαρόκο - Πορτογαλία 1-0 το 2022. Ποιος σκόραρε: Εν-Νεσίρι ή Ζιγιές;", a: "Εν-Νεσίρι" },
-		
-		    { q: "Τελικός Europa League 2024. Ποιος έκανε χατ-τρικ: Λούκμαν ή Σκαμάκα;", a: "Λούκμαν" },
-		    { q: "Τελικός Europa League 2024. Ποιος ήταν προπονητής της Αταλάντα: Γκασπερίνι ή Σπαλέτι;", a: "Γκασπερίνι" },
-		    { q: "Τελικός Europa League 2023. Ποιος σκόραρε για τη Ρόμα: Ντιμπάλα ή Έιμπραχαμ;", a: "Ντιμπάλα" },
-		    { q: "Τελικός Europa League 2023. Ποιος ήταν προπονητής της Σεβίλλης: Μεντιλίμπαρ ή Λοπετέγκι;", a: "Μεντιλίμπαρ" },
-		    { q: "Τελικός Europa League 2021. Ποιος έβαλε το τελευταίο πέναλτι της Βιγιαρεάλ: Ρούλι ή Παρέχο;", a: "Ρούλι" },
-		    { q: "Τελικός Europa League 2021. Ποιος έχασε το τελευταίο πέναλτι της Γιουνάιτεντ: Ντε Χέα ή Ράσφορντ;", a: "Ντε Χέα" },
-		    { q: "Τελικός Europa League 2019. Ποιος σκόραρε δύο φορές για την Τσέλσι: Αζάρ ή Ζιρού;", a: "Αζάρ" },
-		    { q: "Τελικός Europa League 2017. Ποιος σκόραρε για τη Γιουνάιτεντ: Πογκμπά ή Ράσφορντ;", a: "Πογκμπά" },
-		    { q: "Τελικός Conference 2022. Ποιος σκόραρε για τη Ρόμα: Ζανιόλο ή Πελεγκρίνι;", a: "Ζανιόλο" },
-		    { q: "Τελικός Conference 2023. Ποιος σκόραρε το νικητήριο πέναλτι της Γουέστ Χαμ: Μπόουεν ή Πακετά;", a: "Μπόουεν" },
-		
-		    { q: "Premier League 2015-16. Ποιος ήταν πρώτος σκόρερ: Χάρι Κέιν ή Βάρντι;", a: "Χάρι Κέιν" },
-		    { q: "Λέστερ 2015-16. Ποιος ήταν βασικός τερματοφύλακας: Σμάιχελ ή Γουόρντ;", a: "Σμάιχελ" },
-		    { q: "Λέστερ 2015-16. Ποιος ήταν βασικός αμυντικός χαφ: Καντέ ή Μπακαγιόκο;", a: "Καντέ" },
-		    { q: "Άρσεναλ Invincibles 2003-04. Ποιος ήταν πρώτος σκόρερ της ομάδας στο πρωτάθλημα: Ανρί ή Πιρές;", a: "Ανρί" },
-		    { q: "Μάντσεστερ Σίτι 100 βαθμοί. Ποια σεζόν έγινε: 2017-18 ή 2018-19;", a: "2017-18" },
-		    { q: "Λίβερπουλ πρωταθλήτρια 2019-20. Ποιος ήταν βασικός τερματοφύλακας: Άλισον ή Μινιολέ;", a: "Άλισον" },
-		    { q: "Τσέλσι 2016-17. Ποιος ήταν προπονητής: Κόντε ή Σάρι;", a: "Κόντε" },
-		    { q: "Μάντσεστερ Γιουνάιτεντ 2007-08. Ποιος πήρε Χρυσή Μπάλα εκείνη τη χρονιά: Ρονάλντο ή Ρούνεϊ;", a: "Ρονάλντο" },
-		    { q: "Λίβερπουλ 2018-19. Ποιος ήταν βασικός στόπερ δίπλα στον Φαν Ντάικ στον τελικό UCL: Ματίπ ή Γκόμεζ;", a: "Ματίπ" },
-		    { q: "Τότεναμ 2018-19. Ποιος σκόραρε χατ-τρικ στον ημιτελικό με Άγιαξ: Λούκας Μόουρα ή Σον;", a: "Λούκας Μόουρα" },
-		
-		    { q: "Ρεάλ 2016-17. Ποιος έπαιξε βασικός στον τελικό UCL αντί του Μπέιλ: Ίσκο ή Ασένσιο;", a: "Ίσκο" },
-		    { q: "Ρεάλ 2017-18. Ποιος σκόραρε με ψαλιδάκι στον τελικό: Μπέιλ ή Ρονάλντο;", a: "Μπέιλ" },
-		    { q: "Ρεάλ 2017-18. Ποιος έκανε τα μεγάλα λάθη στον τελικό: Κάριους ή Μινιολέ;", a: "Κάριους" },
-		    { q: "Μπαρτσελόνα 2014-15. Ποιος ήταν προπονητής: Λουίς Ενρίκε ή Τίτο Βιλανόβα;", a: "Λουίς Ενρίκε" },
-		    { q: "Μπαρτσελόνα 2014-15. Ποιος σκόραρε στον τελικό UCL: Ράκιτιτς ή Τσάβι;", a: "Ράκιτιτς" },
-		    { q: "Ατλέτικο 2013-14. Ποιος σκόραρε στον τελικό UCL απέναντι στη Ρεάλ: Γκοντίν ή Γκάμπι;", a: "Γκοντίν" },
-		    { q: "Ρεάλ 2013-14. Ποιος ισοφάρισε στο 93ο λεπτό: Ράμος ή Μπέιλ;", a: "Ράμος" },
-		    { q: "Μπάγερν 2012-13. Ποιος σκόραρε το νικητήριο στον τελικό UCL: Ρόμπεν ή Ριμπερί;", a: "Ρόμπεν" },
-		    { q: "Τσέλσι 2011-12. Ποιος ισοφάρισε στον τελικό UCL: Ντρογκμπά ή Λάμπαρντ;", a: "Ντρογκμπά" },
-		    { q: "Τσέλσι 2011-12. Ποιος απέκρουσε πέναλτι του Ρόμπεν στην παράταση: Τσεχ ή Κουρτουά;", a: "Τσεχ" },
-		
-		    { q: "Μίλαν - Λίβερπουλ 2005. Ποιος σκόραρε πρώτος στον τελικό: Μαλντίνι ή Κακά;", a: "Μαλντίνι" },
-		    { q: "Λίβερπουλ - Μίλαν 2005. Ποιος απέκρουσε το πέναλτι του Σεβτσένκο: Ντούντεκ ή Ρέινα;", a: "Ντούντεκ" },
-		    { q: "Μάντσεστερ Γιουνάιτεντ - Τσέλσι 2008. Ποιος έχασε πέναλτι για την Τσέλσι: Τέρι ή Λάμπαρντ;", a: "Τέρι" },
-		    { q: "Μπαρτσελόνα - Γιουνάιτεντ 2011. Ποιος σκόραρε για τη Γιουνάιτεντ: Ρούνεϊ ή Τσιτσαρίτο;", a: "Ρούνεϊ" },
-		    { q: "Ίντερ 2009-10. Ποιος ήταν προπονητής στο τρεμπλ: Μουρίνιο ή Μαντσίνι;", a: "Μουρίνιο" },
-		    { q: "Ίντερ 2009-10. Ποιος σκόραρε δύο φορές στον τελικό UCL: Μιλίτο ή Ετό;", a: "Μιλίτο" },
-		    { q: "Πόρτο 2003-04. Ποιος ήταν προπονητής στο Champions League: Μουρίνιο ή Βίλας-Μπόας;", a: "Μουρίνιο" },
-		    { q: "Πόρτο - Μονακό 2004. Ποιος σκόραρε για την Πόρτο: Ντέκο ή Ροναλντίνιο;", a: "Ντέκο" },
-		    { q: "Άγιαξ 1994-95. Ποιος σκόραρε στον τελικό UCL: Κλάιφερτ ή Μπέργκαμπ;", a: "Κλάιφερτ" },
-		    { q: "Ντόρτμουντ 1996-97. Ποιος σκόραρε δύο φορές στον τελικό UCL: Ρίντλε ή Σάμερ;", a: "Ρίντλε" },
-		
-		    { q: "Copa America 2021. Ποιος σκόραρε στον τελικό: Ντι Μαρία ή Μέσι;", a: "Ντι Μαρία" },
-		    { q: "Copa America 2021. Ποιος έδωσε την ασίστ στον Ντι Μαρία: Ντε Πολ ή Παρέδες;", a: "Ντε Πολ" },
-		    { q: "Copa America 2024. Ποιος σκόραρε στον τελικό: Λαουτάρο ή Άλβαρες;", a: "Λαουτάρο" },
-		    { q: "Finalissima 2022. Ποια ομάδα νίκησε η Αργεντινή: Ιταλία ή Αγγλία;", a: "Ιταλία" },
-		    { q: "Nations League 2019. Ποιος σκόραρε στον τελικό για την Πορτογαλία: Γκονσάλο Γκουέδες ή Μπερνάρντο Σίλβα;", a: "Γκονσάλο Γκουέδες" },
-		    { q: "AFCON 2021. Ποιος έβαλε το τελευταίο πέναλτι για τη Σενεγάλη: Μανέ ή Κουλιμπαλί;", a: "Μανέ" },
-		    { q: "Μπαρτσελόνα - Μπάγερν 8-2. Ποιος σκόραρε για την Μπαρτσελόνα: Σουάρες ή Γκριεζμάν;", a: "Σουάρες" },
-		    { q: "Μπαρτσελόνα - Μπάγερν 8-2. Ποιος σκόραρε για την Μπάγερν απέναντι στην πρώην ομάδα του: Κουτίνιο ή Τιάγκο;", a: "Κουτίνιο" },
-		    { q: "Ρεάλ - Άγιαξ 1-4 το 2019. Ποιος έκανε τεράστιο ματς ως false nine: Τάντιτς ή Νέρες;", a: "Τάντιτς" },
-		    { q: "Ρεάλ - Άγιαξ 1-4 το 2019. Ποιος ήταν αρχηγός του Άγιαξ στην άμυνα: Ντε Λιχτ ή Μπλιντ;", a: "Ντε Λιχτ" },
-		    { q: "Τελικός Μουντιάλ 2026. Ποιος σκόραρε για την Ισπανία: Φεράν Τόρες ή Μοράτα;", a: "Φεράν Τόρες" },
-		    { q: "Τελικός UCL 2026. Ποιος σκόραρε για την Άρσεναλ: Χάβερτς ή Σάκα;", a: "Χάβερτς" },
-		    { q: "Τελικός UCL 2026. Ποιος ισοφάρισε με πέναλτι για την Παρί: Ντεμπελέ ή Κβαρατσχέλια;", a: "Ντεμπελέ" },
-		    { q: "Τελικός Europa League 2026. Ποια ομάδα νίκησε 3-0 η Άστον Βίλα: Φράιμπουργκ ή Ρόμα;", a: "Φράιμπουργκ" },
-		    { q: "Τελικός Κυπέλλου Ελλάδας 2026. Ποιος σήκωσε το τρόπαιο: ΟΦΗ ή ΠΑΟΚ;", a: "ΟΦΗ" },
-		    { q: "Τελικός Μουντιάλ 2026. Ποιος Αργεντινός αποβλήθηκε: Έντσο Φερνάντες ή Μακ Άλιστερ;", a: "Έντσο Φερνάντες" }
+		    { q: "Τελικός Euro 2004. Ποιος εκτέλεσε το κόρνερ στο γκολ του Χαριστέα: Μπασινάς ή Καραγκούνης;", a: "Μπασινάς" },
+		    { q: "Euro 2004, ημιτελικός με Τσεχία. Ποιος σκόραρε το ασημένιο γκολ: Δέλλας ή Καψής;", a: "Δέλλας" },
+		    { q: "Euro 2004, πρεμιέρα Πορτογαλία - Ελλάδα 1-2. Ποιος σκόραρε με πέναλτι: Μπασινάς ή Καραγκούνης;", a: "Μπασινάς" },
+		    { q: "Euro 2004, προημιτελικός με Γαλλία. Ποιος έκανε τη σέντρα στο γκολ του Χαριστέα: Ζαγοράκης ή Σεϊταρίδης;", a: "Ζαγοράκης" },
+		    { q: "Euro 2004, Ρωσία - Ελλάδα 2-1. Ποιος σκόραρε για την Ελλάδα: Βρύζας ή Χαριστέας;", a: "Βρύζας" },
+		    { q: "Euro 2004, Ελλάδα - Ισπανία 1-1. Ποιος ισοφάρισε για την Ελλάδα: Χαριστέας ή Βρύζας;", a: "Χαριστέας" },
+		    { q: "Euro 2004, ημιτελικός. Ποιος Τσέχος σταρ βγήκε τραυματίας στο πρώτο ημίχρονο: Νέντβεντ ή Πόμπορσκι;", a: "Νέντβεντ" },
+		    { q: "Ποιος αναδείχθηκε κορυφαίος παίκτης του Euro 2004: Ζαγοράκης ή Κριστιάνο Ρονάλντο;", a: "Ζαγοράκης" },
+		    { q: "Μουντιάλ 2010, Ελλάδα - Νιγηρία 2-1. Ποιος σκόραρε το πρώτο γκολ της Ελλάδας σε Μουντιάλ: Σαλπιγγίδης ή Τοροσίδης;", a: "Σαλπιγγίδης" },
+		    { q: "Μουντιάλ 2014, Ελλάδα - Ακτή Ελεφαντοστού 2-1. Ποιος σκόραρε το πέναλτι στις καθυστερήσεις: Σαμαράς ή Γκέκας;", a: "Σαμαράς" },
+		    { q: "Μουντιάλ 2014, Κόστα Ρίκα - Ελλάδα. Ποιος ισοφάρισε για την Ελλάδα στο 91': Σωκράτης ή Μήτρογλου;", a: "Σωκράτης" },
+		    { q: "Μουντιάλ 2014, διαδικασία πέναλτι με Κόστα Ρίκα. Ποιος Έλληνας αστόχησε: Γκέκας ή Σαμαράς;", a: "Γκέκας" },
+		    { q: "Euro 2012, Ρωσία - Ελλάδα 0-1. Ποιος σκόραρε: Καραγκούνης ή Σαμαράς;", a: "Καραγκούνης" },
+		    { q: "Euro 2012, Πολωνία - Ελλάδα 1-1. Ποιος Έλληνας έχασε πέναλτι: Καραγκούνης ή Σαλπιγγίδης;", a: "Καραγκούνης" },
+		    { q: "Τελικός Conference League 2024. Σε ποιο γήπεδο έγινε: OPAP Arena ή Καραϊσκάκη;", a: "OPAP Arena" },
+		    { q: "Conference League 2024. Ποια ομάδα απέκλεισε ο Ολυμπιακός στους ημιτελικούς: Άστον Βίλα ή Φενέρμπαχτσε;", a: "Άστον Βίλα" },
+		    { q: "Τελικός Κυπελλούχων Πρωταθλητριών 1971. Ποιος ήταν ο προπονητής του Παναθηναϊκού: Πούσκας ή Μπάγεβιτς;", a: "Πούσκας" },
+		    { q: "Ημιτελικός Champions League 1996, Άγιαξ - Παναθηναϊκός 0-1. Ποιος σκόραρε: Βαζέχα ή Γεωργιάδης;", a: "Βαζέχα" },
+		    { q: "Champions League 1999. Ποια ομάδα απέκλεισε τον Ολυμπιακό στους προημιτελικούς: Γιουβέντους ή Μάντσεστερ Γιουνάιτεντ;", a: "Γιουβέντους" },
+		    { q: "ΠΑΟΚ 2018-19, πρωταθλητής χωρίς ήττα. Ποιος ήταν ο προπονητής: Λουτσέσκου ή Στέφανοβιτς;", a: "Λουτσέσκου" },
+		    { q: "ΑΕΚ, πρωτάθλημα 2018. Ποιος ήταν ο προπονητής: Χιμένεθ ή Δέλλας;", a: "Χιμένεθ" },
+		    { q: "ΑΕΚ, νταμπλ 2023. Ποιος ήταν ο προπονητής: Αλμέιδα ή Χιμένεθ;", a: "Αλμέιδα" },
+		    { q: "Champions League 2018, Ρόμα - Μπαρτσελόνα 3-0. Ποιος σκόραρε το τρίτο γκολ: Μανωλάς ή Τζέκο;", a: "Μανωλάς" },
+		    { q: "Τελικός UCL 1993. Ποιος σκόραρε το μοναδικό γκολ της Μαρσέιγ: Μπολί ή Βελέρ;", a: "Μπολί" },
+		    { q: "Τελικός UCL 1998. Ποιος σκόραρε για τη Ρεάλ απέναντι στη Γιουβέντους: Μιγιάτοβιτς ή Ραούλ;", a: "Μιγιάτοβιτς" },
+		    { q: "Τελικός UCL 1999. Ποιος εκτέλεσε τα κόρνερ και στα δύο γκολ της Γιουνάιτεντ: Μπέκαμ ή Γκιγκς;", a: "Μπέκαμ" },
+		    { q: "Τελικός UCL 2000, Ρεάλ - Βαλένθια 3-0. Ποιος σκόραρε με βολέ: Μακμάναμαν ή Μοριέντες;", a: "Μακμάναμαν" },
+		    { q: "Τελικός UCL 2002. Ποιος έκανε τη σέντρα στο θρυλικό βολέ του Ζιντάν: Ρομπέρτο Κάρλος ή Φίγκο;", a: "Ρομπέρτο Κάρλος" },
+		    { q: "Τελικός UCL 2003, Μίλαν - Γιουβέντους. Ποιος εκτέλεσε το νικητήριο πέναλτι: Σεβτσένκο ή Πίρλο;", a: "Σεβτσένκο" },
+		    { q: "Τελικός UCL 2004, Πόρτο - Μονακό 3-0. Ποιος σκόραρε: Ντέκο ή Ντέρλεϊ;", a: "Ντέκο" },
+		    { q: "Τελικός UCL 2005. Ποιος σκόραρε το πρώτο γκολ της ανατροπής της Λίβερπουλ: Τζέραρντ ή Σμίτσερ;", a: "Τζέραρντ" },
+		    { q: "Τελικός UCL 2005. Ποιος έχασε το τελευταίο πέναλτι της Μίλαν: Σεβτσένκο ή Πίρλο;", a: "Σεβτσένκο" },
+		    { q: "Τελικός UCL 2006. Ποιος τερματοφύλακας αποβλήθηκε: Λέμαν ή Βαλντές;", a: "Λέμαν" },
+		    { q: "Τελικός UCL 2006. Ποιος σκόραρε το νικητήριο γκολ της Μπαρτσελόνα: Μπελέτι ή Ετό;", a: "Μπελέτι" },
+		    { q: "Τελικός UCL 2007 στην Αθήνα. Ποιος σκόραρε για τη Λίβερπουλ: Κάιτ ή Τζέραρντ;", a: "Κάιτ" },
+		    { q: "Τελικός UCL 2008. Ποιος της Τσέλσι έχασε το κρίσιμο τελευταίο πέναλτι: Ανελκά ή Τέρι;", a: "Ανελκά" },
+		    { q: "Τελικός UCL 2009 στη Ρώμη. Πώς σκόραρε ο Μέσι: με κεφαλιά ή με αριστερό;", a: "με κεφαλιά" },
+		    { q: "Τελικός UCL 2010. Ποιος πέτυχε και τα δύο γκολ της Ίντερ: Μιλίτο ή Ετό;", a: "Μιλίτο" },
+		    { q: "Τελικός UCL 2011 στο Γουέμπλεϊ. Ποιος ισοφάρισε για τη Γιουνάιτεντ: Ρούνεϊ ή Τσιτσαρίτο;", a: "Ρούνεϊ" },
+		    { q: "Τελικός UCL 2012. Ποιος της Μπάγερν έχασε πέναλτι στην παράταση: Ρόμπεν ή Γκόμεθ;", a: "Ρόμπεν" },
+		    { q: "Τελικός UCL 2012. Ποιος σκόραρε το γκολ της Μπάγερν: Μίλερ ή Γκόμεθ;", a: "Μίλερ" },
+		    { q: "Τελικός UCL 2013. Ποιος σκόραρε με πέναλτι για την Ντόρτμουντ: Γκουντογκάν ή Ρόις;", a: "Γκουντογκάν" },
+		    { q: "Τελικός UCL 2014. Ποιος εκτέλεσε το κόρνερ στο γκολ του Ράμος στο 93': Μόντριτς ή Ντι Μαρία;", a: "Μόντριτς" },
+		    { q: "Τελικός UCL 2014. Ποιος σκόραρε το 1-0 της Ατλέτικο: Γκοντίν ή Μιράντα;", a: "Γκοντίν" },
+		    { q: "Τελικός UCL 2016. Ποιος της Ατλέτικο σημάδεψε δοκάρι στη διαδικασία πέναλτι: Χουανφράν ή Σαούλ;", a: "Χουανφράν" },
+		    { q: "Τελικός UCL 2017. Ποιος σκόραρε το γκολ της Γιουβέντους με ανάποδο ψαλίδι: Μάντζουκιτς ή Ιγκουαΐν;", a: "Μάντζουκιτς" },
+		    { q: "Τελικός UCL 2018. Ποιος σκόραρε το γκολ της Λίβερπουλ: Μανέ ή Φιρμίνο;", a: "Μανέ" },
+		    { q: "Τελικός UCL 2019. Ποιος σκόραρε το 2-0 της Λίβερπουλ: Όριγκι ή Φιρμίνο;", a: "Όριγκι" },
+		    { q: "Ημιτελικός UCL 2019, Λίβερπουλ - Μπαρτσελόνα 4-0. Ποιος εκτέλεσε γρήγορα το κόρνερ του 4-0: Αλεξάντερ-Άρνολντ ή Ρόμπερτσον;", a: "Αλεξάντερ-Άρνολντ" },
+		    { q: "Τελικός UCL 2022. Ποιος έδωσε την ασίστ στο γκολ του Βινίσιους: Βαλβέρδε ή Καρβαχάλ;", a: "Βαλβέρδε" },
+		    { q: "Τελικός UCL 2024. Ποιος σκόραρε το 2-0 της Ρεάλ: Βινίσιους ή Μπέλινγκαμ;", a: "Βινίσιους" },
+		    { q: "Τελικός UCL 2025, Παρί - Ίντερ 5-0. Ποιος πέτυχε δύο γκολ: Ντουέ ή Κβαρατσχέλια;", a: "Ντουέ" },
+		    { q: "Τελικός UCL 2025. Ποιος άνοιξε το σκορ απέναντι στην πρώην ομάδα του: Χακίμι ή Ντουέ;", a: "Χακίμι" },
+		    { q: "Τελικός UCL 2026. Ποιος σκόραρε στο 6' για την Άρσεναλ: Χάβερτς ή Σάκα;", a: "Χάβερτς" },
+		    { q: "Τελικός UCL 2026. Πώς ισοφάρισε ο Ντεμπελέ για την Παρί: με πέναλτι ή με κεφαλιά;", a: "με πέναλτι" },
+		    { q: "Champions League 2017, Μπαρτσελόνα - Παρί 6-1. Ποιος σκόραρε το 6ο γκολ: Σέρτζι Ρομπέρτο ή Νεϊμάρ;", a: "Σέρτζι Ρομπέρτο" },
+		    { q: "Τελικός Μουντιάλ 1986. Ποιος σκόραρε το νικητήριο 3-2 της Αργεντινής: Μπουρουτσάγα ή Βαλντάνο;", a: "Μπουρουτσάγα" },
+		    { q: "Τελικός Μουντιάλ 1994. Ποιος ήταν ο τερματοφύλακας της Βραζιλίας: Ταφαρέλ ή Ντίντα;", a: "Ταφαρέλ" },
+		    { q: "Τελικός Μουντιάλ 1998. Ποιος Γάλλος αποβλήθηκε: Ντεσαγί ή Λεμπέφ;", a: "Ντεσαγί" },
+		    { q: "Τελικός Μουντιάλ 2002. Ποιος έκανε το λάθος στο 1-0 του Ρονάλντο: Καν ή Χάμαν;", a: "Καν" },
+		    { q: "Τελικός Μουντιάλ 2006. Ποιος σκόραρε για την Ιταλία: Ματεράτσι ή Τόνι;", a: "Ματεράτσι" },
+		    { q: "Τελικός Μουντιάλ 2006. Ποιος Γάλλος χτύπησε το οριζόντιο στη διαδικασία πέναλτι: Τρεζεγκέ ή Αμπιντάλ;", a: "Τρεζεγκέ" },
+		    { q: "Τελικός Μουντιάλ 2010. Ποιος Ολλανδός αποβλήθηκε στην παράταση: Χάιτινγκα ή Φαν Μπόμελ;", a: "Χάιτινγκα" },
+		    { q: "Τελικός Μουντιάλ 2014. Ποιος έκανε τη σέντρα στο γκολ του Γκέτσε: Σίρλε ή Μίλερ;", a: "Σίρλε" },
+		    { q: "Μουντιάλ 2014, Βραζιλία - Γερμανία 1-7. Ποιος σκόραρε για τη Βραζιλία: Όσκαρ ή Νεϊμάρ;", a: "Όσκαρ" },
+		    { q: "Μουντιάλ 2014. Ο Κλόζε έγινε πρώτος σκόρερ όλων των εποχών με γκολ απέναντι σε: Βραζιλία ή Αργεντινή;", a: "Βραζιλία" },
+		    { q: "Τελικός Μουντιάλ 2018. Ποιος Κροάτης έβαλε αυτογκόλ: Μάντζουκιτς ή Λόβρεν;", a: "Μάντζουκιτς" },
+		    { q: "Τελικός Μουντιάλ 2018. Ποιος ισοφάρισε 1-1 για την Κροατία: Πέρισιτς ή Μόντριτς;", a: "Πέρισιτς" },
+		    { q: "Τελικός Μουντιάλ 2022. Ποιος σκόραρε το 2-0 της Αργεντινής: Ντι Μαρία ή Άλβαρες;", a: "Ντι Μαρία" },
+		    { q: "Τελικός Μουντιάλ 2022. Ποιος εκτέλεσε το νικητήριο πέναλτι: Μοντιέλ ή Παρέδες;", a: "Μοντιέλ" },
+		    { q: "Τελικός Μουντιάλ 2026. Ποιος σκόραρε στο 106': Φεράν Τόρες ή Μοράτα;", a: "Φεράν Τόρες" },
+		    { q: "Τελικός Μουντιάλ 2026. Ποιος Αργεντινός αποβλήθηκε: Έντσο Φερνάντες ή Μακ Άλιστερ;", a: "Έντσο Φερνάντες" },
+		    { q: "Μουντιάλ 2026. Ποιος πήρε το βραβείο του καλύτερου νέου: Κουμπαρσί ή Γιαμάλ;", a: "Κουμπαρσί" },
+		    { q: "Μουντιάλ 2026. Ποιος πήρε το Χρυσό Γάντι: Ουνάι Σιμόν ή Εμιλιάνο Μαρτίνες;", a: "Ουνάι Σιμόν" },
+		    { q: "Τελικός Euro 2008. Ποιος έδωσε την ασίστ στο γκολ του Τόρες: Τσάβι ή Ινιέστα;", a: "Τσάβι" },
+		    { q: "Τελικός Euro 2012, Ισπανία - Ιταλία 4-0. Ποιος σκόραρε το 4ο γκολ: Μάτα ή Τόρες;", a: "Μάτα" },
+		    { q: "Τελικός Euro 2016. Ποιος Γάλλος σημάδεψε δοκάρι στο 90+2': Ζινιάκ ή Ζιρού;", a: "Ζινιάκ" },
+		    { q: "Τελικός Euro 2020. Ποιος σκόραρε για την Αγγλία στο 2': Σο ή Τρίπιερ;", a: "Σο" },
+		    { q: "Τελικός Euro 2020. Ποιος ισοφάρισε για την Ιταλία: Μπονούτσι ή Κιελίνι;", a: "Μπονούτσι" },
+		    { q: "Τελικός Euro 2024. Ποιος σκόραρε το νικητήριο της Ισπανίας: Οϊαρθάμπαλ ή Μοράτα;", a: "Οϊαρθάμπαλ" },
+		    { q: "Τελικός Euro 2024. Ποιος ισοφάρισε για την Αγγλία: Πάλμερ ή Κέιν;", a: "Πάλμερ" },
+		    { q: "Τελικός Copa América 2021 στο Μαρακανά. Ποιος σκόραρε: Ντι Μαρία ή Λαουτάρο;", a: "Ντι Μαρία" },
+		    { q: "Premier League 2012, γκολ Αγουέρο στο 93:20. Ποιος έδωσε την ασίστ: Μπαλοτέλι ή Τζέκο;", a: "Μπαλοτέλι" },
+		    { q: "Premier League 2012, γκολ Αγουέρο στο 93:20. Αντίπαλος ήταν: ΚΠΡ ή Σάντερλαντ;", a: "ΚΠΡ" },
+		    { q: "Λέστερ, πρωταθλήτρια 2016. Ποιος ήταν ο αρχηγός της: Γουές Μόργκαν ή Τζέιμι Βάρντι;", a: "Γουές Μόργκαν" },
+		    { q: "Άρσεναλ των Invincibles 2003-04. Ποιος ήταν ο τερματοφύλακας: Λέμαν ή Σίμαν;", a: "Λέμαν" },
+		    { q: "Premier League 2025-26. Ποιος βγήκε δεύτερος σκόρερ πίσω από τον Χάαλαντ: Ιγκόρ Τιάγκο ή Σεμένιο;", a: "Ιγκόρ Τιάγκο" },
+		    { q: "Ποιος ήταν ο πρώτος προπονητής που κατέκτησε τρεμπλ με αγγλική ομάδα: Φέργκιουσον ή Γκουαρδιόλα;", a: "Φέργκιουσον" },
+		    { q: "Χρυσή Μπάλα 1995, ο πρώτος μη Ευρωπαίος νικητής: Γουεά ή Ρονάλντο;", a: "Γουεά" },
+		    { q: "Χρυσή Μπάλα 1997: Ρονάλντο ή Μιγιάτοβιτς;", a: "Ρονάλντο" },
+		    { q: "Χρυσή Μπάλα 2001: Όουεν ή Ραούλ;", a: "Όουεν" },
+		    { q: "Χρυσή Μπάλα 2003: Νέντβεντ ή Ανρί;", a: "Νέντβεντ" },
+		    { q: "Χρυσή Μπάλα 2004: Σεβτσένκο ή Ντέκο;", a: "Σεβτσένκο" },
+		    { q: "Χρυσή Μπάλα 2006: Κανναβάρο ή Μπουφόν;", a: "Κανναβάρο" },
+		    { q: "Χρυσή Μπάλα 2007: Κακά ή Κριστιάνο Ρονάλντο;", a: "Κακά" },
+		    { q: "Χρυσή Μπάλα 2025: Ντεμπελέ ή Γιαμάλ;", a: "Ντεμπελέ" },
+		    { q: "Χρυσή Μπάλα 2026. Ποιος βγήκε δεύτερος πίσω από τον Κέιν: Εμπαπέ ή Γιαμάλ;", a: "Εμπαπέ" },
+		    { q: "Ποια μεταγραφή κόστισε περισσότερο: Ζιντάν στη Ρεάλ (2001) ή Φίγκο στη Ρεάλ (2000);", a: "Ζιντάν" },
+		    { q: "Ποια μεταγραφή κόστισε περισσότερο το καλοκαίρι του 2009: Κριστιάνο Ρονάλντο ή Κακά;", a: "Κριστιάνο Ρονάλντο" }
 		];
 
         const L = {
@@ -3893,13 +4312,13 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             // 🪪 PLAYER ID - ΕΛΛΗΝΙΚΟ ΠΡΩΤΑΘΛΗΜΑ (1-10)
             // ==========================================
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "01-04", c: "Quilmes AC", l: L.quilmes, f: "Academy"}, {y: "04-07", c: "River Plate", l: L.river, f: "€1.5m"}, {y: "07-09", c: "Rubin Kazan", l: L.rubin, f: "€7m"}, {y: "09-10", c: "Valencia CF", l: L.valencia, f: "€7m"}, {y: "10-12", c: "Rubin Kazan", l: L.rubin, f: "Loan"}, {y: "12-13", c: "Rayo Vallecano", l: L.rayo, f: "Free"}, {y: "13-17", c: "Olympiacos", l: L.olympiacos, f: "Free"}, {y: "17-18", c: "Rayo Vallecano", l: L.rayo, f: "Free"} ], a: "Alejandro Domínguez", fake: "Ariel Ibagaza", hint: "Αργεντινός βιρτουόζος μεσοεπιθετικός που λατρεύτηκε στο λιμάνι του Πειραιά και φόρεσε το περιβραχιόνιο του αρχηγού με το νούμερο 10." },
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-10", c: "Trikala FC", l: L.trikala, f: "Academy"}, {y: "10-11", c: "Asteras Tripolis", l: L.asteras, f: "Free"}, {y: "11-14", c: "Kaiserslautern", l: L.kaiserslautern, f: "€800k"}, {y: "14-24", c: "Olympiacos", l: L.olympiacos, f: "€400k"}, {y: "24-Σημ", c: "Al-Khaleej FC", l: L.alkhaleej, f: "Free"} ], a: "Kostas Fortounis", fake: "Giannis Fetfatzidis", hint: "Ο κορυφαίος Έλληνας μεσοεπιθετικός της γενιάς του. Αποχώρησε ως Κυπελλούχος Ευρώπης μετά από 10 χρόνια στην ομάδα." },
+            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-10", c: "Trikala FC", l: L.trikala, f: "Academy"}, {y: "10-11", c: "Asteras Tripolis", l: L.asteras, f: "Free"}, {y: "11-14", c: "Kaiserslautern", l: L.kaiserslautern, f: "€800k"}, {y: "14-24", c: "Olympiacos", l: L.olympiacos, f: "€400k"}, {y: "24-26", c: "Al-Khaleej FC", l: L.alkhaleej, f: "Free"}, {y: "26-Σημ", c: "Olympiacos", l: L.olympiacos, f: "Free"} ], a: "Kostas Fortounis", fake: "Giannis Fetfatzidis", hint: "Ο κορυφαίος Έλληνας μεσοεπιθετικός της γενιάς του. Αποχώρησε ως Κυπελλούχος Ευρώπης μετά από 10 χρόνια στην ομάδα." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "04-06", c: "FC Libourne", l: L.libourne, f: "Academy"}, {y: "06-14", c: "Marseille", l: L.marseille, f: "€80k"}, {y: "14-15", c: "Dynamo Moscow", l: L.dynamomoscow, f: "€7m"}, {y: "15-17", c: "Olympique Lyon", l: L.lyon, f: "€6m"}, {y: "17-19", c: "Fenerbahce", l: L.fenerbahce, f: "€1.5m"}, {y: "19-23", c: "Olympiacos", l: L.olympiacos, f: "Free"}, {y: "23-24", c: "Apollon Limassol", l: L.apollonlimassol, f: "Free"}, {y: "24-Σημ", c: "Athens Kallithea", l: L.kallithea, f: "Free"} ], a: "Mathieu Valbuena", fake: "Yann M'Vila", hint: "Γάλλος βραχύσωμος μάγος (1.67μ) που αποκαλείται χαϊδευτικά και 'Ποδήλατο' (Le Petit Velo)." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "10-12", c: "Boca Juniors", l: L.boca, f: "Academy"}, {y: "12-13", c: "Barcelona B", l: L.barcelonab, f: "Loan"}, {y: "13-14", c: "CA Tigre", l: L.tigre, f: "Loan"}, {y: "14-15", c: "UD Las Palmas", l: L.laspalmas, f: "Loan"}, {y: "15-18", c: "UD Las Palmas", l: L.laspalmas, f: "€1.5m"}, {y: "17-18", c: "AEK Athens", l: L.aek, f: "Loan"}, {y: "18-20", c: "AEK Athens", l: L.aek, f: "Loan/Buy"}, {y: "20-21", c: "UD Las Palmas", l: L.laspalmas, f: "Free"}, {y: "21-24", c: "AEK Athens", l: L.aek, f: "€1.4m"}, {y: "24-Σημ", c: "Cerro Porteño", l: L.cerroporteno, f: "Free"} ], a: "Sergio Araujo", fake: "Ezequiel Ponce", hint: "Ο λατρεμένος 'Τσίνο' (El Chino) των οπαδών, απόλυτα ταυτισμένος με το χτίσιμο του νέου γηπέδου της ομάδας του." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-10", c: "NK Osijek", l: L.osijek, f: "Academy"}, {y: "10-11", c: "Leverkusen", l: L.leverkusen, f: "€2.4m"}, {y: "11-13", c: "Dinamo Zagreb", l: L.dinamozagreb, f: "€1m"}, {y: "13-18", c: "Dynamo Kyiv", l: L.dynamokyiv, f: "€5m"}, {y: "18-22", c: "Besiktas JK", l: L.besiktas, f: "Free"}, {y: "22-Σημ", c: "AEK Athens", l: L.aek, f: "Free"} ], a: "Domagoj Vida", fake: "Dejan Lovren", hint: "Κροάτης διεθνής στόπερ με χαρακτηριστική αλογοουρά. Αγωνίστηκε βασικός στον τελικό του Μουντιάλ το 2018." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "07-10", c: "Internacional", l: L.internacional, f: "Academy"}, {y: "10-13", c: "Metalist Kharkiv", l: L.metalist, f: "€6m"}, {y: "13-21", c: "Shakhtar Donetsk", l: L.shakhtar, f: "€15.2m"}, {y: "21-23", c: "Internacional", l: L.internacional, f: "Free"}, {y: "23-Σημ", c: "PAOK FC", l: L.paok, f: "Free"} ], a: "Taison", fake: "Bernard", hint: "Βραζιλιάνος ταχύτατος εξτρέμ που άφησε εποχή στην Ουκρανία πριν έρθει για να αναμορφώσει την επίθεση του 'Δικεφάλου'." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-11", c: "SM Caen", l: L.caen, f: "Academy"}, {y: "11-12", c: "Al-Hilal", l: L.alhilal, f: "€7.5m"}, {y: "12-16", c: "Granada CF", l: L.granada, f: "€5m"}, {y: "16-19", c: "Al-Duhail", l: L.alduhail, f: "€15m"}, {y: "19-24", c: "Olympiacos", l: L.olympiacos, f: "Free"}, {y: "24-25", c: "APOEL FC", l: L.apoel, f: "Free"}, {y: "25-Σημ", c: "FC Nantes", l: L.nantes, f: "Free"} ], a: "Youssef El Arabi", fake: "Ahmed Hassan", hint: "Μαροκινός 'εκτελεστής' των γηπέδων, πασίγνωστος στο ελληνικό κοινό για τον χαρακτηριστικό πανηγυρισμό του με τα 'πιστόλια'." },
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "14-18", c: "Querétaro", l: L.queretaro, f: "Academy"}, {y: "18-22", c: "Cruz Azul", l: L.cruzazul, f: "€10.5m"}, {y: "22-23", c: "Celta de Vigo", l: L.celtavigo, f: "Free"}, {y: "22-23", c: "AEK Athens", l: L.aek, f: "Loan"}, {y: "23-Σημ", c: "AEK Athens", l: L.aek, f: "€6.5m"} ], a: "Orbelín Pineda", fake: "Rodolfo Pizarro", hint: "Μεξικανός διεθνής μέσος, αποτελεί 'στρατιώτη' του Ματίας Αλμέιδα και συχνά πανηγυρίζει κάνοντας κωλοτούμπες." },
+            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "14-18", c: "Querétaro", l: L.queretaro, f: "Academy"}, {y: "18-22", c: "Cruz Azul", l: L.cruzazul, f: "€10.5m"}, {y: "22-23", c: "Celta de Vigo", l: L.celtavigo, f: "Free"}, {y: "22-23", c: "AEK Athens", l: L.aek, f: "Loan"}, {y: "23-26", c: "AEK Athens", l: L.aek, f: "€6.5m"}, {y: "26-Σημ", c: "Monterrey", l: L.monterrey, f: "Transfer"} ], a: "Orbelín Pineda", fake: "Rodolfo Pizarro", hint: "Μεξικανός διεθνής μέσος, αποτελεί 'στρατιώτη' του Ματίας Αλμέιδα και συχνά πανηγυρίζει κάνοντας κωλοτούμπες." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "07-08", c: "FC Omniworld", l: L.omniworld, f: "Academy"}, {y: "08-11", c: "PSV Eindhoven", l: L.psv, f: "€2m"}, {y: "11-12", c: "Kayserispor", l: L.kayserispor, f: "€3m"}, {y: "12-14", c: "Galatasaray", l: L.galatasaray, f: "€8.5m"}, {y: "14-16", c: "Malaga CF", l: L.malaga, f: "Loan/Buy"}, {y: "16-19", c: "Watford FC", l: L.watford, f: "€8.4m"}, {y: "17-18", c: "CD Leganés", l: L.leganes, f: "Loan"}, {y: "18-21", c: "Al-Nassr", l: L.alnassr, f: "€8.5m"}, {y: "21-24", c: "AEK Athens", l: L.aek, f: "Free"}, {y: "25", c: "Hull City", l: L.hullcity, f: "Short-term"}, {y: "25-Σημ", c: "Wydad AC", l: L.wydad, f: "Free"} ], a: "Nordin Amrabat", fake: "Adel Taarabt", hint: "Μαροκινός 'ταύρος', ακούραστος εξτρέμ με τρομερή δύναμη. Ο αδερφός του (Σοφιάν) παίζει επίσης στο κορυφαίο επίπεδο." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "11-13", c: "Atletico Mineiro", l: L.atleticomineiro, f: "Academy"}, {y: "13-18", c: "Shakhtar Donetsk", l: L.shakhtar, f: "€25m"}, {y: "18-21", c: "Everton", l: L.everton, f: "Free"}, {y: "21-22", c: "Sharjah FC", l: L.sharjah, f: "€1m"}, {y: "22-24", c: "Panathinaikos", l: L.pao, f: "Free"}, {y: "24-Σημ", c: "Atletico Mineiro", l: L.atleticomineiro, f: "Free"} ], a: "Bernard", fake: "Tete", hint: "Βραζιλιάνος βραχύσωμος μάγος. Ήταν βασικός με την Εθνική Βραζιλίας στο εφιαλτικό 7-1 από τη Γερμανία." },
 
@@ -3919,7 +4338,7 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "04-09", c: "River Plate", l: L.river, f: "Academy"}, {y: "09-11", c: "FC Porto", l: L.porto, f: "€5.4m"}, {y: "11-13", c: "Atletico Madrid", l: L.atletico, f: "€40m"}, {y: "13-19", c: "AS Monaco", l: L.monaco, f: "€43m"}, {y: "14-15", c: "Man Utd", l: L.manutd, f: "Loan (€7.6m)"}, {y: "15-16", c: "Chelsea", l: L.chelsea, f: "Loan (€7m)"}, {y: "19-21", c: "Galatasaray", l: L.galatasaray, f: "Free"}, {y: "21-24", c: "Rayo Vallecano", l: L.rayo, f: "Free"}, {y: "24-26", c: "Millonarios FC", l: L.q_millonarios, f: "Free"}, {y: "2026", c: "Without Club", l: "", f: "-"} ], a: "Radamel Falcao", fake: "Jackson Martínez", hint: "Κολομβιανός 'killer' των περιοχών, πασίγνωστος σε όλο τον κόσμο ως 'Η Τίγρης' (El Tigre)." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "03-08", c: "Marseille", l: L.marseille, f: "Academy"}, {y: "06-08", c: "Tours", l: L.tours, f: "Loans"}, {y: "08-10", c: "Clermont Foot", l: L.q_clermont, f: "Free"}, {y: "10-13", c: "Udinese", l: L.udinese, f: "Free"}, {y: "13-14", c: "AS Roma", l: L.roma, f: "€13.5m"}, {y: "14-16", c: "Bayern Munich", l: L.bayern, f: "€28m"}, {y: "16-19", c: "Juventus", l: L.juventus, f: "€20m"}, {y: "19-21", c: "Al-Duhail SC", l: L.alduhail, f: "€8m"}, {y: "21", c: "Fatih Karagümrük", l: L.karagumruk, f: "Free"}, {y: "2021", c: "Retired", l: "", f: "-"} ], a: "Mehdi Benatia", fake: "Kalidou Koulibaly", hint: "Μαροκινός κεντρικός αμυντικός που αποτέλεσε τον 'βράχο' της άμυνας για κορυφαίες ομάδες της Ιταλίας και της Γερμανίας." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "11-13", c: "Górnik Zabrze", l: L.gornik, f: "Academy"}, {y: "13-15", c: "Bayer Leverkusen", l: L.leverkusen, f: "€2.6m"}, {y: "13-14", c: "Augsburg", l: L.q_augsburg, f: "Loan"}, {y: "14-16", c: "Ajax", l: L.ajax, f: "€2.8m"}, {y: "16-21", c: "Napoli", l: L.napoli, f: "€32m"}, {y: "21-23", c: "Marseille", l: L.marseille, f: "€13.6m"}, {y: "22-Σημ", c: "Juventus", l: L.juventus, f: "€7.3m"} ], a: "Arkadiusz Milik", fake: "Robert Lewandowski", hint: "Πολωνός αριστεροπόδαρος επιθετικός, ο οποίος παίζει συχνά ως παρτενέρ του Λεβαντόφσκι στην Εθνική Πολωνίας." },
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-14", c: "Real Madrid", l: L.realmadrid, f: "Academy"}, {y: "14-16", c: "Juventus", l: L.juventus, f: "€20m"}, {y: "16-17", c: "Real Madrid", l: L.realmadrid, f: "€30m"}, {y: "17-19", c: "Chelsea", l: L.chelsea, f: "€66m"}, {y: "19-20", c: "Atletico Madrid", l: L.atletico, f: "Loan/Buy"}, {y: "20-22", c: "Juventus", l: L.juventus, f: "Loan (€20m)"}, {y: "22-24", c: "Atletico Madrid", l: L.atletico, f: "Free"}, {y: "24-25", c: "AC Milan", l: L.milan, f: "€17.2m"}, {y: "25", c: "Galatasaray", l: L.galatasaray, f: "Loan"}, {y: "25-26", c: "Como 1907", l: L.como, f: "Loan"} ], a: "Álvaro Morata", fake: "Fernando Torres", hint: "Ισπανός διεθνής στράικερ που συνηθίζει να παίρνει μεταγραφές-επιστροφές σε ομάδες που έπαιζε και παλιά (όπως Ρεάλ Μαδρίτης και Γιουβέντους)." },
+            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-14", c: "Real Madrid", l: L.realmadrid, f: "Academy"}, {y: "14-16", c: "Juventus", l: L.juventus, f: "€20m"}, {y: "16-17", c: "Real Madrid", l: L.realmadrid, f: "€30m"}, {y: "17-19", c: "Chelsea", l: L.chelsea, f: "€66m"}, {y: "19-20", c: "Atletico Madrid", l: L.atletico, f: "Loan/Buy"}, {y: "20-22", c: "Juventus", l: L.juventus, f: "Loan (€20m)"}, {y: "22-24", c: "Atletico Madrid", l: L.atletico, f: "Free"}, {y: "24-25", c: "AC Milan", l: L.milan, f: "€17.2m"}, {y: "25", c: "Galatasaray", l: L.galatasaray, f: "Loan"}, {y: "25-26", c: "Como 1907", l: L.como, f: "Loan"}, {y: "26-Σημ", c: "CD Leganés", l: L.leganes, f: "Free"} ], a: "Álvaro Morata", fake: "Fernando Torres", hint: "Ισπανός διεθνής στράικερ που συνηθίζει να παίρνει μεταγραφές-επιστροφές σε ομάδες που έπαιζε και παλιά (όπως Ρεάλ Μαδρίτης και Γιουβέντους)." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "04-12", c: "RC Lens", l: L.lens, f: "Academy"}, {y: "12-13", c: "Sevilla FC", l: L.sevilla, f: "€4m"}, {y: "13-15", c: "AS Monaco", l: L.monaco, f: "€20m"}, {y: "15-17", c: "Inter Milan", l: L.inter, f: "€36m"}, {y: "17-20", c: "Valencia CF", l: L.valencia, f: "€22m"}, {y: "20-23", c: "Atletico Madrid", l: L.atletico, f: "€16m"}, {y: "23-Σημ", c: "Marseille", l: L.marseille, f: "€8m"} ], a: "Geoffrey Kondogbia", fake: "Franck Kessié", hint: "Δυναμικός αμυντικός μέσος. Επέλεξε να εκπροσωπεί την Κεντροαφρικανική Δημοκρατία παρότι αρχικά έπαιξε για την Εθνική Γαλλίας." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "07-13", c: "Dinamo Zagreb", l: L.dinamozagreb, f: "Academy"}, {y: "13-15", c: "Inter Milan", l: L.inter, f: "€11m"}, {y: "15-19", c: "Real Madrid", l: L.realmadrid, f: "€38m"}, {y: "18-19", c: "Chelsea", l: L.chelsea, f: "Loan"}, {y: "19-23", c: "Chelsea", l: L.chelsea, f: "€45m"}, {y: "23-Σημ", c: "Man City", l: L.mancity, f: "€29.1m"} ], a: "Mateo Kovačić", fake: "Luka Modrić", hint: "Κροάτης κεντρικός μέσος. Έχει κατακτήσει 4 Champions League με δύο διαφορετικές ομάδες (Ρεάλ Μαδρίτης και Τσέλσι)." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "14-15", c: "Pescara", l: L.pescara, f: "Academy"}, {y: "15-18", c: "Sampdoria", l: L.sampdoria, f: "€3m"}, {y: "15-16", c: "Pescara", l: L.pescara, f: "Loan"}, {y: "18-22", c: "Arsenal", l: L.arsenal, f: "€28.6m"}, {y: "20-21", c: "Atletico Madrid", l: L.atletico, f: "Loan"}, {y: "21-22", c: "Fiorentina", l: L.fiorentina, f: "Loan (€1.5m)"}, {y: "22-Σημ", c: "Galatasaray", l: L.galatasaray, f: "€6m"} ], a: "Lucas Torreira", fake: "Rodrigo Bentancur", hint: "Ουρουγουανός βραχύσωμος, αλλά υπερβολικά μαχητικός αμυντικός μέσος (δεν ξεπερνά το 1.66μ), που ξεχώρισε στην Άρσεναλ." },
@@ -3940,7 +4359,7 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-14", c: "Vojvodina", l: L.vojvodina, f: "Academy"}, {y: "14-15", c: "KRC Genk", l: L.genk, f: "€1m"}, {y: "15-23", c: "Lazio", l: L.lazio, f: "€12m"}, {y: "23-Σημ", c: "Al-Hilal", l: L.alhilal, f: "€40m"} ], a: "Sergej Milinković-Savić", fake: "Dušan Vlahović", hint: "Σέρβος πανύψηλος μέσος που έκανε σπουδαία καριέρα στη Λάτσιο. Είναι ευρέως γνωστός με τα αρχικά 'SMS'." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "11-13", c: "Partizan Belgrade", l: L.partizan, f: "Academy"}, {y: "11-12", c: "Teleoptik", l: L.teleoptik, f: "Loan"}, {y: "13-15", c: "Anderlecht", l: L.anderlecht, f: "€5m"}, {y: "15-18", c: "Newcastle United", l: L.newcastle, f: "€18.5m"}, {y: "18-23", c: "Fulham", l: L.fulham, f: "€24.7m"}, {y: "23-25", c: "Al-Hilal", l: L.alhilal, f: "€52.6m"}, {y: "25-Σημ", c: "Al-Rayyan SC", l: L.alrayyan, f: "Free (€18m MV)"} ], a: "Aleksandar Mitrović", fake: "Dušan Vlahović", hint: "Σέρβος σέντερ φορ-'τανκ'. Αποτελεί τον απόλυτο ρέκορντμαν τερμάτων στην ιστορία της Εθνικής ομάδας της χώρας του." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "09-13", c: "Esbjerg fB", l: L.esbjerg, f: "Academy"}, {y: "13-17", c: "Toulouse", l: L.toulouse, f: "€2m"}, {y: "17-19", c: "Middlesbrough", l: L.middlesbrough, f: "€11.3m"}, {y: "18", c: "Girondins Bordeaux", l: L.bordeaux, f: "Loan"}, {y: "19-20", c: "CD Leganés", l: L.leganes, f: "€5m"}, {y: "20-22", c: "FC Barcelona", l: L.barcelona, f: "€18m"}, {y: "22-24", c: "Espanyol", l: L.espanyol, f: "Free"}, {y: "24-Σημ", c: "Grêmio", l: L.gremio, f: "Free (€3.2m MV)"} ], a: "Martin Braithwaite", fake: "Pierre-Emerick Aubameyang", hint: "Δανός φορ που βρέθηκε αναπάντεχα να παίζει στην Μπαρτσελόνα, ενώ εκτός γηπέδων είναι δισεκατομμυριούχος επιχειρηματίας!" },
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-13", c: "Ajax", l: L.ajax, f: "€1.5m (Academy)"}, {y: "13-20", c: "Tottenham", l: L.tottenham, f: "€14.1m"}, {y: "20-21", c: "Inter Milan", l: L.inter, f: "€27m"}, {y: "21-22", c: "Without Club", l: "", f: "Medical reasons"}, {y: "22", c: "Brentford", l: L.brentford, f: "Free"}, {y: "22-25", c: "Manchester United", l: L.manutd, f: "Free"}, {y: "25-26", c: "VfL Wolfsburg", l: L.wolfsburg, f: "Free (€4m MV)"} ], a: "Christian Eriksen", fake: "Martin Ødegaard", hint: "Δανός μέσος που 'πάγωσε' τον πλανήτη όταν κατέρρευσε στο γήπεδο στο Euro 2020, αλλά επέστρεψε μαγικά στο κορυφαίο επίπεδο!" },
+            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-13", c: "Ajax", l: L.ajax, f: "€1.5m (Academy)"}, {y: "13-20", c: "Tottenham", l: L.tottenham, f: "€14.1m"}, {y: "20-21", c: "Inter Milan", l: L.inter, f: "€27m"}, {y: "21-22", c: "Without Club", l: "", f: "Medical reasons"}, {y: "22", c: "Brentford", l: L.brentford, f: "Free"}, {y: "22-25", c: "Manchester United", l: L.manutd, f: "Free"}, {y: "25-26", c: "VfL Wolfsburg", l: L.wolfsburg, f: "Free (€4m MV)"}, {y: "2026", c: "Without Club", l: "", f: "-"} ], a: "Christian Eriksen", fake: "Martin Ødegaard", hint: "Δανός μέσος που 'πάγωσε' τον πλανήτη όταν κατέρρευσε στο γήπεδο στο Euro 2020, αλλά επέστρεψε μαγικά στο κορυφαίο επίπεδο!" },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "13-17", c: "Angers SCO", l: L.angers, f: "Academy"}, {y: "15-16", c: "US Orléans", l: L.orleans, f: "Loan"}, {y: "17-19", c: "LOSC Lille", l: L.lille, f: "€18m"}, {y: "19-23", c: "Arsenal", l: L.arsenal, f: "€80m"}, {y: "22-23", c: "OGC Nice", l: L.nice, f: "Loan"}, {y: "23-24", c: "Trabzonspor", l: L.trabzonspor, f: "Free"}, {y: "24-Σημ", c: "Villarreal CF", l: L.villarreal, f: "Free (€8.5m MV)"} ], a: "Nicolas Pépé", fake: "Wilfried Zaha", hint: "Ιβοριανός εξτρέμ. Η αγορά του αποτέλεσε τότε τη μακράν πιο ακριβή μεταγραφή στην ιστορία της Άρσεναλ." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "04-09", c: "Manchester City", l: L.mancity, f: "Academy"}, {y: "06", c: "Darlington", l: L.darlington, f: "Loan"}, {y: "06", c: "Bury", l: L.bury, f: "Loan"}, {y: "07", c: "Falkirk", l: L.falkirk, f: "Loan"}, {y: "07-08", c: "Cardiff City", l: L.cardiff, f: "Loan"}, {y: "08", c: "Coventry City", l: L.coventry, f: "Loan"}, {y: "09-10", c: "Notts County", l: L.nottscounty, f: "Free"}, {y: "10-11", c: "Leeds United", l: L.leeds, f: "Free"}, {y: "11-22", c: "Leicester City", l: L.leicester, f: "€1.68m"}, {y: "22-23", c: "OGC Nice", l: L.nice, f: "€1m"}, {y: "23-24", c: "Anderlecht", l: L.anderlecht, f: "Free"}, {y: "24-Σημ", c: "Celtic FC", l: L.celtic, f: "Free (€1m MV)"} ], a: "Kasper Schmeichel", fake: "Joe Hart", hint: "Δανός τερματοφύλακας που κατέκτησε το πρωτάθλημα-θαύμα με τη Λέστερ, ακολουθώντας τα χνάρια του θρυλικού πατέρα του." },          
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-11", c: "Junior FC", l: L.junior, f: "Academy"}, {y: "07", c: "Barranquilla", l: L.barranquilla, f: "Loan"}, {y: "07-08", c: "Minervén", l: L.minerven, f: "Loan"}, {y: "08", c: "Barranquilla", l: L.barranquilla, f: "Loan"}, {y: "12-13", c: "Club Brugge", l: L.brugge, f: "€1.5m"}, {y: "13-15", c: "Sevilla FC", l: L.sevilla, f: "€10m"}, {y: "15-18", c: "AC Milan", l: L.milan, f: "€33.3m"}, {y: "17-21", c: "Villarreal CF", l: L.villarreal, f: "€9.5m (Total)"}, {y: "21-22", c: "Granada CF", l: L.granada, f: "Free"}, {y: "22-Σημ", c: "Junior FC", l: L.junior, f: "Free"} ], a: "Carlos Bacca", fake: "Radamel Falcao", hint: "Κολομβιανός φορ που πριν γίνει επαγγελματίας ποδοσφαιριστής εργαζόταν ως εισπράκτορας σε λεωφορεία!" },          
@@ -3953,13 +4372,11 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "08-10", c: "São Paulo", l: L.saopaulo, f: "Academy"}, {y: "10-12", c: "Internacional", l: L.internacional, f: "€6m"}, {y: "12-17", c: "Chelsea", l: L.chelsea, f: "€32m"}, {y: "17-24", c: "Shanghai Port", l: L.q_shanghai_port, f: "€60m"}, {y: "25-26", c: "São Paulo", l: L.saopaulo, f: "Free"}, {y: "2026", c: "Retired", l: "", f: "-"} ], a: "Oscar", fake: "Ramires", hint: "Βραζιλιάνος μεσοεπιθετικός που σόκαρε την Ευρώπη αφήνοντας την Τσέλσι στην ακμή του για τα εκατομμύρια της Κίνας." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-07", c: "FC Vilnius", l: L.vilnius, f: "Free"}, {y: "07-08", c: "ŁKS Łódź", l: L.lks_lodz, f: "Free"}, {y: "10-13", c: "Corinthians", l: L.corinthians, f: "€5m"}, {y: "13-15", c: "Tottenham", l: L.tottenham, f: "€19.75m"}, {y: "15-17", c: "Guangzhou Evergrande", l: L.guangzhou, f: "€14m"}, {y: "17-18", c: "FC Barcelona", l: L.barcelona, f: "€40m"}, {y: "18-21", c: "Guangzhou Evergrande", l: L.guangzhou, f: "€42m"}, {y: "21", c: "Al-Ahli SFC", l: L.alahli, f: "Free"}, {y: "22-24", c: "Corinthians", l: L.corinthians, f: "Free"}, {y: "2024", c: "Retired", l: "", f: "-"} ], a: "Paulinho", fake: "Fernandinho", hint: "Βραζιλιάνος box-to-box μέσος που έκανε μια απροσδόκητη, αλλά πολύ πετυχημένη, θητεία στην Μπαρτσελόνα." },          
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "10", c: "Deportivo Cali", l: L.deportivo_cali, f: "Academy"}, {y: "10-15", c: "Udinese", l: L.udinese, f: "€1.5m"}, {y: "10-11", c: "Granada", l: L.granada, f: "Loan"}, {y: "11-12", c: "Lecce", l: L.lecce, f: "Loan"}, {y: "15-17", c: "Sampdoria", l: L.sampdoria, f: "€12m"}, {y: "17-19", c: "Sevilla FC", l: L.sevilla, f: "€24.5m"}, {y: "19", c: "Fiorentina", l: L.fiorentina, f: "Loan"}, {y: "19-24", c: "Atalanta", l: L.atalanta, f: "€21.2m"}, {y: "24-26", c: "Orlando City", l: L.orlandocity, f: "€2.1m"}, {y: "26-Σημ", c: "Junior FC", l: L.junior, f: "Free"} ], a: "Luis Muriel", fake: "Duván Zapata", hint: "Κολομβιανός φορ που το στυλ του θυμίζει έντονα το 'Φαινόμενο' (Ρονάλντο), ιδανικός στο να μπαίνει και να σκοράρει ως αλλαγή." },         
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-11", c: "Junior FC", l: L.junior, f: "Academy"}, {y: "07", c: "Barranquilla", l: L.barranquilla, f: "Loan"}, {y: "07-08", c: "Minervén", l: L.minerven, f: "Loan"}, {y: "08", c: "Barranquilla", l: L.barranquilla, f: "Loan"}, {y: "12-13", c: "Club Brugge", l: L.brugge, f: "€1.5m"}, {y: "13-15", c: "Sevilla FC", l: L.sevilla, f: "€10m"}, {y: "15-18", c: "AC Milan", l: L.milan, f: "€33.3m"}, {y: "17-21", c: "Villarreal CF", l: L.villarreal, f: "€9.5m (Total)"}, {y: "21-22", c: "Granada CF", l: L.granada, f: "Free"}, {y: "22-Σημ", c: "Junior FC", l: L.junior, f: "Free"} ], a: "Carlos Bacca", fake: "Radamel Falcao", hint: "Κολομβιανός 'killer' των ευρωπαϊκών τελικών, κατακτώντας το Europa League συνολικά τρεις φορές." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "05-07", c: "Colo-Colo", l: L.colocolo, f: "Academy"}, {y: "07-11", c: "Bayer Leverkusen", l: L.leverkusen, f: "€5.2m"}, {y: "11-15", c: "Juventus", l: L.juventus, f: "€12.5m"}, {y: "15-18", c: "Bayern Munich", l: L.bayern, f: "€39.25m"}, {y: "18-20", c: "FC Barcelona", l: L.barcelona, f: "€18m"}, {y: "20-22", c: "Inter Milan", l: L.inter, f: "€1m"}, {y: "22-23", c: "Flamengo", l: L.flamengo, f: "Free"}, {y: "23-24", c: "Athletico Paranaense", l: L.athleticopr, f: "Free"}, {y: "24-Σημ", c: "Colo-Colo", l: L.colocolo, f: "Free"} ], a: "Arturo Vidal", fake: "Alexis Sánchez", hint: "Χιλιανός μέσος, γνωστός ως 'Ο Βασιλιάς Αρθούρος', με σήμα κατατεθέν το αστείρευτο πάθος του και τη μοϊκάνα του." },
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "05-10", c: "Saprissa", l: L.saprissa, f: "Academy"}, {y: "10-12", c: "Albacete", l: L.albacete, f: "Free"}, {y: "12-14", c: "Levante", l: L.levante, f: "€150k"}, {y: "14-19", c: "Real Madrid", l: L.realmadrid, f: "€10m"}, {y: "19-24", c: "PSG", l: L.psg, f: "€15m"}, {y: "23", c: "Nottm Forest", l: L.nottingham, f: "Loan"}, {y: "25", c: "Newell's Old Boys", l: L.newells, f: "Free"}, {y: "25-Σημ", c: "Pumas UNAM", l: L.unampumas, f: "€1.63m"} ], a: "Keylor Navas", fake: "Claudio Bravo", hint: "Ο 'Πάνθηρας' από την Κόστα Ρίκα που υπερασπίστηκε επάξια την εστία της Ρεάλ στην κατάκτηση 3 σερί Champions League." },
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "07-08", c: "Envigado", l: L.envigado, f: "Academy"}, {y: "08-10", c: "Banfield", l: L.banfield, f: "€280k"}, {y: "10-13", c: "FC Porto", l: L.porto, f: "€7.35m"}, {y: "13-14", c: "AS Monaco", l: L.monaco, f: "€45m"}, {y: "14-20", c: "Real Madrid", l: L.realmadrid, f: "€75m"}, {y: "17-19", c: "Bayern Munich", l: L.bayern, f: "Loan (€13m)"}, {y: "20-21", c: "Everton", l: L.everton, f: "Free"}, {y: "21-22", c: "Al-Rayyan SC", l: L.alrayyan, f: "€8m"}, {y: "22-23", c: "Olympiacos", l: L.olympiacos, f: "Free"}, {y: "23-24", c: "São Paulo", l: L.saopaulo, f: "Free"}, {y: "24-25", c: "Rayo Vallecano", l: L.rayo, f: "Free"}, {y: "25-Σημ", c: "Minnesota United", l: L.minutd, f: "Free"} ], a: "James Rodríguez", fake: "Radamel Falcao", hint: "Κολομβιανός σταρ. Πήρε μεταγραφή στη Ρεάλ Μαδρίτης αφού πρώτα βγήκε πρώτος σκόρερ στο Μουντιάλ του 2014!" },           
+            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "07-08", c: "Envigado", l: L.envigado, f: "Academy"}, {y: "08-10", c: "Banfield", l: L.banfield, f: "€280k"}, {y: "10-13", c: "FC Porto", l: L.porto, f: "€7.35m"}, {y: "13-14", c: "AS Monaco", l: L.monaco, f: "€45m"}, {y: "14-20", c: "Real Madrid", l: L.realmadrid, f: "€75m"}, {y: "17-19", c: "Bayern Munich", l: L.bayern, f: "Loan (€13m)"}, {y: "20-21", c: "Everton", l: L.everton, f: "Free"}, {y: "21-22", c: "Al-Rayyan SC", l: L.alrayyan, f: "€8m"}, {y: "22-23", c: "Olympiacos", l: L.olympiacos, f: "Free"}, {y: "23-24", c: "São Paulo", l: L.saopaulo, f: "Free"}, {y: "24-25", c: "Rayo Vallecano", l: L.rayo, f: "Free"}, {y: "26", c: "Minnesota United", l: L.minutd, f: "Free"} ], a: "James Rodríguez", fake: "Radamel Falcao", hint: "Κολομβιανός σταρ. Πήρε μεταγραφή στη Ρεάλ Μαδρίτης αφού πρώτα βγήκε πρώτος σκόρερ στο Μουντιάλ του 2014!" },           
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "06-09", c: "Cobreloa", l: L.cobreloa, f: "Academy"}, {y: "10-11", c: "Universidad de Chile", l: L.udechile, f: "€1m"}, {y: "12-15", c: "Napoli", l: L.napoli, f: "€13.5m"}, {y: "13", c: "Gremio", l: L.gremio, f: "Loan"}, {y: "14", c: "Valencia CF", l: L.valencia, f: "Loan"}, {y: "14-15", c: "QPR", l: L.qpr, f: "Loan"}, {y: "15-17", c: "Hoffenheim", l: L.hoffenheim, f: "€6m"}, {y: "17-20", c: "Tigres UANL", l: L.tigres, f: "€6m"}, {y: "20-24", c: "Atlético Mineiro", l: L.atleticomineiro, f: "€1.15m"}, {y: "25", c: "Club Nacional", l: L.nacional, f: "Free"}, {y: "25-26", c: "Audax Italiano", l: L.audax, f: "Free"}, {y: "2026", c: "Retired", l: "", f: "MV: €200k"} ], a: "Eduardo Vargas", fake: "Alexis Sánchez", hint: "Χιλιανός φορ. Όσο μέτριος ήταν σε συλλογικό επίπεδο στην Ευρώπη, άλλο τόσο 'φωτιά' ήταν μόνιμα με την Εθνική του." },         
             { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "11-18", c: "Arsenal", l: L.arsenal, f: "€1m"}, {y: "11-12", c: "Lorient", l: L.lorient, f: "Loan"}, {y: "12-13", c: "Real Betis", l: L.betis, f: "Loan"}, {y: "13-14", c: "Olympiacos", l: L.olympiacos, f: "Loan"}, {y: "14-15", c: "Villarreal", l: L.villarreal, f: "Loan"}, {y: "16-17", c: "Sporting CP", l: L.sporting, f: "Loan"}, {y: "17-18", c: "Real Betis", l: L.betis, f: "Loan"}, {y: "18-20", c: "Frosinone", l: L.q_frosinone, f: "€1.5m"}, {y: "19-23", c: "Club León", l: L.clubleon, f: "€2m"}, {y: "21-22", c: "Monterrey", l: L.monterrey, f: "Loan"}, {y: "23-24", c: "LD Alajuelense", l: L.alajuelense, f: "Free"}, {y: "24-25", c: "Atlético Goianiense", l: L.goianiense, f: "Loan"}, {y: "25-Σημ", c: "LD Alajuelense", l: L.alajuelense, f: "End of Loan"} ], a: "Joel Campbell", fake: "Bryan Ruiz", hint: "Κοσταρικανός εξτρέμ. Αξέχαστο το γκολ του με τη φανέλα του Ολυμπιακού κόντρα στη Μάντσεστερ Γιουνάιτεντ το 2014." },           
-            { cat: "Player ID", p: 2, type: "transfer", title: "ΙΣΤΟΡΙΚΟ ΚΑΡΙΕΡΑΣ", q: "Ποιος ποδοσφαιριστής είναι;", transfers: [ {y: "04-06", c: "PSG", l: L.psg, f: "Free"}, {y: "05-06", c: "Dijon", l: L.dijon, f: "Loan"}, {y: "06-07", c: "Alemannia Aachen", l: L.alemannia_aachen, f: "Free"}, {y: "07-12", c: "TSG Hoffenheim", l: L.hoffenheim, f: "€1m"}, {y: "12-15", c: "VfB Stuttgart", l: L.stuttgart, f: "€4.5m"}, {y: "15-20", c: "Hertha BSC", l: L.hertha, f: "Free"}, {y: "20", c: "Schalke 04", l: L.schalke, f: "Free"}, {y: "2021", c: "Retired", l: "", f: "-"} ], a: "Vedad Ibišević", fake: "Edin Džeko", hint: "Ο Βόσνιος 'εκτελεστής' με το νούμερο 19 στην πλάτη, έμβλημα για αρκετές γερμανικές ομάδες." },
 			
 			// ==========================================
             // 🤝 CLUB COMBO (2 Πόντοι) - 60 ΕΡΩΤΗΣΕΙΣ
@@ -4728,6 +5145,7 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		        gameStats.wentToPens = true;
 		
 		        const intro = document.getElementById('penalty-intro');
+		        document.getElementById('pen-intro-score').innerText = `${team1.score} - ${team2.score}`;
 		        intro.style.display = 'flex';
 		
 		        setTimeout(() => {
@@ -4765,6 +5183,10 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		    box2.innerHTML = "";
 		
 		    const totalCircles = Math.max(5, penA.length, penB.length);
+		    document.getElementById('pen-total').innerText =
+		        `${penA.filter(x => x === 1).length} - ${penB.filter(x => x === 1).length}`;
+		    document.getElementById('pen-team-1').classList.toggle('is-turn', currentTurn === 1);
+		    document.getElementById('pen-team-2').classList.toggle('is-turn', currentTurn === 2);
 		
 		    for (let i = 0; i < totalCircles; i++) {
 		        const c1 = document.createElement('div');
@@ -4789,7 +5211,9 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             if (sdPool.length === 0) sdPool = shuffle([...SUDDEN_DEATH_QUESTIONS]);
             currentQ = sdPool.pop();
             
-            document.getElementById('sd-turn-display').innerText = `${currentTurn === 1 ? team1.name : team2.name}, ΣΤΗΝ ΑΣΠΡΗ ΒΟΥΛΑ...`;
+            document.getElementById('sd-turn-display').innerText = `${currentTurn === 1 ? team1.name : team2.name} στην άσπρη βούλα`;
+            document.getElementById('pen-team-1').classList.toggle('is-turn', currentTurn === 1);
+            document.getElementById('pen-team-2').classList.toggle('is-turn', currentTurn === 2);
             document.getElementById('sd-question-box').innerText = currentQ.q;
             document.getElementById('sd-answer').style.display = 'none';
             document.getElementById('sd-btn-show').style.display = 'block';
@@ -4804,39 +5228,27 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
         }
 
         function resolveSdTurn(scored) {
-		    const box = document.getElementById("penalty-action-box");
+		    const stage = document.getElementById("pen-stage");
+		    const banner = document.getElementById("pen-banner");
 		    const showBtn = document.getElementById("sd-btn-show");
 		    const resultBtns = document.getElementById("sd-result-btns");
-		
+
 		    if (showBtn) showBtn.disabled = true;
 		    if (resultBtns) resultBtns.style.pointerEvents = "none";
-		
-		    box.classList.remove("penalty-pop");
-		    box.style.display = "flex";
-		
-		    if (scored) {
-		        box.innerHTML = "⚽ ΓΚΟΟΟΛ !!!";
-		        box.style.background = "#00b894";
-		        box.style.color = "white";
-		    } else {
-		        box.innerHTML = "🧤 ΑΠΕΚΡΟΥΣΕ!";
-		        box.style.background = "#d63031";
-		        box.style.color = "white";
-		    }
-		
-		    void box.offsetWidth;
-		    box.classList.add("penalty-pop");
-		
+
+		    const dir = ['left', 'right', 'mid'][Math.floor(Math.random() * 3)];
+		    stage.className = 'pen-stage';
+		    void stage.offsetWidth;
+		    stage.classList.add(scored ? 'is-goal' : 'is-save', 'dir-' + dir);
+		    banner.textContent = scored ? 'ΓΚΟΛ!' : 'ΑΠΟΚΡΟΥΣΗ!';
+		    setTimeout(() => playSfx(scored ? sfxGoal : sfxBoo), 500);
+
 		    setTimeout(() => {
-		        box.style.display = "none";
-		        box.classList.remove("penalty-pop");
-		
+		        stage.className = 'pen-stage';
 		        finishTurnLogic(scored);
-		
 		        if (showBtn) showBtn.disabled = false;
 		        if (resultBtns) resultBtns.style.pointerEvents = "auto";
-		
-		    }, 1500);
+		    }, 2300);
 		}
 		function finishTurnLogic(isCorrect) {
 		    if (currentTurn === 1) {
@@ -4890,6 +5302,21 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
         let coinWinnerId = 1;
         let builderTeamId = 1;
         let selectedOptionals = [];
+
+        // Ήχοι: στο iPhone το play() μπορεί να απορριφθεί, οπότε δεν πρέπει να σπάει τίποτα
+        function playSfx(a) {
+            try { a.currentTime = 0; const pr = a.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (e) {}
+        }
+
+        // Μικρό μήνυμα επιβεβαίωσης για τις βοήθειες
+        function llToast(text, color) {
+            let t = document.getElementById('ll-toast');
+            if (!t) { t = document.createElement('div'); t.id = 'll-toast'; t.className = 'll-toast'; document.body.appendChild(t); }
+            t.textContent = text;
+            t.style.background = color || '#121820';
+            t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+            clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800);
+        }
 
         const sfxGoal = new Audio('https://www.myinstants.com/media/sounds/goal_3.mp3');
         const sfxBoo = new Audio('https://www.myinstants.com/media/sounds/boo-3.mp3');
@@ -5589,28 +6016,40 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		    const modal = document.getElementById('joker-modal');
 		    const spinner = document.getElementById('joker-spinner');
 		    const resultTxt = document.getElementById('joker-result');
+		    const strip = document.getElementById('joker-strip');
+		    let currentTeam = (teamId === 1) ? team1 : team2;
+
+		    const outcomes = [
+		        { i: "💎", title: "Χρυσό συμβόλαιο!", d: "+2 πόντοι", c: "linear-gradient(135deg,#0fa36f,#06734d)", isGoal: true },
+		        { i: "🏟️", title: "Το VAR δίνει γκολ!", d: "+2 πόντοι", c: "linear-gradient(135deg,#1f6fd1,#123f7a)", isGoal: true },
+		        { i: "🟥", title: "Απευθείας κόκκινη!", d: "−1 πόντος", c: "linear-gradient(135deg,#e04848,#9e1f1f)", isGoal: false },
+		        { i: "🚑", title: "Τραυματισμός στο 90'!", d: "−1 πόντος", c: "linear-gradient(135deg,#6b7785,#3b434c)", isGoal: false }
+		    ];
+		    let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+		    // Κύλινδρος «κουλοχέρη» που σταματάει στο αποτέλεσμα
+		    const icons = [];
+		    for (let k = 0; k < 18; k++) icons.push(outcomes[k % outcomes.length].i);
+		    icons.push(chosen.i);
+		    strip.style.transition = 'none';
+		    strip.style.transform = 'translateY(0)';
+		    strip.innerHTML = icons.map(ic => `<span>${ic}</span>`).join('');
+
 		    modal.style.display = 'flex';
 		    spinner.style.display = 'block';
 		    resultTxt.style.display = 'none';
-		
-		
+		    void strip.offsetWidth;
+		    strip.style.transition = '';
+		    strip.style.transform = `translateY(-${(icons.length - 1) * 150}px)`;
+
 		    setTimeout(() => {
 		        spinner.style.display = 'none';
-		        let currentTeam = (teamId === 1) ? team1 : team2;
-		
-		        const outcomes = [
-		            { t: "💎 ΧΡΥΣΟ ΣΥΜΒΟΛΑΙΟ!\n+2 BONUS ΠΟΝΤΟΙ!", c: "#00b894", isGoal: true, bonus: 2 },
-		            { t: "🏟️ VAR DECISION: GOAL!\n+2 BONUS ΠΟΝΤΟΙ!", c: "#1e3c72", isGoal: true, bonus: 2 },
-		            { t: "🟥 ΑΠΕΥΘΕΙΑΣ ΚΟΚΚΙΝΗ!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", c: "#d63031", isGoal: false, bonus: -1 },
-		            { t: "🚑 ΤΡΑΥΜΑΤΙΣΜΟΣ ΣΤΟ 90'!\n-1 ΠΟΝΤΟΣ ΑΠΟ ΤΟ ΣΚΟΡ!", c: "#636e72", isGoal: false, bonus: -1 }
-		        ];
-		        
-		        let chosen = outcomes[Math.floor(Math.random() * outcomes.length)];
-		        resultTxt.innerText = chosen.t;
-		        resultTxt.style.background = chosen.c;
-		        resultTxt.style.color = "white";
+		        resultTxt.innerHTML = `<div class="joker-card" style="background:${chosen.c}">
+		            <div class="jc-icon">${chosen.i}</div>
+		            <div class="jc-title">${chosen.title}</div>
+		            <div class="jc-delta">${chosen.d}</div></div>`;
 		        resultTxt.style.display = 'block';
-		        
+
 		        setTimeout(() => {
 				    modal.style.display = 'none';
 				    document.getElementById('question-screen').style.display = 'none';
@@ -5627,11 +6066,11 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 					
 					    currentTeam.score += jokerPoints;
 					
-					    sfxGoal.play();
+					    playSfx(sfxGoal);
 					    if (typeof triggerConfetti === "function") triggerConfetti();
 					} else {
 					    currentTeam.score = Math.max(0, currentTeam.score - 1);
-					    sfxBuzzer.play();
+					    playSfx(sfxBuzzer);
 					}
 				
 				    // Ενημέρωση UI
@@ -5660,6 +6099,10 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
             // Αν έχει ήδη πατηθεί, μην κάνεις τίποτα
             if (team === 1 && t1LL.var === false) return;
             if (team === 2 && t2LL.var === false) return;
+            if (gameMode === '1v1' && currentTurn !== team) { alert("Δεν είναι η σειρά σας!"); return; }
+            if (document.getElementById('question-screen').style.display !== 'flex' || !currentQ) {
+                alert("Το VAR παίζεται ΜΕΣΑ στην ερώτηση!"); return;
+            }
 
             // Καίμε το κουμπί
             if (team === 1) {
@@ -5685,7 +6128,9 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
                 currentHint = "Σφάλμα: Δεν βρέθηκε η ερώτηση για να δοθεί hint.";
             }
             
-            hintText.innerHTML = currentHint;
+            hintText.textContent = currentHint;
+            const prog = document.getElementById('var-progress');
+            prog.classList.remove('run'); void prog.offsetWidth; prog.classList.add('run');
 
             // Εμφάνιση Φάσης 1 (Εικόνα)
             modal.style.display = 'flex';
@@ -5759,9 +6204,11 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		    if (type === 'x2') { 
 		        isDouble = true; 
 		        document.getElementById(`x2-badge-${teamId}`).style.display = 'block';
+		        llToast('x2 ενεργό · διπλοί πόντοι', '#d9741c');
 		        if(inQuestion) updatePointsTag();
 		    } else if (type === 'fifty') {
 		        isFiftyFifty = true;
+		        llToast('50:50 · έμειναν δύο επιλογές', '#1f6fd1');
 		        updatePointsTag(); // Αυτό αλλάζει την ταμπέλα πάνω σε "1 ΠΟΝΤΟΣ"
 		        
 		        if (currentQ.type === "mcq") {
@@ -5778,8 +6225,11 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		            // Εξαφανίζουμε τα 2 πρώτα λάθος κουτιά!
 		            let optA = document.getElementById(`opt-${wrongs[0]}`);
 		            let optB = document.getElementById(`opt-${wrongs[1]}`);
-		            if(optA) optA.style.visibility = 'hidden';
-		            if(optB) optB.style.visibility = 'hidden';
+		            [optA, optB].forEach(o => {
+		                if (!o) return;
+		                o.classList.add('fifty-out');
+		                setTimeout(() => { o.style.visibility = 'hidden'; o.classList.remove('fifty-out'); }, 450);
+		            });
 		            
 		        } else {
 		            // --- ΛΟΓΙΚΗ ΓΙΑ ΑΠΛΕΣ ΕΡΩΤΗΣΕΙΣ ΜΕ FAKE ΑΠΑΝΤΗΣΗ ---
@@ -5799,7 +6249,7 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		            let safeOpt0 = opts[0] ? opts[0].replace(/'/g, "\\'") : "";
 		            let safeOpt1 = opts[1] ? opts[1].replace(/'/g, "\\'") : "";
 		
-		            fBox.innerHTML = `<div style="color:white; font-weight:bold; margin-bottom:10px;">💡 50/50</div>
+		            fBox.innerHTML = `<div class="fifty-label">50:50 · μία από τις δύο</div>
 		                <button class="mc-option" onclick="checkFifty(this, '${safeOpt0}')">${opts[0]}</button>
 		                <button class="mc-option" onclick="checkFifty(this, '${safeOpt1}')">${opts[1]}</button>`;
 		            
@@ -6070,10 +6520,10 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		            }
 		
 		            if (winner !== "Ισοπαλία!") {
-		                sfxGoal.play();
+		                playSfx(sfxGoal);
 		                triggerConfetti();
 		            } else {
-		                sfxBoo.play();
+		                playSfx(sfxBoo);
 		            }
 		
 		            document.getElementById('end-msg').innerHTML = `
@@ -6087,15 +6537,15 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 		        else {
 		            if (team1.score > team2.score) {
 		                winner = team1.name;
-		                sfxGoal.play();
+		                playSfx(sfxGoal);
 		                triggerConfetti();
 		            } else if (team2.score > team1.score) {
 		                winner = team2.name;
-		                sfxGoal.play();
+		                playSfx(sfxGoal);
 		                triggerConfetti();
 		            } else {
 		                winner = "Ισοπαλία!";
-		                sfxBoo.play();
+		                playSfx(sfxBoo);
 		            }
 		
 		            document.getElementById('end-msg').innerHTML = `
@@ -6119,7 +6569,7 @@ button:focus-visible, .pt-btn:focus-visible { outline: 3px solid var(--gold); ou
 			    }
 			
 			    if (isNewHighScore) {
-			        sfxGoal.play();
+			        playSfx(sfxGoal);
 			        triggerConfetti();
 			    }
 			

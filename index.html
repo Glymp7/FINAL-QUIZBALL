@@ -4023,11 +4023,9 @@ html, body {
    ===================================================================== */
 #kit-box { display: none; justify-content: center; margin: 4px auto 10px; }
 #kit-box.on { display: flex; }
-#kit-box .kit-frame {
-    width: min(190px, 48vw); aspect-ratio: 200 / 222; padding: 10px; box-sizing: content-box;
-    border-radius: 18px; background: radial-gradient(ellipse at 50% 35%, rgba(255,255,255,.95), rgba(225,232,238,.92));
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,.8), 0 12px 28px rgba(0,0,0,.25);
-}
+#kit-box .kit-frame { width: min(200px, 52vw); filter: drop-shadow(0 8px 14px rgba(0,0,0,.22)); }
+#builder-back { display: none; margin: 10px auto 0; background: none; border: 0; color: #8fa0b0; font-weight: 800; font-size: 14px; cursor: pointer; }
+#builder-screen.qb-training #builder-back { display: block; }
 #kit-box svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .q-fake-cat .mc-option { font-size: 15px; line-height: 1.25; }
 @media (max-height: 760px) { #kit-box .kit-frame { width: min(150px, 40vw); } }
@@ -4186,6 +4184,7 @@ html, body {
                 </button>
             </div>
             <button class="start-btn" id="btn-finalize-board" disabled onclick="finalizeSetupAndStart()">ΕΝΑΡΞΗ ΑΓΩΝΑ ➔</button>
+            <button id="builder-back" type="button" onclick="qbTrainBack()">← Πίσω στην αρχή</button>
         </div>
     </div>
 
@@ -6297,46 +6296,46 @@ html, body {
 			{"cat": "Ψεύτικη Μεταγραφή", "p": 2, "type": "mcq", "q": "Ποια μεταγραφή του Βασίλης Τοροσίδης ΔΕΝ έγινε ποτέ;", "options": ["Ρόμα → Μπολόνια (2016)", "Ρόμα → Νάπολι (2015)", "Μπολόνια → Ολυμπιακός (2018)", "Ολυμπιακός → Ρόμα (2013)"], "correctIdx": 1, "a": "Ρόμα → Νάπολι (2015)", "hint": "Στην Ιταλία έπαιξε σε δύο ομάδες."},
 			{"cat": "Ψεύτικη Μεταγραφή", "p": 2, "type": "mcq", "q": "Ποια μεταγραφή του Αντρέα Πίρλο ΔΕΝ έγινε ποτέ;", "options": ["Μπρέσια → Ίντερ (1998)", "Μίλαν → Τσέλσι (2009)", "Γιουβέντους → Νιου Γιορκ Σίτι (2015)", "Ίντερ → Μίλαν (2001)"], "correctIdx": 1, "a": "Μίλαν → Τσέλσι (2009)", "hint": "Ο Αντσελότι τον ήθελε στο Λονδίνο, αλλά δεν έπαιξε ποτέ στην Αγγλία."},
 			{"cat": "Ψεύτικη Μεταγραφή", "p": 2, "type": "mcq", "q": "Ποια μεταγραφή του Φερνάντο Ιέρο ΔΕΝ έγινε ποτέ;", "options": ["Βαγιαδολίδ → Ρεάλ Μαδρίτης (1989)", "Ρεάλ Μαδρίτης → Σέλτικ (2003)", "Αλ Ραγιάν → Μπόλτον (2004)", "Ρεάλ Μαδρίτης → Αλ Ραγιάν (2003)"], "correctIdx": 1, "a": "Ρεάλ Μαδρίτης → Σέλτικ (2003)", "hint": "Μετά τη Ρεάλ πήγε στο Κατάρ."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "centreband", "c": ["#ffffff", "#c8102e"], "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Φέγενορντ", "Τβέντε", "Άγιαξ", "PSV"], "correctIdx": 2, "a": "Άγιαξ", "hint": "Ολλανδική ομάδα από την πρωτεύουσα."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#d0021b", "#ffffff"], "shorts": "#111111", "socks": "#111111"}, "options": ["PSV", "Άγιαξ", "Φέγενορντ", "Τβέντε"], "correctIdx": 2, "a": "Φέγενορντ", "hint": "Η ομάδα του λιμανιού του Ρότερνταμ."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#e2001a", "#ffffff"], "n": 7, "shorts": "#111111", "socks": "#e2001a"}, "options": ["AZ", "Φέγενορντ", "Άγιαξ", "PSV"], "correctIdx": 3, "a": "PSV", "hint": "Η ομάδα της Philips, από το Αϊντχόφεν."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#008a3e", "#ffffff"], "n": 7, "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Βέρντερ", "Παναθηναϊκός", "Σέλτικ", "Σπόρτινγκ"], "correctIdx": 2, "a": "Σέλτικ", "hint": "Σκωτσέζικη ομάδα με το λευκό σορτσάκι."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#008057", "#ffffff"], "n": 7, "shorts": "#111111", "socks": "#008057"}, "options": ["Βέρντερ", "Παναθηναϊκός", "Σπόρτινγκ", "Σέλτικ"], "correctIdx": 2, "a": "Σπόρτινγκ", "hint": "Πορτογαλική ομάδα με το μαύρο σορτσάκι."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#1d5ba4", "#ffffff"], "n": 7, "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Μπέρμιγχαμ", "Τσέλσι", "Έβερτον", "ΚΠΡ"], "correctIdx": 3, "a": "ΚΠΡ", "hint": "Λονδρέζικη ομάδα, γνωστή και με τα αρχικά της."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "chestband", "c": ["#1b5fb5", "#ffffff", "#d81e2c", "#111111", "#ffffff"], "shorts": "#ffffff", "socks": "#1b5fb5"}, "options": ["Νάπολι", "Τζένοα", "Σαμπντόρια", "Λάτσιο"], "correctIdx": 2, "a": "Σαμπντόρια", "hint": "Η «άλλη» ομάδα της Γένοβας."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#a6192e", "#0a2a5e"], "shorts": "#0a2a5e", "socks": "#0a2a5e"}, "options": ["Κρίσταλ Πάλας", "Σαμπντόρια", "Τζένοα", "Μπολόνια"], "correctIdx": 2, "a": "Τζένοα", "hint": "Η αρχαιότερη ιταλική ομάδα που υπάρχει ακόμα."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#0057b8", "#ffffff"], "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Χάντερσφιλντ", "Τζένοα", "Σέφιλντ Γουένσντεϊ", "Μπλάκμπερν"], "correctIdx": 3, "a": "Μπλάκμπερν", "hint": "Πρωταθλήτρια Αγγλίας το 1995 με τον Σίρερ."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hband", "c": ["#0b2a6f", "#f2b705"], "shorts": "#0b2a6f", "socks": "#0b2a6f"}, "options": ["Ροζάριο Σεντράλ", "Βιγιαρεάλ", "Μπόκα Τζούνιορς", "Πάρμα"], "correctIdx": 2, "a": "Μπόκα Τζούνιορς", "hint": "Τα χρώματα τα πήρε από τη σημαία ενός σουηδικού πλοίου."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "sash", "c": ["#ffffff", "#d81e2c"], "shorts": "#111111", "socks": "#ffffff"}, "options": ["Ιντεπεντιέντε", "Ρίβερ Πλέιτ", "Βάσκο ντα Γκάμα", "Περού"], "correctIdx": 1, "a": "Ρίβερ Πλέιτ", "hint": "Ομάδα του Μπουένος Άιρες με μαύρο σορτσάκι."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "sash", "c": ["#ffffff", "#d81e2c"], "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Πολωνία", "Χιλή", "Ρίβερ Πλέιτ", "Περού"], "correctIdx": 3, "a": "Περού", "hint": "Εθνική ομάδα της Νότιας Αμερικής, όλα λευκά εκτός από την ταινία."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#f4a6c0"], "shorts": "#111111", "socks": "#111111", "collar": "#111111"}, "options": ["Κάλιαρι", "Παλέρμο", "Τορίνο", "Ρόμα"], "correctIdx": 1, "a": "Παλέρμο", "hint": "Ομάδα της Σικελίας."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#5b2a86", "#ffffff"], "n": 7, "shorts": "#5b2a86", "socks": "#5b2a86"}, "options": ["Βαγιαδολίδ", "Φιορεντίνα", "Άντερλεχτ", "Τουλούζ"], "correctIdx": 0, "a": "Βαγιαδολίδ", "hint": "Ισπανική ομάδα που ανήκε στον Ρονάλντο το Φαινόμενο."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#cb3524", "#ffffff"], "n": 7, "shorts": "#1b2a5a", "socks": "#cb3524"}, "options": ["Ατλέτικο Μαδρίτης", "Σάντερλαντ", "Άθλετικ Μπιλμπάο", "Ολυμπιακός"], "correctIdx": 0, "a": "Ατλέτικο Μαδρίτης", "hint": "Κοίτα το χρώμα στο σορτσάκι."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια πορτογαλική ομάδα φοράει αυτή τη φανέλα;", "kit": {"pat": "solid", "c": ["#d81e2c"], "sleeves": "#ffffff", "shorts": "#ffffff", "socks": "#d81e2c"}, "options": ["Πόρτο", "Σπόρτινγκ", "Μπενφίκα", "Μπράγκα"], "correctIdx": 3, "a": "Μπράγκα", "hint": "Αντέγραψε τη φανέλα της Άρσεναλ τη δεκαετία του '20."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#d81e2c", "#1d3f8f"], "shorts": "#1d3f8f", "socks": "#d81e2c"}, "options": ["Βασιλεία", "Μπαρτσελόνα", "Λεβάντε", "Κρίσταλ Πάλας"], "correctIdx": 0, "a": "Βασιλεία", "hint": "Ελβετική ομάδα από τα σύνορα με Γαλλία και Γερμανία."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#f6c700", "#111111"], "n": 7, "shorts": "#111111", "socks": "#111111"}, "options": ["Ντόρτμουντ", "Πενιαρόλ", "ΑΕΚ", "Άρης"], "correctIdx": 1, "a": "Πενιαρόλ", "hint": "Ομάδα του Μοντεβιδέο."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#5a3a22"], "shorts": "#5a3a22", "socks": "#5a3a22", "collar": "#ffffff"}, "options": ["Ουνιόν Βερολίνου", "Σανκτ Πάουλι", "Αμβούργο", "Βέρντερ"], "correctIdx": 1, "a": "Σανκτ Πάουλι", "hint": "Η «αντισυστημική» ομάδα του λιμανιού του Αμβούργου."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vee", "c": ["#ffffff", "#1d4fa3"], "shorts": "#1d4fa3", "socks": "#ffffff"}, "options": ["Σαν Λορέντσο", "Ρασίνγκ", "Βέλεθ Σάρσφιλντ", "Ιντεπεντιέντε"], "correctIdx": 2, "a": "Βέλεθ Σάρσφιλντ", "hint": "Αργεντίνικη ομάδα, παγκόσμια πρωταθλήτρια συλλόγων το 1994."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#f6b500", "#a90432"], "shorts": "#a90432", "socks": "#a90432"}, "options": ["Γαλατασαράι", "Μπεσίκτας", "Τράμπζονσπορ", "Φενέρμπαχτσε"], "correctIdx": 0, "a": "Γαλατασαράι", "hint": "Κατέκτησε το Κύπελλο UEFA το 2000."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#ffd200", "#0b1f5c"], "n": 7, "shorts": "#ffffff", "socks": "#0b1f5c"}, "options": ["Τράμπζονσπορ", "Μπεσίκτας", "Γαλατασαράι", "Φενέρμπαχτσε"], "correctIdx": 3, "a": "Φενέρμπαχτσε", "hint": "Η ομάδα της ασιατικής πλευράς της Κωνσταντινούπολης."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#6d1a36", "#7fbce6"], "n": 7, "shorts": "#ffffff", "socks": "#6d1a36"}, "options": ["Μπέρνλι", "Άστον Βίλα", "Τράμπζονσπορ", "Γουέστ Χαμ"], "correctIdx": 2, "a": "Τράμπζονσπορ", "hint": "Τουρκική ομάδα της Μαύρης Θάλασσας."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "tristripes", "c": ["#7a1a2c", "#ffffff", "#00613a", "#ffffff"], "n": 9, "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Μποταφόγκο", "Φλαμένγκο", "Φλουμινένσε", "Βάσκο ντα Γκάμα"], "correctIdx": 2, "a": "Φλουμινένσε", "hint": "Ομάδα του Ρίο με τρία χρώματα στη φανέλα."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#c8102e", "#111111"], "n": 7, "shorts": "#ffffff", "socks": "#c8102e"}, "options": ["Μπόρνμουθ", "Μίλαν", "Νις", "Φλαμένγκο"], "correctIdx": 3, "a": "Φλαμένγκο", "hint": "Η πιο δημοφιλής ομάδα της Βραζιλίας."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#f5a31a"], "shorts": "#111111", "socks": "#f5a31a", "collar": "#111111"}, "options": ["Όξφορντ", "Γουλβς", "Γουότφορντ", "Νόριτς"], "correctIdx": 1, "a": "Γουλβς", "hint": "Το χρώμα λέγεται «old gold»."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#fff200"], "trim": "#00a650", "shorts": "#00a650", "socks": "#fff200", "collar": "#00a650"}, "options": ["Γουλβς", "Γουότφορντ", "Βιγιαρεάλ", "Νόριτς"], "correctIdx": 3, "a": "Νόριτς", "hint": "Τη λένε «Τα Καναρίνια»."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια ομάδα φόρεσε αυτή την εκτός έδρας φανέλα το 1991-93;", "kit": {"pat": "zigzag", "c": ["#f3d02b", "#1b2a5a", "#c8102e"], "shorts": "#1b2a5a", "socks": "#f3d02b"}, "options": ["Λιντς", "Γουότφορντ", "Άρσεναλ", "Νόριτς"], "correctIdx": 2, "a": "Άρσεναλ", "hint": "Η «μελανιασμένη μπανάνα» του 1991-93."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια ομάδα άλλαξε αυτή τη φανέλα στο ημίχρονο, γιατί οι παίκτες «δεν έβλεπαν» ο ένας τον άλλον;", "kit": {"pat": "solid", "c": ["#8c9096"], "shorts": "#8c9096", "socks": "#8c9096", "collar": "#ffffff"}, "options": ["Μάντσεστερ Γιουνάιτεντ", "Νιούκαστλ", "Τσέλσι", "Λίβερπουλ"], "correctIdx": 0, "a": "Μάντσεστερ Γιουνάιτεντ", "hint": "Ο Φέργκιουσον την άλλαξε στο ημίχρονο με τη Σαουθάμπτον το 1996."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 2018;", "kit": {"pat": "zigzag", "c": ["#00a651", "#111111", "#ffffff"], "shorts": "#00a651", "socks": "#00a651", "sleevesPat": true}, "options": ["Γκάνα", "Σενεγάλη", "Νιγηρία", "Καμερούν"], "correctIdx": 2, "a": "Νιγηρία", "hint": "Έγινε sold out σε λίγα λεπτά πριν το Μουντιάλ 2018."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή την αμάνικη φανέλα στο Κόπα Άφρικα 2002;", "kit": {"pat": "solid", "c": ["#00843d"], "sleeveless": true, "shorts": "#d81e2c", "socks": "#f6c700"}, "options": ["Ακτή Ελεφαντοστού", "Σενεγάλη", "Καμερούν", "Νιγηρία"], "correctIdx": 2, "a": "Καμερούν", "hint": "Η FIFA απαγόρευσε τα αμάνικα για το Μουντιάλ 2002."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Euro 1988;", "kit": {"pat": "diamonds", "c": ["#ff7f00", "#ffb366"], "shorts": "#ffffff", "socks": "#ff7f00"}, "options": ["Ολλανδία", "Βέλγιο", "Ιρλανδία", "Ακτή Ελεφαντοστού"], "correctIdx": 0, "a": "Ολλανδία", "hint": "Με αυτή κατέκτησε το Euro 1988."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 1998;", "kit": {"pat": "aztec", "c": ["#006847", "#4f9d6e"], "shorts": "#ffffff", "socks": "#d81e2c"}, "options": ["Ιρλανδία", "Μεξικό", "Νιγηρία", "Βραζιλία"], "correctIdx": 1, "a": "Μεξικό", "hint": "Το σχέδιο θυμίζει το ημερολόγιο των Αζτέκων."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή την εκτός έδρας φανέλα στο Μουντιάλ 1994;", "kit": {"pat": "denim", "c": ["#3b5d8f", "#ffffff"], "shorts": "#ffffff", "socks": "#3b5d8f"}, "options": ["Αργεντινή", "Αυστραλία", "ΗΠΑ", "Χιλή"], "correctIdx": 2, "a": "ΗΠΑ", "hint": "Ήταν η διοργανώτρια χώρα."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 1986;", "kit": {"pat": "halfpin", "c": ["#c8102e", "#ffffff"], "shorts": "#ffffff", "socks": "#c8102e"}, "options": ["Δανία", "Ελβετία", "Πολωνία", "Αυστρία"], "correctIdx": 0, "a": "Δανία", "hint": "Η «Δανέζικη δυναμίτις» του Μουντιάλ 1986."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 1990;", "kit": {"pat": "chevrons", "c": ["#ffffff", "#111111", "#dd0000", "#ffce00"], "shorts": "#111111", "socks": "#ffffff"}, "options": ["Δυτική Γερμανία", "Βέλγιο", "Ισπανία", "Αυστρία"], "correctIdx": 0, "a": "Δυτική Γερμανία", "hint": "Με αυτή κατέκτησε το Μουντιάλ 1990."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στον τελικό-σοκ του Μουντιάλ 1950;", "kit": {"pat": "solid", "c": ["#ffffff"], "shorts": "#ffffff", "socks": "#ffffff", "collar": "#1d4fa3"}, "options": ["Βραζιλία", "Ουρουγουάη", "Παραγουάη", "Αργεντινή"], "correctIdx": 0, "a": "Βραζιλία", "hint": "Μετά από εκείνο το Μουντιάλ άλλαξε για πάντα χρώμα."},
-			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική κατέκτησε το Μουντιάλ φορώντας αυτή τη φανέλα στον τελικό του 1966;", "kit": {"pat": "solid", "c": ["#d81e2c"], "shorts": "#ffffff", "socks": "#d81e2c", "collar": "#d81e2c"}, "options": ["Ελβετία", "Ουαλία", "Δανία", "Αγγλία"], "correctIdx": 3, "a": "Αγγλία", "hint": "Ο τελικός με το «γκολ-φάντασμα»."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια αγγλική ομάδα φόρεσε αυτή τη φανέλα το 1992-93;", "kit": {"pat": "tiger", "c": ["#f5a31a", "#111111"], "shorts": "#111111", "socks": "#f5a31a"}, "options": ["Γουότφορντ", "Γουλβς", "Χαλ Σίτι", "Ντόρτμουντ"], "correctIdx": 2, "a": "Χαλ Σίτι", "hint": "Το παρατσούκλι της ομάδας είναι «Οι Τίγρεις»."},
-			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια ομάδα φόρεσε αυτή τη «redcurrant» φανέλα το 2005-06;", "kit": {"pat": "solid", "c": ["#7b1c2e"], "shorts": "#ffffff", "socks": "#7b1c2e", "collar": "#c9a227", "trim": "#c9a227"}, "options": ["Άρσεναλ", "Άστον Βίλα", "Γουέστ Χαμ", "Ρόμα"], "correctIdx": 0, "a": "Άρσεναλ", "hint": "Φορέθηκε στην τελευταία σεζόν σε ένα ιστορικό γήπεδο του Λονδίνου."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#e2001a", "#ffffff"], "n": 7, "shorts": "#111111", "socks": "#e2001a"}, "options": ["Φέγενορντ", "PSV", "Άγιαξ", "AZ"], "correctIdx": 1, "a": "PSV", "hint": "Η ομάδα της Philips, από το Αϊντχόφεν."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#008057", "#ffffff"], "n": 7, "shorts": "#111111", "socks": "#008057"}, "options": ["Σέλτικ", "Σπόρτινγκ", "Βέρντερ", "Παναθηναϊκός"], "correctIdx": 1, "a": "Σπόρτινγκ", "hint": "Πορτογαλική ομάδα με το μαύρο σορτσάκι."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hoops", "c": ["#1d5ba4", "#ffffff"], "n": 7, "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Μπέρμιγχαμ", "Έβερτον", "Τσέλσι", "ΚΠΡ"], "correctIdx": 3, "a": "ΚΠΡ", "hint": "Λονδρέζικη ομάδα, γνωστή και με τα αρχικά της."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "chestband", "c": ["#1b5fb5", "#ffffff", "#d81e2c", "#111111", "#ffffff"], "shorts": "#ffffff", "socks": "#1b5fb5"}, "options": ["Λάτσιο", "Σαμπντόρια", "Νάπολι", "Τζένοα"], "correctIdx": 1, "a": "Σαμπντόρια", "hint": "Η «άλλη» ομάδα της Γένοβας."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#a6192e", "#0a2a5e"], "shorts": "#0a2a5e", "socks": "#0a2a5e"}, "options": ["Μπολόνια", "Τζένοα", "Σαμπντόρια", "Κρίσταλ Πάλας"], "correctIdx": 1, "a": "Τζένοα", "hint": "Η αρχαιότερη ιταλική ομάδα που υπάρχει ακόμα."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#0057b8", "#ffffff"], "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Σέφιλντ Γουένσντεϊ", "Τζένοα", "Χάντερσφιλντ", "Μπλάκμπερν"], "correctIdx": 3, "a": "Μπλάκμπερν", "hint": "Πρωταθλήτρια Αγγλίας το 1995 με τον Σίρερ."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "sash", "c": ["#ffffff", "#d81e2c"], "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Ρίβερ Πλέιτ", "Περού", "Χιλή", "Πολωνία"], "correctIdx": 1, "a": "Περού", "hint": "Εθνική ομάδα της Νότιας Αμερικής, όλα λευκά εκτός από την ταινία."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#f4a6c0"], "shorts": "#111111", "socks": "#111111", "collar": "#111111"}, "options": ["Τορίνο", "Παλέρμο", "Ρόμα", "Κάλιαρι"], "correctIdx": 1, "a": "Παλέρμο", "hint": "Ομάδα της Σικελίας."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#5b2a86", "#ffffff"], "n": 7, "shorts": "#5b2a86", "socks": "#5b2a86"}, "options": ["Βαγιαδολίδ", "Φιορεντίνα", "Τουλούζ", "Άντερλεχτ"], "correctIdx": 0, "a": "Βαγιαδολίδ", "hint": "Ισπανική ομάδα που ανήκε στον Ρονάλντο το Φαινόμενο."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια πορτογαλική ομάδα φοράει αυτή τη φανέλα;", "kit": {"pat": "solid", "c": ["#d81e2c"], "sleeves": "#ffffff", "shorts": "#ffffff", "socks": "#d81e2c"}, "options": ["Πόρτο", "Μπενφίκα", "Σπόρτινγκ", "Μπράγκα"], "correctIdx": 3, "a": "Μπράγκα", "hint": "Αντέγραψε τη φανέλα της Άρσεναλ τη δεκαετία του '20."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#d81e2c", "#1d3f8f"], "shorts": "#1d3f8f", "socks": "#d81e2c"}, "options": ["Λεβάντε", "Μπαρτσελόνα", "Κρίσταλ Πάλας", "Βασιλεία"], "correctIdx": 3, "a": "Βασιλεία", "hint": "Ελβετική ομάδα από τα σύνορα με Γαλλία και Γερμανία."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#5a3a22"], "shorts": "#5a3a22", "socks": "#5a3a22", "collar": "#ffffff"}, "options": ["Ουνιόν Βερολίνου", "Αμβούργο", "Βέρντερ", "Σανκτ Πάουλι"], "correctIdx": 3, "a": "Σανκτ Πάουλι", "hint": "Η «αντισυστημική» ομάδα του λιμανιού του Αμβούργου."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vee", "c": ["#ffffff", "#1d4fa3"], "shorts": "#1d4fa3", "socks": "#ffffff"}, "options": ["Ιντεπεντιέντε", "Σαν Λορέντσο", "Ρασίνγκ", "Βέλεθ Σάρσφιλντ"], "correctIdx": 3, "a": "Βέλεθ Σάρσφιλντ", "hint": "Αργεντίνικη ομάδα, παγκόσμια πρωταθλήτρια συλλόγων το 1994."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#fff200"], "trim": "#00a650", "shorts": "#00a650", "socks": "#fff200", "collar": "#00a650"}, "options": ["Γουλβς", "Βιγιαρεάλ", "Γουότφορντ", "Νόριτς"], "correctIdx": 3, "a": "Νόριτς", "hint": "Τη λένε «Τα Καναρίνια»."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια ομάδα φόρεσε αυτή την εκτός έδρας φανέλα το 1991-93;", "kit": {"pat": "zigzag", "c": ["#f3d02b", "#1b2a5a", "#c8102e"], "shorts": "#1b2a5a", "socks": "#f3d02b"}, "options": ["Γουότφορντ", "Λιντς", "Άρσεναλ", "Νόριτς"], "correctIdx": 2, "a": "Άρσεναλ", "hint": "Η «μελανιασμένη μπανάνα» του 1991-93."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια ομάδα φόρεσε αυτή τη «redcurrant» φανέλα το 2005-06;", "kit": {"pat": "solid", "c": ["#7b1c2e"], "shorts": "#ffffff", "socks": "#7b1c2e", "collar": "#c9a227", "trim": "#c9a227"}, "options": ["Ρόμα", "Άρσεναλ", "Γουέστ Χαμ", "Άστον Βίλα"], "correctIdx": 1, "a": "Άρσεναλ", "hint": "Φορέθηκε στην τελευταία σεζόν σε ένα ιστορικό γήπεδο του Λονδίνου."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#f6c700", "#111111"], "n": 7, "shorts": "#111111", "socks": "#111111"}, "options": ["ΑΕΚ", "Άρης", "Ντόρτμουντ", "Πενιαρόλ"], "correctIdx": 3, "a": "Πενιαρόλ", "hint": "Ομάδα του Μοντεβιδέο."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#ffd200", "#0b1f5c"], "n": 7, "shorts": "#ffffff", "socks": "#0b1f5c"}, "options": ["Φενέρμπαχτσε", "Γαλατασαράι", "Τράμπζονσπορ", "Μπεσίκτας"], "correctIdx": 0, "a": "Φενέρμπαχτσε", "hint": "Η ομάδα της ασιατικής πλευράς της Κωνσταντινούπολης."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια ομάδα φόρεσε αυτή τη γκρι εκτός έδρας φανέλα το 1995-96;", "kit": {"pat": "marl", "c": ["#7d838b", "#959ba3"], "shorts": "#7d838b", "socks": "#7d838b"}, "options": ["Νιούκαστλ", "Μάντσεστερ Γιουνάιτεντ", "Λίβερπουλ", "Τσέλσι"], "correctIdx": 1, "a": "Μάντσεστερ Γιουνάιτεντ", "hint": "Ο Φέργκιουσον την άλλαξε στο ημίχρονο, γιατί οι παίκτες «δεν έβλεπαν» ο ένας τον άλλον."},
+			{"cat": "Φανέλα", "p": 1, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ του 1950;", "kit": {"pat": "solid", "c": ["#ffffff"], "shorts": "#ffffff", "socks": "#ffffff", "collar": "#1d4fa3"}, "options": ["Ουρουγουάη", "Παραγουάη", "Βραζιλία", "Αργεντινή"], "correctIdx": 2, "a": "Βραζιλία", "hint": "Μετά από εκείνο το Μουντιάλ άλλαξε για πάντα χρώμα φανέλας."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "halves", "c": ["#d6001c", "#111111"]}, "options": ["Νις", "Μίλαν", "Νιούελς Ολντ Μπόις", "Φλαμένγκο"], "correctIdx": 2, "a": "Νιούελς Ολντ Μπόις", "hint": "Η ομάδα όπου μεγάλωσε ποδοσφαιρικά ο Μέσι."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#00843d"], "sleeves": "#ffffff"}, "options": ["Χιμπέρνιαν", "Φερεντσβάρος", "Σέλτικ", "Σεντ Ετιέν"], "correctIdx": 0, "a": "Χιμπέρνιαν", "hint": "Σκωτσέζικη ομάδα από το Εδιμβούργο."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "sepstripes", "c": ["#3aa0dc", "#111111", "#ffffff"], "n": 7, "shorts": "#111111", "socks": "#ffffff"}, "options": ["Κλαμπ Μπριζ", "Ίντερ", "Αταλάντα", "Γκρέμιο"], "correctIdx": 3, "a": "Γκρέμιο", "hint": "Κοίτα προσεκτικά τις λεπτές λευκές γραμμές. Βραζιλιάνικη ομάδα από το Πόρτο Αλέγκρε."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "quarters", "c": ["#1d4fa3", "#ffffff"]}, "options": ["Χάντερσφιλντ", "Μπλάκμπερν", "Μπρίστολ Ρόβερς", "Μπέρμιγχαμ"], "correctIdx": 2, "a": "Μπρίστολ Ρόβερς", "hint": "Αγγλική ομάδα με το παρατσούκλι «The Gas»."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "cross", "c": ["#ffffff", "#111111"]}, "options": ["Νιούκαστλ", "Πάρμα", "Γιουβέντους", "Ουντινέζε"], "correctIdx": 1, "a": "Πάρμα", "hint": "Το σχέδιο λέγεται «crociata»."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#ffffff"], "shorts": "#d81e2c", "socks": "#1d3f8f"}, "options": ["Φούλαμ", "Τότεναμ", "Αμβούργο", "Λιντς"], "correctIdx": 2, "a": "Αμβούργο", "hint": "Γερμανική ομάδα, πρωταθλήτρια Ευρώπης το 1983. Κοίτα το σορτσάκι."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#009a44", "#ffffff"], "n": 7}, "options": ["Βέρντερ", "Σπόρτινγκ", "Φερεντσβάρος", "Σέλτικ"], "correctIdx": 2, "a": "Φερεντσβάρος", "hint": "Η πιο πετυχημένη ομάδα της Ουγγαρίας."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vee", "c": ["#0b1f4d", "#ffffff"]}, "options": ["Βέλεθ Σάρσφιλντ", "Στρασμπούρ", "Μπορντό", "Μονπελιέ"], "correctIdx": 2, "a": "Μπορντό", "hint": "Γαλλική ομάδα από την πόλη του κρασιού. Το λευκό σχέδιο λέγεται «scapulaire»."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#00a650", "#111111"], "n": 7}, "options": ["Σεντ Ετιέν", "Σασουόλο", "Ρεάλ Μπέτις", "Βέρντερ"], "correctIdx": 1, "a": "Σασουόλο", "hint": "Ιταλική ομάδα που ανήκει σε εταιρεία κόλλας για πλακάκια."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#0b3e91", "#f6c400"], "n": 7}, "options": ["Κάντιθ", "Βιγιαρεάλ", "Ροζάριο Σεντράλ", "Μπόκα Τζούνιορς"], "correctIdx": 2, "a": "Ροζάριο Σεντράλ", "hint": "Η ομάδα όπου ξεκίνησε ο Ντι Μαρία."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας εθνικής ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#7bb6e4"], "shorts": "#111111", "socks": "#111111"}, "options": ["Λάτσιο", "Νάπολι", "Ουρουγουάη", "Μάντσεστερ Σίτι"], "correctIdx": 2, "a": "Ουρουγουάη", "hint": "Δύο φορές παγκόσμια πρωταθλήτρια. Κοίτα το σορτσάκι."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας εθνικής ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "solid", "c": ["#d81e2c"], "shorts": "#ffffff", "socks": "#00843d"}, "options": ["Πορτογαλία", "Βουλγαρία", "Ουγγαρία", "Μεξικό"], "correctIdx": 2, "a": "Ουγγαρία", "hint": "Η χώρα των «Μαγικών Μαγιάρων» του '50. Τα χρώματα είναι της σημαίας."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "hband", "c": ["#ffffff", "#111111"]}, "options": ["Κορίνθιανς", "Σάντος", "Κολο-Κολο", "Ολίμπια Ασουνσιόν"], "correctIdx": 3, "a": "Ολίμπια Ασουνσιόν", "hint": "Η πιο πετυχημένη ομάδα της Παραγουάης."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας εθνικής ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#d81e2c", "#ffffff"], "n": 7, "shorts": "#1d3f8f"}, "options": ["Χιλή", "Κόστα Ρίκα", "Περού", "Παραγουάη"], "correctIdx": 3, "a": "Παραγουάη", "hint": "Η εθνική του Τσιλαβέρτ."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#0067b1", "#ffffff"], "n": 7}, "options": ["Μπλάκμπερν", "Ρεάλ Σοσιεδάδ", "Μπρίστολ Ρόβερς", "ΚΠΡ"], "correctIdx": 1, "a": "Ρεάλ Σοσιεδάδ", "hint": "Βασκική ομάδα από το Σαν Σεμπαστιάν."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 1998;", "kit": {"pat": "aztec", "c": ["#006847", "#4f9d6e"], "shorts": "#ffffff", "socks": "#d81e2c"}, "options": ["Σαουδική Αραβία", "Νιγηρία", "Καμερούν", "Μεξικό"], "correctIdx": 3, "a": "Μεξικό", "hint": "Το σχέδιο θυμίζει το ημερολόγιο των Αζτέκων."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια αγγλική ομάδα φόρεσε αυτή τη φανέλα το 1992-93;", "kit": {"pat": "tiger", "c": ["#f5a31a", "#111111"], "shorts": "#111111", "socks": "#f5a31a"}, "options": ["Χαλ Σίτι", "Γουλβς", "Γουότφορντ", "Ντόρτμουντ"], "correctIdx": 0, "a": "Χαλ Σίτι", "hint": "Το παρατσούκλι της ομάδας είναι «Οι Τίγρεις»."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποια εθνική φόρεσε αυτή τη φανέλα στο Μουντιάλ 1986;", "kit": {"pat": "halfpin", "c": ["#c8102e", "#ffffff"], "shorts": "#ffffff", "socks": "#c8102e"}, "options": ["Πολωνία", "Ελβετία", "Δανία", "Αυστρία"], "correctIdx": 2, "a": "Δανία", "hint": "Η «Δανέζικη δυναμίτις»."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "tristripes", "c": ["#7a1a2c", "#ffffff", "#00613a", "#ffffff"], "n": 9, "shorts": "#ffffff", "socks": "#ffffff"}, "options": ["Μποταφόγκο", "Βάσκο ντα Γκάμα", "Φλουμινένσε", "Φλαμένγκο"], "correctIdx": 2, "a": "Φλουμινένσε", "hint": "Ομάδα του Ρίο με τρία χρώματα στη φανέλα."},
+			{"cat": "Φανέλα", "p": 2, "type": "mcq", "q": "Ποιας ομάδας είναι αυτή η φανέλα;", "kit": {"pat": "vstripes", "c": ["#6d1a36", "#7fbce6"], "n": 7, "shorts": "#ffffff", "socks": "#6d1a36"}, "options": ["Μπέρνλι", "Γουέστ Χαμ", "Τράμπζονσπορ", "Άστον Βίλα"], "correctIdx": 2, "a": "Τράμπζονσπορ", "hint": "Τουρκική ομάδα της Μαύρης Θάλασσας."},
 		];
 
         ALL_QUESTIONS.forEach(q => {
@@ -6964,7 +6963,7 @@ html, body {
             gameMode = 'training';
             team1.score = 0;
             currentTurn = 1;
-            selectedOptionals = shuffle(["Βρες το Σκορ", "Gossip", "Retro Transfer", "Club Combo", "Ψεύτικη Μεταγραφή", "Φανέλα"]).slice(0, 2);
+            if (!(window.qbTrainPicked && selectedOptionals.length === 2)) selectedOptionals = shuffle(["Βρες το Σκορ", "Gossip", "Retro Transfer", "Club Combo", "Ψεύτικη Μεταγραφή", "Φανέλα"]).slice(0, 2);
             
             document.getElementById('header').style.display = 'none';
             document.getElementById('training-header').style.display = 'block';
@@ -8700,6 +8699,16 @@ html, body {
             }
             case 'hoops': { const h = 136 / n; for (let i = 0; i < n + 1; i++) if (i % 2) R(0, 16 + i * h, 200, h + .4, c[1]); break; }
             case 'halves': R(100, 0, 100, 160, c[1]); break;
+            case 'quarters': R(100, 0, 100, 84, c[1]); R(0, 84, 100, 80, c[1]); break;
+            case 'cross': R(88, 0, 24, 160, c[1]); R(0, 62, 200, 24, c[1]); break;
+            case 'sepstripes': {
+                const w = 136 / n;
+                for (let i = -2; i < n + 4; i++) { R(32 + i * w, 0, w + .4, 160, i % 2 ? c[1] : c[0]); R(32 + i * w - 1.2, 0, 2.4, 160, c[2]); }
+                break;
+            }
+            case 'marl':
+                for (let y = -200; y < 200; y += 5) out.push(`<line x1="0" y1="${y}" x2="200" y2="${y + 200}" stroke="${c[1]}" stroke-width="1.6" opacity=".55"/>`);
+                break;
             case 'centreband': R(76, 0, 48, 160, c[1]); break;
             case 'hband': R(0, 62, 200, 30, c[1]); break;
             case 'chestband': c.slice(1).forEach((col, i) => R(0, 58 + i * 8, 200, 8.4, col)); break;
@@ -8741,23 +8750,74 @@ html, body {
     function kitSVG(k) {
         const id = 'k' + Math.random().toString(36).slice(2, 8);
         const body = k.sleeveless ? VEST : SHIRT;
-        const shorts = esc(k.shorts || '#fff'), socks = esc(k.socks || shorts);
+        const hasShorts = !!k.shorts, shorts = esc(k.shorts || '#fff'), socks = k.socks ? esc(k.socks) : '';
         let sleeves = '';
-        if (k.sleeves && !k.sleeveless) sleeves = `<path d="${SLEEVE_L}" fill="${esc(k.sleeves)}"/><path d="${SLEEVE_R}" fill="${esc(k.sleeves)}"/>`;
+        if (k.sleeves && !k.sleeveless) sleeves = `<path d="${SLEEVE_L}" fill="${esc(k.sleeves)}" stroke="rgba(0,0,0,.3)" stroke-width="1.4"/><path d="${SLEEVE_R}" fill="${esc(k.sleeves)}" stroke="rgba(0,0,0,.3)" stroke-width="1.4"/>`;
         const trim = k.trim ? `<path d="M17 47 L30 82" stroke="${esc(k.trim)}" stroke-width="5"/><path d="M183 47 L170 82" stroke="${esc(k.trim)}" stroke-width="5"/>` : '';
         const collar = `<path d="M72 18 Q100 36 128 18" fill="none" stroke="${esc(k.collar || 'rgba(0,0,0,.18)')}" stroke-width="${k.collar ? 6 : 2}" stroke-linecap="round"/>`;
-        return `<svg viewBox="0 0 200 222" role="img" aria-label="Φανέλα">
+        const lower = !hasShorts ? '' : `<path d="M52 158 L148 158 L154 198 L106 198 L100 180 L94 198 L46 198 Z" fill="${shorts}" stroke="rgba(0,0,0,.35)" stroke-width="1.6" stroke-linejoin="round"/>` +
+            (socks ? `<rect x="58" y="203" width="28" height="17" rx="4" fill="${socks}" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/><rect x="114" y="203" width="28" height="17" rx="4" fill="${socks}" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/>` : '');
+        const vh = !hasShorts ? 158 : (socks ? 222 : 202);
+        return `<svg viewBox="0 0 200 ${vh}" role="img" aria-label="Φανέλα">
 <defs><clipPath id="${id}"><path d="${body}"/></clipPath>
 <linearGradient id="${id}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset=".22" stop-color="#000" stop-opacity="0"/><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient></defs>
 <g clip-path="url(#${id})">${pattern(k)}${sleeves}${trim}<rect width="200" height="160" fill="url(#${id}s)"/></g>
 <path d="${body}" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.6" stroke-linejoin="round"/>
 ${collar}
-<path d="M52 158 L148 158 L154 198 L106 198 L100 180 L94 198 L46 198 Z" fill="${shorts}" stroke="rgba(0,0,0,.35)" stroke-width="1.6" stroke-linejoin="round"/>
-<rect x="58" y="203" width="28" height="17" rx="4" fill="${socks}" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/>
-<rect x="114" y="203" width="28" height="17" rx="4" fill="${socks}" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/>
+${lower}
 </svg>`;
     }
     window.qbKitSVG = kitSVG;
+
+    /* Προπόνηση: διαλέγεις εσύ τις 2 κατηγορίες */
+    let trainPick = false;
+    const bScreen = () => document.getElementById('builder-screen');
+    const finBtn = () => document.getElementById('btn-finalize-board');
+    function builderReset() {
+        selectedOptionals = [];
+        document.querySelectorAll('.opt-cat-btn').forEach(b => b.classList.remove('selected'));
+        finBtn().disabled = true;
+        document.getElementById('builder-count').textContent = '0 από 2';
+    }
+    const prevTrain = window.startTraining;
+    window.startTraining = function () {
+        trainPick = true;
+        builderReset();
+        document.getElementById('home-screen').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
+        document.getElementById('builder-team-title').innerText = 'Προπόνηση: διάλεξε 2 κατηγορίες';
+        finBtn().innerText = 'ΕΝΑΡΞΗ ΠΡΟΠΟΝΗΣΗΣ ➔';
+        bScreen().classList.add('qb-training');
+        bScreen().style.display = 'flex';
+        bScreen().scrollTop = 0;
+    };
+    function leaveTrainBuilder() {
+        trainPick = false;
+        bScreen().classList.remove('qb-training');
+        bScreen().style.display = 'none';
+        finBtn().innerText = 'ΕΝΑΡΞΗ ΑΓΩΝΑ ➔';
+    }
+    window.qbTrainBack = function () {
+        leaveTrainBuilder();
+        builderReset();
+        document.getElementById('home-screen').style.display = 'flex';
+    };
+    const prevFinal = window.finalizeSetupAndStart;
+    window.finalizeSetupAndStart = function () {
+        if (trainPick) {
+            if (selectedOptionals.length !== 2) return;
+            leaveTrainBuilder();
+            window.qbTrainPicked = true;
+            try { prevTrain(); } finally { window.qbTrainPicked = false; }
+            return;
+        }
+        return prevFinal.apply(this, arguments);
+    };
+    const prevAdv = window.selectAdvantage;
+    if (prevAdv) window.selectAdvantage = function () {
+        trainPick = false; bScreen().classList.remove('qb-training'); finBtn().innerText = 'ΕΝΑΡΞΗ ΑΓΩΝΑ ➔';
+        return prevAdv.apply(this, arguments);
+    };
 
     const origOpen = window.openQuestion;
     window.openQuestion = function (id, conf) {
@@ -8766,7 +8826,7 @@ ${collar}
         const q = (typeof currentQ !== 'undefined') ? currentQ : null;
         if (box) {
             if (q && q.kit && q.kit.c) {
-                box.innerHTML = `<div class="kit-frame">${kitSVG(q.kit)}</div>`;
+                box.innerHTML = `<div class="kit-frame" style="aspect-ratio:200/${q.kit.shorts ? (q.kit.socks ? 222 : 202) : 158}">${kitSVG(q.kit)}</div>`;
                 box.classList.add('on');
             } else { box.classList.remove('on'); box.innerHTML = ''; }
         }

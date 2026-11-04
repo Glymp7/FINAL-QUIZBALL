@@ -8352,13 +8352,10 @@ html, body {
             if (ll === 0) lines.push('Τελειώσατε με όλες τις βοήθειες στην τσέπη. Τις φυλάτε για τον γάμο σας; 🧳');
             else if (ll === 4) lines.push('Φάγατε και τις τέσσερις βοήθειες και πάλι τίποτα. 🫠');
             if (c <= 3) lines.push(`Σωστές απαντήσεις: ${c}. Τις μετράμε στα δάχτυλα του ενός χεριού. ✋`);
-            const acc = (c + w) ? Math.round(c / (c + w) * 100) : 0;
-            const grade = Math.max(1, Math.min(6, Math.round(acc / 15)));
-            const verdict = ['', 'Ήταν στο γήπεδο; Δεν τους είδαμε.', 'Παρών, αλλά μόνο στη φωτογραφία.', 'Έτρεξαν, δεν έφτασαν.', 'Αξιοπρεπής ήττα. Λέμε τώρα.', 'Τίμια μάχη, άδικο αποτέλεσμα (λένε οι ίδιοι).', 'Έχασαν με το κεφάλι ψηλά.'][grade];
-            return `<div class="fs-roast"><div class="fs-roast-mic">🎙️ Δηλώσεις μετά τον αγώνα · ${esc(name)}</div>
-                ${quote ? `<div class="fs-roast-q">${quote}</div>` : ''}
-                ${lines.slice(0, 2).map(t => `<div class="fs-roast-line">${t}</div>`).join('')}
-                <div class="fs-roast-grade"><span class="fs-roast-num">${grade}</span><span>Βαθμός εφημερίδας: «${verdict}»</span></div></div>`;
+            // Μία μόνο ατάκα: πρώτα αυτή που βγαίνει από το παιχνίδι, αλλιώς μια κλασική κατραπακιά
+            const line = lines.length ? pick(lines) : quote;
+            if (!line) return '';
+            return `<div class="fs-roast"><div class="fs-roast-mic">🎙️ ${esc(name)}</div><div class="fs-roast-q">${line}</div></div>`;
         }
 
         window.showEndScreen = function () {

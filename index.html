@@ -8661,7 +8661,7 @@ html, body {
         function relabelNext(ok) {
             const next = document.getElementById('btn-next');
             if (!next) return;
-            next.style.background = ok ? tCol(stealBy) : '#d63031';
+            next.style.background = ok ? '#00b894' : '#d63031';
             next.innerText = ok ? `ΣΩΣΤΟ · ${tName(stealBy)} +${stealPts()} ➔` : `ΛΑΘΟΣ · ${tName(stealBy)} −1 ➔`;
         }
         const _checkMcq = window.checkMcq;

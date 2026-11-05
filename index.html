@@ -4041,6 +4041,21 @@ html, body {
 .fs-roast-grade { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; font-weight: 700; color: #c9d3dc; }
 .fs-roast-num { flex: none; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center;
     background: #fff; color: #c0392b; font-family: var(--font-display); font-weight: 900; font-size: 18px; transform: rotate(-4deg); }
+
+/* v28 γενικό πέρασμα UI */
+/* VAR: η εικόνα γεμίζει όλη την οθόνη του monitor (ένα παλιό max-width την κόλλαγε αριστερά) */
+#var-phase-1 .var-monitor { aspect-ratio: 16 / 9; }
+#var-phase-1 .var-monitor img { max-width: none !important; width: 100% !important; height: 100% !important; object-fit: cover !important; }
+.var-corner.c1, .var-corner.c3 { left: 30%; } .var-corner.c2, .var-corner.c4 { right: 30%; }
+.var-corner.c1, .var-corner.c2 { top: 26%; } .var-corner.c3, .var-corner.c4 { bottom: 12%; }
+/* Κουμπί VAR: ίδιο στυλ με τις άλλες βοήθειες, με κείμενο */
+.btn-var { background: #6c5ce7 !important; }
+.btn-var .ll-label { display: inline !important; font-size: 12px; font-weight: 900; white-space: nowrap; }
+/* Πέναλτι: οι κύκλοι χωράνε σε μικρές οθόνες */
+.pen-board .pen-circle { box-sizing: border-box !important; }
+.pen-board .pen-circles { flex-wrap: wrap !important; max-width: 100% !important; }
+/* Ποιος Λείπει: πιο ευανάγνωστα ονόματα */
+.pitch-row > div > span { letter-spacing: -0.2px; }
     </style>
 </head>
 <body>
@@ -7336,6 +7351,7 @@ html, body {
 			        btn.className = "mc-option";
 			        btn.disabled = false;
 			        btn.style.visibility = 'visible';
+			        btn.style.display = '';
 			    }
 			}
             else if (currentQ.type === "score") {
@@ -7664,7 +7680,7 @@ html, body {
 		            [optA, optB].forEach(o => {
 		                if (!o) return;
 		                o.classList.add('fifty-out');
-		                setTimeout(() => { o.style.visibility = 'hidden'; o.classList.remove('fifty-out'); }, 450);
+		                setTimeout(() => { o.style.visibility = 'hidden'; o.style.display = 'none'; o.classList.remove('fifty-out'); }, 450);
 		            });
 		            
 		        } else {
@@ -7941,13 +7957,13 @@ html, body {
 		    const names = document.querySelectorAll('#pitch-container .pitch-row > div > span');
 		
 		    names.forEach(name => {
-		        name.style.fontSize = window.innerWidth <= 600 ? '8.5px' : '9.5px';
+		        name.style.fontSize = window.innerWidth <= 600 ? '11px' : '12px';
 		        name.style.whiteSpace = 'nowrap';
 		
 		        let size = parseFloat(name.style.fontSize);
 		        const parent = name.parentElement;
 		
-		        while (name.scrollWidth > parent.clientWidth && size > 4.8) {
+		        while (name.scrollWidth > parent.clientWidth && size > 6) {
 		            size -= 0.3;
 		            name.style.fontSize = size + 'px';
 		        }

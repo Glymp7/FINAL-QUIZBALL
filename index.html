@@ -9319,6 +9319,18 @@ ${lower}
         if ('serviceWorker' in navigator && location.protocol !== 'file:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(() => {});
+                // Αυτόματη ενημέρωση: όταν ανεβαίνει νέα έκδοση, η εφαρμογή την παίρνει μόνη της.
+                // Στην αρχική οθόνη ξαναφορτώνει αμέσως, μέσα σε παιχνίδι περιμένει να τελειώσει.
+                let qbHadCtrl = !!navigator.serviceWorker.controller;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!qbHadCtrl) { qbHadCtrl = true; return; }
+                    const home = document.getElementById('home-screen');
+                    if (home && getComputedStyle(home).display !== 'none') location.reload();
+                    else window.qbUpdatePending = true;
+                });
+                const qbCheckUpdate = () => navigator.serviceWorker.getRegistration().then(r => r && r.update()).catch(() => {});
+                document.addEventListener('visibilitychange', () => { if (!document.hidden) qbCheckUpdate(); });
+                setInterval(qbCheckUpdate, 5 * 60 * 1000);
                 // Μετά τη φόρτωση, ζητάμε από τον service worker να κατεβάσει στο παρασκήνιο
                 // όλα τα σήματα/σημαίες που χρησιμοποιούν οι ερωτήσεις, ώστε να παίζουν και offline.
                 navigator.serviceWorker.ready.then(reg => {

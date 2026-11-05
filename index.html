@@ -4084,6 +4084,122 @@ html, body {
 #pitch-container.is-lineup .missing-shirt.revealed-shirt { background: #f5c518 !important; color: #121820 !important; border-color: #fff; font-size: 19px !important; animation: qbPop .35s ease; }
 #pitch-container.is-lineup .pitch-player-name.revealed-name { color: #f5c518 !important; }
 @keyframes qbPop { 0% { transform: scale(.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+/* ===== v31: Top 5 σαν τηλεοπτικός πίνακας ===== */
+#top5-container {
+    background: linear-gradient(180deg, #17202b 0%, #0f151d 100%); border-radius: 18px;
+    padding: 14px 12px 12px; gap: 8px !important; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.25);
+    position: relative; overflow: hidden;
+}
+#top5-container::before {
+    content: ""; position: absolute; inset: -40% -10% auto; height: 70%;
+    background: radial-gradient(ellipse at center, rgba(245,197,24,.16), transparent 65%); pointer-events: none;
+}
+.t5-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; position: relative; }
+.t5-title { display: flex; align-items: center; gap: 8px; }
+.t5-logo {
+    font-family: var(--font-display); font-weight: 900; font-size: 20px; letter-spacing: 1px;
+    background: linear-gradient(180deg, #ffe27a, #f5a623); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.t5-count { font-family: var(--font-display); font-weight: 900; font-size: 13px; color: #cfd8e3; background: rgba(255,255,255,.08); padding: 3px 9px; border-radius: 999px; }
+.t5-count.bump { animation: t5Bump .45s ease; }
+#top5-container .t5-strikes { display: flex !important; align-items: center; gap: 6px !important; margin: 0 !important; font-size: 0 !important; }
+.t5-strike-lbl { font-size: 11px; font-weight: 800; color: #8a97a6; margin-right: 2px; }
+#top5-container .strike-x {
+    width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 900; color: rgba(255,255,255,.35); border: 2px solid rgba(255,255,255,.18);
+    opacity: 1 !important; transition: background .2s;
+}
+#top5-container .strike-x.hit { background: #e0312b; border-color: #ff6b63; color: #fff; animation: t5Stamp .45s cubic-bezier(.2,1.6,.4,1); box-shadow: 0 0 16px rgba(224,49,43,.6); }
+#top5-container.t5-shake { animation: t5Shake .4s ease; }
+
+#top5-container .top5-item {
+    position: relative; display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.06) !important; color: #fff !important;
+    border: 1px solid rgba(255,255,255,.08); border-radius: 12px !important;
+    padding: 0 12px 0 8px !important; min-height: 50px; cursor: pointer;
+    perspective: 600px; animation: t5In .4s ease both; animation-delay: calc(var(--i) * 70ms);
+    -webkit-tap-highlight-color: transparent;
+}
+#top5-container .top5-item:active { transform: scale(.98); }
+#top5-container .top5-item:not(.revealed) ~ .top5-item:not(.revealed) .t5-tap { visibility: hidden; }
+#top5-container .top5-num {
+    flex: 0 0 auto; width: 32px !important; height: 32px !important; border-radius: 10px !important;
+    font-family: var(--font-display); font-weight: 900; font-size: 16px !important;
+    background: #2c3a4a !important; color: #cfd8e3 !important; margin: 0 !important;
+    display: flex; align-items: center; justify-content: center;
+}
+#top5-container .rank-1 .top5-num { background: linear-gradient(160deg, #ffe27a, #e0a100) !important; color: #3a2a00 !important; }
+#top5-container .rank-2 .top5-num { background: linear-gradient(160deg, #f1f4f7, #a9b4bf) !important; color: #2a3440 !important; }
+#top5-container .rank-3 .top5-num { background: linear-gradient(160deg, #f3b98a, #b0652c) !important; color: #3a1d06 !important; }
+.t5-face { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.t5-hidden {
+    height: 12px; flex: 1; max-width: 62%; border-radius: 6px;
+    background: linear-gradient(90deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.2) 50%, rgba(255,255,255,.08) 100%);
+    background-size: 200% 100%; animation: t5Shimmer 1.8s linear infinite;
+}
+.t5-tap { font-size: 10.5px; font-weight: 700; color: #6f7d8c; white-space: nowrap; }
+#top5-container .top5-item.revealed {
+    background: linear-gradient(100deg, #0e8f63 0%, #18b26b 100%) !important; border-color: rgba(255,255,255,.25);
+    box-shadow: 0 6px 16px rgba(24,178,107,.35); cursor: default;
+}
+#top5-container .top5-item.revealed .t5-face { animation: t5Flip .55s cubic-bezier(.3,1.4,.5,1) both; transform-origin: 50% 50%; }
+#top5-container .top5-item.revealed::after {
+    content: ""; position: absolute; inset: 0; border-radius: 12px; pointer-events: none;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+    background-size: 250% 100%; animation: t5Shine .8s ease .15s both;
+}
+#top5-container .top5-item.revealed .top5-num { background: rgba(255,255,255,.95) !important; color: #0e8f63 !important; }
+#top5-container .rank-1.revealed .top5-num { background: linear-gradient(160deg, #ffe27a, #e0a100) !important; color: #3a2a00 !important; }
+.t5-name { font-family: var(--font-display); font-weight: 800; font-size: 16px; line-height: 1.2; color: #fff; overflow-wrap: anywhere; }
+.t5-stat {
+    flex: 0 0 auto; font-family: var(--font-display); font-weight: 900; font-size: 13px; color: #0b3d2a;
+    background: #f5c518; padding: 4px 9px; border-radius: 999px; white-space: nowrap; max-width: 46%; overflow: hidden; text-overflow: ellipsis;
+}
+#top5-container.t5-perfect { box-shadow: 0 0 0 2px #f5c518, 0 0 30px rgba(245,197,24,.45); }
+#top5-container.t5-perfect .top5-item.revealed { animation: t5Wave .6s ease both; animation-delay: calc(var(--i) * 80ms); }
+@keyframes t5In { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes t5Shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@keyframes t5Flip { 0% { transform: rotateX(90deg); opacity: 0; } 100% { transform: rotateX(0); opacity: 1; } }
+@keyframes t5Shine { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+@keyframes t5Stamp { 0% { transform: scale(2.2) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes t5Shake { 0%,100% { transform: none; } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+@keyframes t5Bump { 50% { transform: scale(1.25); background: rgba(24,178,107,.5); color: #fff; } }
+@keyframes t5Wave { 50% { transform: scale(1.03); } }
+
+/* ===== v31: ταμπέλα πόντων που «γυρίζει» (x2 / 50:50) ===== */
+#q-category-tag.tag-flip-up, #q-category-tag.tag-flip-down { animation: tagFlip .7s cubic-bezier(.3,1.3,.5,1); }
+#q-category-tag.tag-flip-up { --flash: #ff8a1f; }
+#q-category-tag.tag-flip-down { --flash: #1f6fd1; }
+@keyframes tagFlip {
+    0% { transform: rotateX(0); }
+    40% { transform: rotateX(90deg) scale(1.05); background: var(--flash); }
+    60% { transform: rotateX(-15deg) scale(1.18); background: var(--flash); box-shadow: 0 0 0 4px rgba(255,255,255,.6), 0 0 26px var(--flash); }
+    100% { transform: none; }
+}
+.tag-burst {
+    position: fixed; z-index: 400; pointer-events: none; font-family: var(--font-display); font-weight: 900;
+    font-size: 30px; color: #ff8a1f; text-shadow: 0 3px 0 #7a3a00, 0 8px 18px rgba(0,0,0,.45);
+}
+
+/* ===== v31: Hot ερώτηση με φλόγα ===== */
+.question-card.is-hot-q::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 30;
+    animation: hotCard 1.6s ease-in-out infinite;
+}
+@keyframes hotCard {
+    0%,100% { box-shadow: inset 0 0 0 3px #ff7a00, inset 0 0 22px rgba(255,98,0,.45); }
+    50% { box-shadow: inset 0 0 0 4px #ffb300, inset 0 0 40px rgba(255,140,0,.6); }
+}
+.question-card.is-hot-q #q-category-tag {
+    background: linear-gradient(90deg, #ff3d00, #ff9100, #ff3d00) !important; background-size: 200% 100% !important;
+    animation: hotTag 1.4s linear infinite; box-shadow: 0 0 16px rgba(255,98,0,.55);
+}
+@keyframes hotTag { from { background-position: 0 0; } to { background-position: 200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+    #top5-container .top5-item, .t5-hidden, #top5-container .top5-item.revealed .t5-face, #top5-container .top5-item.revealed::after,
+    #q-category-tag.tag-flip-up, #q-category-tag.tag-flip-down, .question-card.is-hot-q::after, .question-card.is-hot-q #q-category-tag { animation: none !important; }
+}
     </style>
 </head>
 <body>
@@ -4387,9 +4503,13 @@ html, body {
 				</div>
 
                 <div id="top5-container">
-                    <div class="t5-strikes" id="t5-strike-box">
-                        <span class="strike-x" id="t5-strike-1">❌</span>
-                        <span class="strike-x" id="t5-strike-2">❌</span>
+                    <div class="t5-head">
+                        <div class="t5-title"><span class="t5-logo">TOP 5</span><span class="t5-count" id="t5-count">0/5</span></div>
+                        <div class="t5-strikes" id="t5-strike-box">
+                            <span class="t5-strike-lbl">Λάθη</span>
+                            <span class="strike-x" id="t5-strike-1">✕</span>
+                            <span class="strike-x" id="t5-strike-2">✕</span>
+                        </div>
                     </div>
                     <div id="t5-slots"></div>
                 </div>
@@ -7468,12 +7588,15 @@ html, body {
                 document.getElementById('btn-t5-stop').style.display = 'none';
                 document.getElementById('t5-secret-list').innerHTML = currentQ.top5.map((item, i) => `${i+1}. ${item}`).join('<br>');
                 t5Strikes = 0; t5Found = 0;
+                document.getElementById('t5-count').textContent = '0/5';
+                document.getElementById('top5-container').classList.remove('t5-perfect', 't5-shake');
+                ['t5-strike-1', 't5-strike-2'].forEach(id => document.getElementById(id).classList.remove('hit'));
                 document.getElementById('t5-strike-1').style.opacity = '0.2';
                 document.getElementById('t5-strike-2').style.opacity = '0.2';
                 const slots = document.getElementById('t5-slots');
                 slots.innerHTML = "";
                 currentQ.top5.forEach((item, idx) => {
-                    slots.innerHTML += `<div class="top5-item" onclick="revealTop5(this, '${item.replace(/'/g, "\\'")}')"><div class="top5-num">${idx+1}</div><span>???</span></div>`;
+                    slots.innerHTML += `<div class="top5-item rank-${idx+1}" style="--i:${idx}" onclick="revealTop5(this, '${item.replace(/'/g, "\\'")}')"><div class="top5-num">${idx+1}</div><div class="t5-face"><span class="t5-hidden"></span><span class="t5-tap">Πάτα όταν το βρουν</span></div></div>`;
                 });
             }
        
@@ -7635,9 +7758,14 @@ html, body {
 
         function revealTop5(element, answer) {
             if(element.classList.contains('revealed')) return;
-            element.innerHTML = `<div class="top5-num">${element.querySelector('.top5-num').innerText}</div>${answer}`;
+            const m = String(answer).match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+            const nm = m ? m[1] : answer, stat = m ? m[2] : '';
+            const esc5 = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+            element.innerHTML = `<div class="top5-num">${element.querySelector('.top5-num').innerText}</div><div class="t5-face"><span class="t5-name">${esc5(nm)}</span>${stat ? `<span class="t5-stat">${esc5(stat)}</span>` : ''}</div>`;
             element.classList.add('revealed');
             t5Found++;
+            const cnt = document.getElementById('t5-count'); if (cnt) { cnt.textContent = `${t5Found}/5`; cnt.classList.remove('bump'); void cnt.offsetWidth; cnt.classList.add('bump'); }
+            if (t5Found === 5) document.getElementById('top5-container').classList.add('t5-perfect');
             if(t5Found === 4) document.getElementById('btn-t5-stop').style.display = 'block';
             if(t5Found === 5) {
                 document.getElementById('btn-t5-stop').style.display = 'none';
@@ -7647,6 +7775,10 @@ html, body {
 
         function top5Mistake() {
             t5Strikes++;
+            const sx = document.getElementById(`t5-strike-${t5Strikes}`);
+            if (sx) { sx.classList.add('hit'); }
+            const tc = document.getElementById('top5-container');
+            if (tc) { tc.classList.remove('t5-shake'); void tc.offsetWidth; tc.classList.add('t5-shake'); }
             if(t5Strikes === 1) document.getElementById('t5-strike-1').style.opacity = '1';
             else if(t5Strikes === 2) {
                 document.getElementById('t5-strike-2').style.opacity = '1';
@@ -9120,5 +9252,82 @@ ${lower}
         }
     </script>
 
+
+<script>
+/* v31: ταμπέλα πόντων που γυρίζει, «+πόντοι» από την ερώτηση, Hot φλόγα */
+(function () {
+    const _upt = window.updatePointsTag;
+    const tagEl = () => document.getElementById('q-category-tag');
+    function flipTag(up, delta) {
+        const t = tagEl(); if (!t) return;
+        t.classList.remove('tag-flip-up', 'tag-flip-down'); void t.offsetWidth;
+        t.classList.add(up ? 'tag-flip-up' : 'tag-flip-down');
+        if (up && delta && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const r = t.getBoundingClientRect();
+            const b = document.createElement('div'); b.className = 'tag-burst'; b.textContent = 'x2';
+            document.body.appendChild(b);
+            const x = r.right - 10, y = r.top - 6;
+            b.animate([
+                { transform: `translate(${x}px, ${y}px) scale(.4)`, opacity: 0 },
+                { transform: `translate(${x + 6}px, ${y - 22}px) scale(1.3)`, opacity: 1, offset: .35 },
+                { transform: `translate(${x + 12}px, ${y - 44}px) scale(1)`, opacity: 0 }
+            ], { duration: 900, easing: 'ease-out' }).onfinish = () => b.remove();
+        }
+    }
+    window.updatePointsTag = function () {
+        const el = document.getElementById('tag-text');
+        if (!el || !currentQ) return _upt();
+        const qid = String(currentQ.id), fresh = el.dataset.qid !== qid;
+        const prev = parseFloat(el.dataset.pts) || 0;
+        if (fresh && isDouble) {
+            // Άνοιγμα ερώτησης με x2: πρώτα οι κανονικοί πόντοι και μετά «γυρίζει» στους διπλούς
+            isDouble = false; _upt(); el.dataset.pts = getQuestionPoints(); isDouble = true;
+            el.dataset.qid = qid;
+            setTimeout(() => {
+                if (!currentQ || String(currentQ.id) !== qid || !isDouble) return;
+                _upt(); el.dataset.pts = getQuestionPoints(); flipTag(true, true);
+            }, 650);
+            return;
+        }
+        _upt();
+        const now = getQuestionPoints();
+        el.dataset.qid = qid; el.dataset.pts = now;
+        if (!fresh && prev && now !== prev) flipTag(now > prev, now > prev);
+    };
+
+    // Hot ερώτηση: φλόγα γύρω από την κάρτα
+    const _oq = window.openQuestion;
+    window.openQuestion = function (id, conf) {
+        _oq(id, conf);
+        const card = document.querySelector('#question-screen .question-card');
+        if (!card) return;
+        const hot = !!(currentQ && currentQ.isHot);
+        card.classList.toggle('is-hot-q', hot);
+        // Βρες το Σκορ: τα ονόματα ομάδων μικραίνουν όσο χρειάζεται για να χωράνε ολόκληρα
+        if (currentQ && currentQ.type === 'score') requestAnimationFrame(() => {
+            ['sm-home', 'sm-away'].forEach(id => {
+                const el = document.getElementById(id); if (!el) return;
+                el.style.removeProperty('font-size');
+                let size = parseFloat(getComputedStyle(el).fontSize);
+                const longest = Math.max(...el.textContent.split(/\s+/).map(w => w.length));
+                el.style.overflowWrap = 'normal';
+                while (el.scrollWidth > el.clientWidth + 1 && size > 11) { size -= 0.5; el.style.setProperty('font-size', size + 'px', 'important'); }
+                if (longest && el.scrollWidth > el.clientWidth + 1) el.style.overflowWrap = 'anywhere';
+            });
+        });
+    };
+
+    // «+πόντοι»: ξεκινάνε από την ταμπέλα της ερώτησης αντί από το κέντρο της οθόνης
+    const _sc = window.scoreChip;
+    window.scoreChip = function (text, cls, fromRect, toRect, ms) {
+        const t = tagEl();
+        const qs = document.getElementById('question-screen');
+        if (!cls && t && qs && qs.style.display !== 'none' && fromRect && fromRect.width <= 2) {
+            fromRect = t.getBoundingClientRect(); ms = Math.max(ms, 820);
+        }
+        return _sc(text, cls, fromRect, toRect, ms);
+    };
+})();
+</script>
 </body>
 </html>

@@ -4236,6 +4236,54 @@ html, body {
 .t5-ref-card li.found .rs { color: #9aa5b1; }
 @keyframes refIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .t5-ref-card { animation: none; } }
+
+/* ===== v34: Club Combo ===== */
+#combo-container.cc-on { display: flex; flex-direction: column; gap: 12px; background: linear-gradient(180deg, #17202b, #0f151d) !important; border: 0 !important; border-radius: 18px !important; padding: 18px 12px 14px !important; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.25); position: relative; overflow: hidden; }
+#combo-container.cc-on::before { content: ""; position: absolute; inset: -30% 0 auto; height: 70%; background: radial-gradient(ellipse at center, rgba(0,184,148,.18), transparent 65%); pointer-events: none; }
+.cc-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 6px; width: 100%; position: relative; }
+.cc-crest { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.cc-crest.l { animation: ccInL .5s cubic-bezier(.2,1.3,.4,1) both; }
+.cc-crest.r { animation: ccInR .5s cubic-bezier(.2,1.3,.4,1) both; }
+.cc-badge { width: clamp(84px, 26vw, 128px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #ffffff, #e9eef3); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,.35), 0 0 0 4px rgba(255,255,255,.08); }
+#combo-container .cc-badge img { width: 74% !important; height: 74% !important; object-fit: contain; }
+.cc-badge .cc-ini { font-family: var(--font-display); font-weight: 900; font-size: 26px; color: #1b2430; }
+.cc-name { font-family: var(--font-display); font-weight: 800; font-size: 14px; color: #e8eef5; text-align: center; line-height: 1.2; }
+.cc-link { width: 42px; height: 42px; border-radius: 50%; background: #18b26b; color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 5px rgba(24,178,107,.2); animation: ccPulse 1.8s ease-in-out .5s infinite; }
+.cc-player { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.06); border: 1px dashed rgba(255,255,255,.22); border-radius: 12px; padding: 9px 12px; color: #cfd8e3; font-size: 13px; font-weight: 700; position: relative; }
+.cc-player .cc-sil { width: 30px; height: 30px; border-radius: 50%; background: #2c3a4a; display: flex; align-items: center; justify-content: center; font-size: 16px; flex: 0 0 auto; }
+@keyframes ccInL { from { opacity: 0; transform: translateX(-40px) rotate(-8deg); } to { opacity: 1; transform: none; } }
+@keyframes ccInR { from { opacity: 0; transform: translateX(40px) rotate(8deg); } to { opacity: 1; transform: none; } }
+@keyframes ccPulse { 50% { box-shadow: 0 0 0 10px rgba(24,178,107,.05); transform: scale(1.06); } }
+/* Αποδεκτές απαντήσεις σε chips */
+#q-answer-box .ans-label { display: block; font-size: 11px; font-weight: 800; opacity: .85; margin-bottom: 6px; text-transform: none; letter-spacing: 0; }
+#q-answer-box .ans-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+#q-answer-box .ans-chip { background: rgba(255,255,255,.2); border-radius: 999px; padding: 5px 11px; font-size: 14px; line-height: 1.2; }
+
+/* ===== v34: Retro Transfer ===== */
+#transfer-container.rt-on { background: transparent !important; border: 0 !important; }
+#transfer-container.rt-on .tf-header, #transfer-container.rt-on #tf-list { display: none !important; }
+.rt-card { position: relative; border-radius: 18px; overflow: hidden; background: linear-gradient(160deg, #1d2a39 0%, #0f151d 100%); color: #fff; padding: 14px 12px 14px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.25); }
+.rt-card::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 2px, transparent 2px 4px); }
+.rt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.rt-stamp { font-family: var(--font-display); font-weight: 900; font-size: 12px; letter-spacing: .5px; color: #ffb347; border: 2px solid #ffb347; border-radius: 6px; padding: 3px 8px; transform: rotate(-3deg); }
+.rt-year { font-family: var(--font-display); font-weight: 900; font-size: 26px; line-height: 1; background: linear-gradient(180deg, #ffe27a, #f5a623); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rt-flow { display: grid; grid-template-columns: 1fr 56px 1fr; align-items: center; gap: 4px; }
+.rt-club { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.rt-club .cc-badge { width: clamp(70px, 22vw, 104px); }
+.rt-club .rt-nm { font-family: var(--font-display); font-weight: 800; font-size: 13px; text-align: center; line-height: 1.2; color: #e8eef5; }
+.rt-club small { font-size: 10px; font-weight: 900; letter-spacing: .6px; color: #8a97a6; }
+.rt-club.from { animation: ccInL .5s cubic-bezier(.2,1.3,.4,1) both; }
+.rt-club.to { animation: ccInR .5s cubic-bezier(.2,1.3,.4,1) .12s both; }
+.rt-arrow { position: relative; height: 24px; }
+.rt-arrow::before { content: ""; position: absolute; left: 2px; right: 10px; top: 11px; border-top: 3px dashed rgba(255,255,255,.35); }
+.rt-arrow::after { content: ""; position: absolute; right: 0; top: 5px; border: 7px solid transparent; border-left: 11px solid #18b26b; }
+.rt-arrow i { position: absolute; top: 4px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.6); animation: rtBall 1.6s ease-in-out .6s infinite; }
+.rt-fee { margin: 14px auto 0; width: max-content; max-width: 100%; display: flex; align-items: baseline; gap: 8px; background: #18b26b; color: #fff; border-radius: 999px; padding: 6px 16px; box-shadow: 0 6px 16px rgba(24,178,107,.35); animation: rtFee .5s cubic-bezier(.2,1.5,.4,1) .35s both; }
+.rt-fee small { font-size: 11px; font-weight: 800; opacity: .9; }
+.rt-fee b { font-family: var(--font-display); font-weight: 900; font-size: 22px; }
+@keyframes rtBall { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 22px); opacity: 0; } }
+@keyframes rtFee { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .cc-crest, .cc-link, .rt-club, .rt-arrow i, .rt-fee { animation: none !important; } }
     </style>
 </head>
 <body>
@@ -5732,7 +5780,7 @@ html, body {
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.liverpool, L.realmadrid], a: "Xabi Alonso / Michael Owen / McManaman / Arbeloa / Fabinho", fake: "Steven Gerrard", hint: "Ανάμεσά τους βρίσκεται ένας Ισπανός μέσος που έγινε πρωταθλητής Γερμανίας ως προπονητής της Λεβερκούζεν." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.inter, L.chelsea], a: "Romelu Lukaku / Hernan Crespo / Samuel Eto'o / Kovacic / Veron", fake: "Didier Drogba", hint: "Ένας Βέλγος θηριώδης φορ και ένας Αργεντινός στράικερ ('El Valdanito')." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.psg, L.milan], a: "Thiago Silva / Zlatan / Donnarumma / Ronaldinho / Weah", fake: "Marco Verratti", hint: "Ο Βραζιλιάνος μάγος με το μόνιμο χαμόγελο και ο Ιταλός τερματοφύλακας." },
-            { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.dortmund, L.mancity], a: "Erling Haaland / Gundogan / Akanji / Sancho / Sergio Gomez", fake: "Kevin De Bruyne", hint: "Το ξανθό 'Cyborg' από τη Νορβηγία είναι η πιο προφανής απάντηση!" },
+            { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.dortmund, L.mancity], a: "Erling Haaland / Gundogan / Akanji", fake: "Kevin De Bruyne", hint: "Το ξανθό 'Cyborg' από τη Νορβηγία είναι η πιο προφανής απάντηση!" },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.atletico, L.chelsea], a: "Diego Costa / Courtois / Torres / Joao Felix / Morata", fake: "Antoine Griezmann", hint: "Ένας Ισπανός φορ που λατρεύτηκε στο Άνφιλντ (Το 'Παιδί') κι ένας πολιτογραφημένος Ισπανός 'ταύρος'." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.napoli, L.juventus], a: "Gonzalo Higuain / Arkadiusz Milik / Cannavaro / Ciro Ferrara", fake: "Lorenzo Insigne", hint: "Ένας Αργεντινός φορ (El Pipita) που η μεταγραφή του προκάλεσε τεράστιο μίσος στη Νάπολη." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.ajax, L.manutd], a: "Edwin van der Sar / Antony / L. Martinez / Blind / Zlatan / Eriksen", fake: "Frenkie de Jong", hint: "Ένας θρυλικός Ολλανδός τερματοφύλακας και αρκετοί παίκτες που πήρε μαζί του αργότερα ο Έρικ Τεν Χαχ." },
@@ -5750,7 +5798,7 @@ html, body {
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.olympiacos, L.roma], a: "Kostas Manolas / Jose Holebas / Vasilis Torosidis / Mady Camara", fake: "Kostas Mitroglou", hint: "Υπάρχουν τρεις Έλληνες διεθνείς αμυντικοί!" },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.pao, L.inter], a: "Giorgos Karagounis", fake: "Angelos Basinas", hint: "Ο 'Τυπάρας' της Εθνικής Ελλάδας και απόλυτο ίνδαλμα των Πρασίνων." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.aek, L.sevilla], a: "Anthony Martial / Erik Lamela", fake: "Sergio Araujo", hint: "Δύο τεράστιες μεταγραφές-βόμβες που έκανε η Ένωση το καλοκαίρι του 2024!" },
-            { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.paok, L.fenerbahce], a: "Dimitris Pelkas / Mame Thiam / Garry Rodrigues", fake: "Jose Angel Crespo", hint: "Ένας Έλληνας διεθνής μεσοεπιθετικός από τις ακαδημίες του Δικεφάλου." },
+            { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.paok, L.fenerbahce], a: "Dimitris Pelkas / Garry Rodrigues", fake: "Jose Angel Crespo", hint: "Ένας Έλληνας διεθνής μεσοεπιθετικός από τις ακαδημίες του Δικεφάλου." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.valencia, L.mancity], a: "David Silva / Nicolas Otamendi / Ferran Torres / Joao Cancelo", fake: "David Villa", hint: "Ο Ισπανός 'Μάγος' (El Mago) που έχει άγαλμα έξω από το γήπεδο της Σίτι." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.marseille, L.chelsea], a: "Cesar Azpilicueta / Drogba / Aubameyang / Batshuayi", fake: "Dimitri Payet", hint: "Ο Ιβοριανός θρύλος της Τσέλσι και ο επί χρόνια Ισπανός αρχηγός της." },
             { cat: "Club Combo", p: 2, type: "combo", q: "Βρείτε έναν κοινό παίκτη.", logos: [L.everton, L.manutd], a: "Wayne Rooney / Romelu Lukaku / Marouane Fellaini / Schneiderlin", fake: "Seamus Coleman", hint: "Ο πρώτος σκόρερ στην ιστορία της Γιουνάιτεντ και ένας πανύψηλος Βέλγος μέσος με αφάνα." },
@@ -5806,7 +5854,7 @@ html, body {
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2014. Από Southampton FC σε Liverpool FC. Κόστος 31 εκατομμύρια ευρώ.", transfers: [ {y: "2014", c: "Southampton FC", l: L.southampton, f: "ΑΠΟ"}, {y: "2014", c: "Liverpool FC", l: L.liverpool, f: "ΠΡΟΣ (€31m)"} ], a: "Adam Lallana", fake: "Dejan Lovren", hint: "Άγγλος μεσοεπιθετικός που υπήρξε αγαπημένο παιδί του Γιούργκεν Κλοπ στα πρώτα χρόνια του Γερμανού στο Άνφιλντ." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2015. Από VfL Wolfsburg σε Manchester City. Κόστος 76 εκατομμύρια ευρώ.", transfers: [ {y: "2015", c: "VfL Wolfsburg", l: L.wolfsburg, f: "ΑΠΟ"}, {y: "2015", c: "Manchester City", l: L.mancity, f: "ΠΡΟΣ (€76m)"} ], a: "Kevin De Bruyne", fake: "Edin Dzeko", hint: "Βέλγος 'μαέστρος'. Είχε περάσει παλιότερα από την Τσέλσι, αλλά έφυγε 'νύχτα' επειδή δεν τον πίστεψε ο Μουρίνιο." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2001. Από Juventus FC σε Real Madrid CF. Κόστος 77.5 εκατομμύρια ευρώ.", transfers: [ {y: "2001", c: "Juventus FC", l: L.juventus, f: "ΑΠΟ"}, {y: "2001", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€77.5m)"} ], a: "Zinedine Zidane", fake: "Edgar Davids", hint: "Γάλλος θρύλος. Στο τέλος της πρώτης του χρονιάς εκεί, σκόραρε ένα μυθικό βολ-πλανέ στον τελικό του Champions League." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2002. Από Inter Milan σε Real Madrid CF. Κόστος 46 εκατομμύρια ευρώ.", transfers: [ {y: "2002", c: "Inter Milan", l: L.inter, f: "ΑΠΟ"}, {y: "2002", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€46m)"} ], a: "Ronaldo Nazario", fake: "Christian Vieri", hint: "Το 'Φαινόμενο'. Πήγε στη Μαδρίτη αμέσως μετά την κατάκτηση του Μουντιάλ του 2002." },
+            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2002. Από Inter Milan σε Real Madrid CF. Κόστος 45 εκατομμύρια ευρώ.", transfers: [ {y: "2002", c: "Inter Milan", l: L.inter, f: "ΑΠΟ"}, {y: "2002", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€45m)"} ], a: "Ronaldo Nazario", fake: "Christian Vieri", hint: "Το 'Φαινόμενο'. Πήγε στη Μαδρίτη αμέσως μετά την κατάκτηση του Μουντιάλ του 2002." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2003. Από Manchester United σε Real Madrid CF. Κόστος 37.5 εκατομμύρια ευρώ.", transfers: [ {y: "2003", c: "Manchester United", l: L.manutd, f: "ΑΠΟ"}, {y: "2003", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€37.5m)"} ], a: "David Beckham", fake: "Ruud van Nistelrooy", hint: "Ο απόλυτος Άγγλος σούπερ σταρ. Αναγκάστηκε να πάρει το νούμερο 23, επειδή το αγαπημένο του '7' το φορούσε ο Ραούλ." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2004. Από AS Roma σε Juventus FC. Κόστος 28 εκατομμύρια ευρώ.", transfers: [ {y: "2004", c: "AS Roma", l: L.roma, f: "ΑΠΟ"}, {y: "2004", c: "Juventus FC", l: L.juventus, f: "ΠΡΟΣ (€28m)"} ], a: "Emerson", fake: "Miralem Pjanic", hint: "Βραζιλιάνος αμυντικός μέσος (παρατσούκλι 'Puma'). Ακολούθησε τον προπονητή Φάμπιο Καπέλο στο Τορίνο." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2005. Από Sevilla FC σε Real Madrid CF. Κόστος 27 εκατομμύρια ευρώ.", transfers: [ {y: "2005", c: "Sevilla FC", l: L.sevilla, f: "ΑΠΟ"}, {y: "2005", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€27m)"} ], a: "Sergio Ramos", fake: "Jose Antonio Reyes", hint: "Ισπανός αμυντικός. Όταν πήγε στη Μαδρίτη σε νεαρή ηλικία, κληρονόμησε το νούμερο 4 του Φερνάντο Ιέρο." },
@@ -5822,7 +5870,7 @@ html, body {
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2015. Από TSG Hoffenheim σε Liverpool FC. Κόστος 41 εκατομμύρια ευρώ.", transfers: [ {y: "2015", c: "TSG Hoffenheim", l: L.hoffenheim, f: "ΑΠΟ"}, {y: "2015", c: "Liverpool FC", l: L.liverpool, f: "ΠΡΟΣ (€41m)"} ], a: "Roberto Firmino", fake: "Kevin Volland", hint: "Βραζιλιάνος φορ, που έγινε το απόλυτο σήμα κατατεθέν της Λίβερπουλ τα επόμενα χρόνια, παίζοντας ως 'False 9' (Ψευτοεννιάρι)." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2001. Από Parma FC σε Juventus FC. Κόστος 52 εκατομμύρια ευρώ.", transfers: [ {y: "2001", c: "Parma FC", l: L.parma, f: "ΑΠΟ"}, {y: "2001", c: "Juventus FC", l: L.juventus, f: "ΠΡΟΣ (€52m)"} ], a: "Gianluigi Buffon", fake: "Lilian Thuram", hint: "Η μεταγραφή αυτή αποτελούσε για πάρα πολλά χρόνια το παγκόσμιο ρεκόρ μεταγραφικού ποσού για τερματοφύλακα." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 1999. Από SS Lazio σε Inter Milan. Κόστος 46 εκατομμύρια ευρώ.", transfers: [ {y: "1999", c: "SS Lazio", l: L.lazio, f: "ΑΠΟ"}, {y: "1999", c: "Inter Milan", l: L.inter, f: "ΠΡΟΣ (€46m)"} ], a: "Christian Vieri", fake: "Marcelo Salas", hint: "Ιταλός στράικερ-οδοστρωτήρας, ευρέως γνωστός σε όλους τους Ιταλούς απλά ως 'Μπόμπο' (Bobo)." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 1999. Από UC Sampdoria σε Parma FC. Κόστος 28 εκατομμύρια ευρώ.", transfers: [ {y: "1999", c: "UC Sampdoria", l: L.sampdoria, f: "ΑΠΟ"}, {y: "1999", c: "Parma FC", l: L.parma, f: "ΠΡΟΣ (€28m)"} ], a: "Juan Sebastian Veron", fake: "Ariel Ortega", hint: "Αργεντινός μέσος με απίθανο στυλ, γνωστός παγκοσμίως ως 'Η Μικρή Μάγισσα' (La Brujita)." },
+            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 1998. Από UC Sampdoria σε Parma FC. Κόστος 15 εκατομμύρια λίρες.", transfers: [ {y: "1998", c: "UC Sampdoria", l: L.sampdoria, f: "ΑΠΟ"}, {y: "1998", c: "Parma FC", l: L.parma, f: "ΠΡΟΣ (£15m)"} ], a: "Juan Sebastian Veron", fake: "Ariel Ortega", hint: "Αργεντινός μέσος με απίθανο στυλ, γνωστός παγκοσμίως ως 'Η Μικρή Μάγισσα' (La Brujita)." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2000. Από FC Barcelona σε Real Madrid CF. Κόστος 60 εκατομμύρια ευρώ.", transfers: [ {y: "2000", c: "FC Barcelona", l: L.barcelona, f: "ΑΠΟ"}, {y: "2000", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€60m)"} ], a: "Luis Figo", fake: "Rivaldo", hint: "Η πιο διάσημη 'προδοσία' του ισπανικού ποδοσφαίρου. Του πέταξαν μέχρι και γουρουνοκεφαλή όταν πήγε να εκτελέσει κόρνερ." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2002. Από SS Lazio σε AC Milan. Κόστος 31 εκατομμύρια ευρώ.", transfers: [ {y: "2002", c: "SS Lazio", l: L.lazio, f: "ΑΠΟ"}, {y: "2002", c: "AC Milan", l: L.milan, f: "ΠΡΟΣ (€31m)"} ], a: "Alessandro Nesta", fake: "Jaap Stam", hint: "Ένας από τους πιο κομψούς Ιταλούς κεντρικούς αμυντικούς όλων των εποχών." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2003. Από Sporting CP σε Manchester United. Κόστος 19 εκατομμύρια ευρώ.", transfers: [ {y: "2003", c: "Sporting CP", l: L.sporting, f: "ΑΠΟ"}, {y: "2003", c: "Manchester United", l: L.manutd, f: "ΠΡΟΣ (€19m)"} ], a: "Cristiano Ronaldo", fake: "Nani", hint: "Η ομάδα του Σερ Άλεξ απαίτησε την αγορά του, αφού τους 'ζάλισε' με τις τρίπλες του σε ένα φιλικό προετοιμασίας στην Πορτογαλία." },
@@ -5840,8 +5888,7 @@ html, body {
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2015. Από Atletico Madrid σε FC Barcelona. Κόστος 34 εκατομμύρια ευρώ.", transfers: [ {y: "2015", c: "Atletico Madrid", l: L.atletico, f: "ΑΠΟ"}, {y: "2015", c: "FC Barcelona", l: L.barcelona, f: "ΠΡΟΣ (€34m)"} ], a: "Arda Turan", fake: "Antoine Griezmann", hint: "Τούρκος μεσοεπιθετικός, που πριν φύγει από την Ατλέτικο είχε πετάξει μέχρι και το παπούτσι του στον επόπτη όταν νευρίασε!" },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2004. Από AFC Ajax σε Juventus FC. Κόστος 16 εκατομμύρια ευρώ.", transfers: [ {y: "2004", c: "AFC Ajax", l: L.ajax, f: "ΑΠΟ"}, {y: "2004", c: "Juventus FC", l: L.juventus, f: "ΠΡΟΣ (€16m)"} ], a: "Zlatan Ibrahimovic", fake: "Maxwell", hint: "Μετακόμισε στην Ιταλία λίγο μετά από ένα μυθικό γκολ που πέτυχε με την ολλανδική ομάδα, όπου ντρίμπλαρε την μισή αντίπαλη ομάδα." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2000. Από Atletico Madrid σε Chelsea FC. Κόστος 22.5 εκατομμύρια ευρώ.", transfers: [ {y: "2000", c: "Atletico Madrid", l: L.atletico, f: "ΑΠΟ"}, {y: "2000", c: "Chelsea FC", l: L.chelsea, f: "ΠΡΟΣ (€22.5m)"} ], a: "Jimmy Floyd Hasselbaink", fake: "Fernando Torres", hint: "Ολλανδός 'κανονιέρης' που έκανε θραύση στο αγγλικό πρωτάθλημα, με σήμα κατατεθέν τα πολύ δυνατά και ξερά του σουτ." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2006. Από Corinthians σε West Ham United. Κόστος 14.6 εκατομμύρια ευρώ.", transfers: [ {y: "2006", c: "Corinthians", l: L.corinthians, f: "ΑΠΟ"}, {y: "2006", c: "West Ham United", l: L.westham, f: "ΠΡΟΣ (€14.6m)"} ], a: "Carlos Tevez", fake: "Javier Mascherano", hint: "Ο 'Απάτσι'. Η μεταγραφή του έγινε 'πακέτο' μαζί με τον φίλο του Χαβιέρ Μαστσεράνο, προκαλώντας τεράστιο σάλο στην Αγγλία με τα δικαιώματα ιδιοκτησίας." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2007. Από Southampton FC σε Tottenham Hotspur. Κόστος 7 εκατομμύρια ευρώ.", transfers: [ {y: "2007", c: "Southampton FC", l: L.southampton, f: "ΑΠΟ"}, {y: "2007", c: "Tottenham Hotspur", l: L.tottenham, f: "ΠΡΟΣ (€7m)"} ], a: "Gareth Bale", fake: "Theo Walcott", hint: "Ξεκίνησε την καριέρα του ως αριστερό μπακ και στην αρχή θεωρούνταν... γρουσούζης (24 ματς χωρίς νίκη η ομάδα του όταν έπαιζε)." },
+            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2007. Από Southampton FC σε Tottenham Hotspur. Κόστος 7 εκατομμύρια λίρες.", transfers: [ {y: "2007", c: "Southampton FC", l: L.southampton, f: "ΑΠΟ"}, {y: "2007", c: "Tottenham Hotspur", l: L.tottenham, f: "ΠΡΟΣ (£7m)"} ], a: "Gareth Bale", fake: "Theo Walcott", hint: "Ξεκίνησε την καριέρα του ως αριστερό μπακ και στην αρχή θεωρούνταν... γρουσούζης (24 ματς χωρίς νίκη η ομάδα του όταν έπαιζε)." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2010. Από Inter Milan σε Manchester City. Κόστος 29 εκατομμύρια ευρώ.", transfers: [ {y: "2010", c: "Inter Milan", l: L.inter, f: "ΑΠΟ"}, {y: "2010", c: "Manchester City", l: L.mancity, f: "ΠΡΟΣ (€29m)"} ], a: "Mario Balotelli", fake: "Wesley Sneijder", hint: "Ιταλός επιθετικός. Ο προπονητής που τον έφερε στην Αγγλία ήταν ο Ρομπέρτο Μαντσίνι. Πανηγύρισε το 1-6 βγάζοντας την μπλούζα 'Why Always Me?'." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2012. Από Pescara σε Paris Saint-Germain. Κόστος 12 εκατομμύρια ευρώ.", transfers: [ {y: "2012", c: "Pescara", l: L.pescara, f: "ΑΠΟ"}, {y: "2012", c: "Paris Saint-Germain", l: L.psg, f: "ΠΡΟΣ (€12m)"} ], a: "Marco Verratti", fake: "Ciro Immobile", hint: "Ιταλός 'μικροσκοπικός' μαέστρος που πήρε τεράστια μεταγραφή χωρίς να έχει παίξει ποτέ ούτε ένα λεπτό στη Serie A!" },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2014. Από AS Monaco σε Real Madrid CF. Κόστος 75 εκατομμύρια ευρώ.", transfers: [ {y: "2014", c: "AS Monaco", l: L.monaco, f: "ΑΠΟ"}, {y: "2014", c: "Real Madrid CF", l: L.realmadrid, f: "ΠΡΟΣ (€75m)"} ], a: "James Rodriguez", fake: "Radamel Falcao", hint: "Κολομβιανός σταρ που βγήκε πρώτος σκόρερ στο Μουντιάλ της Βραζιλίας (2014), πετυχαίνοντας μάλιστα το γκολ της χρονιάς." },
@@ -5850,9 +5897,9 @@ html, body {
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2017. Από Everton FC σε Manchester United. Κόστος 85 εκατομμύρια ευρώ.", transfers: [ {y: "2017", c: "Everton FC", l: L.everton, f: "ΑΠΟ"}, {y: "2017", c: "Manchester United", l: L.manutd, f: "ΠΡΟΣ (€85m)"} ], a: "Romelu Lukaku", fake: "Wayne Rooney", hint: "Βέλγος 'ταύρος', ο οποίος βρήκε στο Μάντσεστερ τον πολύ καλό του φίλο, Πολ Πογκμπά." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2018. Από AS Roma σε Liverpool FC. Κόστος 62 εκατομμύρια ευρώ.", transfers: [ {y: "2018", c: "AS Roma", l: L.roma, f: "ΑΠΟ"}, {y: "2018", c: "Liverpool FC", l: L.liverpool, f: "ΠΡΟΣ (€62m)"} ], a: "Alisson Becker", fake: "Mohamed Salah", hint: "Βραζιλιάνος τερματοφύλακας που ήρθε και έλυσε άμεσα το τεράστιο πρόβλημα των Άγγλων κάτω από τα δοκάρια." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2009. Από Olympique Marseille σε Panathinaikos FC. Κόστος 8 εκατομμύρια ευρώ.", transfers: [ {y: "2009", c: "Olympique Marseille", l: L.marseille, f: "ΑΠΟ"}, {y: "2009", c: "Panathinaikos FC", l: L.pao, f: "ΠΡΟΣ (€8m)"} ], a: "Djibril Cisse", fake: "Mamadou Niang", hint: "Γάλλος σούπερ σταρ, χαρακτηριστικός για τα άπειρα τατουάζ του. Έφτασε στο αεροδρόμιο 'Ελ. Βενιζέλος' φορώντας μια εντυπωσιακή πράσινη φόρμα." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2008. Από CA River Plate σε Olympiacos FC. Κόστος 7.4 εκατομμύρια ευρώ.", transfers: [ {y: "2008", c: "CA River Plate", l: L.river, f: "ΑΠΟ"}, {y: "2008", c: "Olympiacos FC", l: L.olympiacos, f: "ΠΡΟΣ (€7.4m)"} ], a: "Fernando Belluschi", fake: "Luciano Galletti", hint: "Αργεντινός 'Ράστα' μέσος. Η αγορά του ήταν μεταγραφή ρεκόρ τότε για τους Πειραιώτες (και αργότερα έπαιξε και στην Πόρτο)." },
+            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2008. Από CA River Plate σε Olympiacos FC. Κόστος 6.5 εκατομμύρια ευρώ.", transfers: [ {y: "2008", c: "CA River Plate", l: L.river, f: "ΑΠΟ"}, {y: "2008", c: "Olympiacos FC", l: L.olympiacos, f: "ΠΡΟΣ (€6.5m)"} ], a: "Fernando Belluschi", fake: "Luciano Galletti", hint: "Αργεντινός 'Ράστα' μέσος. Η αγορά του ήταν μεταγραφή ρεκόρ τότε για τους Πειραιώτες (και αργότερα έπαιξε και στην Πόρτο)." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2011. Από Valencia CF σε Chelsea FC. Κόστος 26 εκατομμύρια ευρώ.", transfers: [ {y: "2011", c: "Valencia CF", l: L.valencia, f: "ΑΠΟ"}, {y: "2011", c: "Chelsea FC", l: L.chelsea, f: "ΠΡΟΣ (€26m)"} ], a: "Juan Mata", fake: "David Silva", hint: "Ισπανός μαέστρος με σπουδαία τεχνική κατάρτιση. Κέρδισε το Champions League στην πρώτη του χρονιά στο Λονδίνο." },
-            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2004. Από Real Madrid CF σε Inter Milan. Κόστος 16 εκατομμύρια ευρώ.", transfers: [ {y: "2004", c: "Real Madrid CF", l: L.realmadrid, f: "ΑΠΟ"}, {y: "2004", c: "Inter Milan", l: L.inter, f: "ΠΡΟΣ (€16m)"} ], a: "Walter Samuel", fake: "Luis Figo", hint: "Αργεντινός κεντρικός αμυντικός, από τους πιο σκληρούς του αθλήματος. Το παρατσούκλι του ήταν 'Ο Τοίχος' (Il Muro)." },
+            { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2005. Από Real Madrid CF σε Inter Milan. Κόστος 16 εκατομμύρια ευρώ.", transfers: [ {y: "2005", c: "Real Madrid CF", l: L.realmadrid, f: "ΑΠΟ"}, {y: "2005", c: "Inter Milan", l: L.inter, f: "ΠΡΟΣ (€16m)"} ], a: "Walter Samuel", fake: "Luis Figo", hint: "Αργεντινός κεντρικός αμυντικός, από τους πιο σκληρούς του αθλήματος. Το παρατσούκλι του ήταν 'Ο Τοίχος' (Il Muro)." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2008. Από US Palermo σε Juventus FC. Κόστος 22.8 εκατομμύρια ευρώ.", transfers: [ {y: "2008", c: "US Palermo", l: L.palermo, f: "ΑΠΟ"}, {y: "2008", c: "Juventus FC", l: L.juventus, f: "ΠΡΟΣ (€22.8m)"} ], a: "Amauri", fake: "Paulo Dybala", hint: "Βραζιλιάνος επιθετικός που απέκτησε ιταλικό διαβατήριο. Φορ περιοχής, με χαρακτηριστικά μακριά μαλλιά." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2013. Από Shakhtar Donetsk σε Manchester City. Κόστος 40 εκατομμύρια ευρώ.", transfers: [ {y: "2013", c: "Shakhtar Donetsk", l: L.shakhtar, f: "ΑΠΟ"}, {y: "2013", c: "Manchester City", l: L.mancity, f: "ΠΡΟΣ (€40m)"} ], a: "Fernandinho", fake: "Willian", hint: "Βραζιλιάνος αμυντικός μέσος. Έγινε ο απόλυτος 'στρατιώτης' του Πεπ Γκουαρδιόλα στο κέντρο των Πολιτών για σχεδόν μια δεκαετία." },
             { cat: "Retro Transfer", p: 2, type: "transfer", title: "ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ", q: "Έτος 2014. Από SL Benfica σε Atletico Madrid. Κόστος 16 εκατομμύρια ευρώ.", transfers: [ {y: "2014", c: "SL Benfica", l: L.benfica, f: "ΑΠΟ"}, {y: "2014", c: "Atletico Madrid", l: L.atletico, f: "ΠΡΟΣ (€16m)"} ], a: "Jan Oblak", fake: "Nicolas Gaitan", hint: "Σλοβένος τερματοφύλακας, αγοράστηκε για να καλύψει το τεράστιο κενό που άφησε ο Τιμπό Κουρτουά επιστρέφοντας στην Τσέλσι." },
@@ -9404,6 +9451,91 @@ ${lower}
     // Πάντα κλειστό όταν ανοίγει νέα ερώτηση
     const _oq = window.openQuestion;
     window.openQuestion = function (id, conf) { show(false); return _oq(id, conf); };
+})();
+</script>
+
+<script>
+/* v34: νέα γραφικά για Club Combo & Retro Transfer, απαντήσεις σε chips */
+(function () {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const NAMES = { aek: 'ΑΕΚ', ajax: 'Άγιαξ', anderlecht: 'Άντερλεχτ', arsenal: 'Άρσεναλ', astonvilla: 'Άστον Βίλα', atletico: 'Ατλέτικο Μαδρίτης',
+        barcelona: 'Μπαρτσελόνα', barcelonab: 'Μπαρτσελόνα', bayern: 'Μπάγερν', benfica: 'Μπενφίκα', chelsea: 'Τσέλσι', dortmund: 'Ντόρτμουντ',
+        eintracht: 'Άιντραχτ Φρανκφούρτης', espanyol: 'Εσπανιόλ', everton: 'Έβερτον', fenerbahce: 'Φενέρμπαχτσε', fiorentina: 'Φιορεντίνα',
+        galatasaray: 'Γαλατασαράι', genoa: 'Τζένοα', inter: 'Ίντερ', juventus: 'Γιουβέντους', lazio: 'Λάτσιο', leicester: 'Λέστερ', lille: 'Λιλ',
+        liverpool: 'Λίβερπουλ', mancity: 'Μάντσεστερ Σίτι', manutd: 'Μάντσεστερ Γιουνάιτεντ', marseille: 'Μαρσέιγ', milan: 'Μίλαν', monaco: 'Μονακό',
+        napoli: 'Νάπολι', olympiacos: 'Ολυμπιακός', pao: 'Παναθηναϊκός', paok: 'ΠΑΟΚ', parma: 'Πάρμα', porto: 'Πόρτο', psg: 'Παρί Σεν Ζερμέν',
+        realmadrid: 'Ρεάλ Μαδρίτης', roma: 'Ρόμα', schalke: 'Σάλκε', sevilla: 'Σεβίλλη', tottenham: 'Τότεναμ', udinese: 'Ουντινέζε', valencia: 'Βαλένθια',
+        villareal: 'Βιγιαρεάλ', westham: 'Γουέστ Χαμ', dinamozagreb: 'Ντινάμο Ζάγκρεμπ', portsmouth: 'Πόρτσμουθ', river: 'Ρίβερ Πλέιτ',
+        shakhtar: 'Σαχτάρ', werder: 'Βέρντερ Βρέμης' };
+    const EN = { 'Pescara': 'Πεσκάρα', 'TSG Hoffenheim': 'Χοφενχάιμ', 'US Palermo': 'Παλέρμο', 'Olympique Lyon': 'Λιόν', 'PSV Eindhoven': 'PSV',
+        'Southampton FC': 'Σαουθάμπτον', 'Sporting CP': 'Σπόρτινγκ', 'UC Sampdoria': 'Σαμπντόρια', 'VfL Wolfsburg': 'Βόλφσμπουργκ' };
+    const URLN = [[/Wolfsburg/i, 'Βόλφσμπουργκ'], [/Boca/i, 'Μπόκα Τζούνιορς'], [/Leipzig/i, 'Λειψία'], [/PSV/i, 'PSV'], [/Lyonnais/i, 'Λιόν'],
+        [/Leverkusen/i, 'Λεβερκούζεν'], [/Celtic/i, 'Σέλτικ'], [/Salzburg/i, 'Σάλτσμπουργκ'], [/Sporting/i, 'Σπόρτινγκ'], [/Basel/i, 'Βασιλεία'],
+        [/Southampton/i, 'Σαουθάμπτον'], [/Sampdoria/i, 'Σαμπντόρια'], [/Real_Sociedad/i, 'Ρεάλ Σοσιεδάδ']];
+    let byUrl = null;
+    function clubName(url) {
+        if (!byUrl) { byUrl = {}; try { Object.entries(L).forEach(([k, v]) => { if (!byUrl[v]) byUrl[v] = k; }); } catch (_) {} }
+        if (!url) return '';
+        const k = byUrl[url];
+        if (k && NAMES[k]) return NAMES[k];
+        const u = URLN.find(([re]) => re.test(url)); return u ? u[1] : '';
+    }
+    const initials = n => (n || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    const badge = (url, name) => `<div class="cc-badge"><img src="${esc(url)}" alt="${esc(name)}" onerror="this.outerHTML='<span class=&quot;cc-ini&quot;>${esc(initials(name))}</span>'"></div>`;
+    const feeOf = f => { const m = String(f || '').match(/\(([^)]*)\)/); return m ? m[1] : ''; };
+
+    function renderCombo() {
+        const box = document.getElementById('combo-container');
+        const [u1, u2] = currentQ.logos || [];
+        const n1 = clubName(u1), n2 = clubName(u2);
+        box.classList.add('cc-on');
+        box.innerHTML = `<div class="cc-row">
+                <div class="cc-crest l">${badge(u1, n1)}<div class="cc-name">${esc(n1)}</div></div>
+                <div class="cc-link">+</div>
+                <div class="cc-crest r">${badge(u2, n2)}<div class="cc-name">${esc(n2)}</div></div>
+            </div>
+            <img id="combo-img1" hidden alt=""><img id="combo-img2" hidden alt="">`;
+        document.getElementById('q-text').textContent = 'Βρείτε έναν παίκτη που έχει παίξει και στις δύο ομάδες.';
+    }
+    function renderRetro() {
+        const box = document.getElementById('transfer-container');
+        const t = currentQ.transfers || [], a = t[0] || {}, b = t[1] || {};
+        box.classList.add('rt-on');
+        box.querySelectorAll('.rt-card').forEach(e => e.remove());
+        const card = document.createElement('div'); card.className = 'rt-card';
+        const fee = feeOf(b.f);
+        const na = clubName(a.l) || EN[a.c] || a.c || '', nb = clubName(b.l) || EN[b.c] || b.c || '';
+        card.innerHTML = `<div class="rt-top"><span class="rt-stamp">ΡΕΤΡΟ ΜΕΤΑΓΡΑΦΗ</span><span class="rt-year">${esc(b.y || a.y || '')}</span></div>
+            <div class="rt-flow">
+                <div class="rt-club from">${badge(a.l, na)}<span class="rt-nm">${esc(na)}</span><small>ΑΠΟ</small></div>
+                <div class="rt-arrow"><i></i></div>
+                <div class="rt-club to">${badge(b.l, nb)}<span class="rt-nm">${esc(nb)}</span><small>ΠΡΟΣ</small></div>
+            </div>
+            ${fee ? `<div class="rt-fee"><small>Κόστος</small><b>${esc(fee)}</b></div>` : ''}`;
+        box.appendChild(card);
+        document.getElementById('q-text').textContent = 'Ποιος παίκτης έκανε αυτή τη μεταγραφή;';
+    }
+    const _oq = window.openQuestion;
+    window.openQuestion = function (id, conf) {
+        const cb = document.getElementById('combo-container'), tc = document.getElementById('transfer-container');
+        if (cb) cb.classList.remove('cc-on');
+        if (tc) { tc.classList.remove('rt-on'); tc.querySelectorAll('.rt-card').forEach(e => e.remove()); }
+        _oq(id, conf);
+        if (!currentQ) return;
+        if (currentQ.type === 'combo' && currentQ.logos) renderCombo();
+        if (currentQ.type === 'transfer' && currentQ.cat === 'Retro Transfer' && (currentQ.transfers || []).length === 2) renderRetro();
+    };
+    // Πολλές σωστές απαντήσεις (π.χ. Club Combo): φαίνονται σαν ξεχωριστά chips
+    const _ra = window.revealAnswer;
+    window.revealAnswer = function () {
+        const r = _ra.apply(this, arguments);
+        const box = document.getElementById('q-answer-box');
+        if (box && currentQ && typeof currentQ.a === 'string' && currentQ.a.includes(' / ') && getComputedStyle(box).display !== 'none') {
+            const parts = currentQ.a.split(' / ').map(x => x.trim()).filter(Boolean);
+            box.innerHTML = `<span class="ans-label">Σωστή είναι οποιαδήποτε από αυτές:</span><span class="ans-chips">${parts.map(p => `<span class="ans-chip">${esc(p)}</span>`).join('')}</span>`;
+        }
+        return r;
+    };
 })();
 </script>
 </body>

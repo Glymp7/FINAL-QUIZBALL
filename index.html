@@ -4200,6 +4200,42 @@ html, body {
     #top5-container .top5-item, .t5-hidden, #top5-container .top5-item.revealed .t5-face, #top5-container .top5-item.revealed::after,
     #q-category-tag.tag-flip-up, #q-category-tag.tag-flip-down, .question-card.is-hot-q::after, .question-card.is-hot-q #q-category-tag { animation: none !important; }
 }
+
+/* ===== v32: σημειώσεις διαιτητή (μόνο όσο κρατάς πατημένο) ===== */
+#t5-admin-controls .btn-t5-strike { flex: 1 1 auto !important; }
+.t5-peek-btn {
+    flex: 0 0 64px; border: 0; border-radius: 12px; cursor: pointer;
+    background: #2c3a4a; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+    transition: transform .12s, background .15s;
+}
+.t5-peek-eye { font-size: 20px; line-height: 1; }
+.t5-peek-hint { font-size: 10px; font-weight: 800; color: #9fb0c2; letter-spacing: .2px; }
+.t5-peek-btn.is-held { background: #f5c518; transform: scale(.95); }
+.t5-peek-btn.is-held .t5-peek-hint { color: #3a2a00; }
+.t5-ref-card {
+    position: absolute; left: 14px; right: 14px; bottom: 86px; z-index: 60;
+    background: #fffdf3; color: #1b2430; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.06);
+    animation: refIn .18s ease-out; pointer-events: none;
+}
+.t5-ref-card .ref-top {
+    background: #f5c518; color: #3a2a00; font-family: var(--font-display); font-weight: 900; font-size: 14px;
+    padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+}
+.t5-ref-card .ref-top small { font-size: 11px; font-weight: 800; opacity: .75; }
+.t5-ref-card ol { list-style: none; margin: 0; padding: 6px 12px 10px;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 35px, rgba(31,111,209,.14) 35px 36px); }
+.t5-ref-card li { display: flex; align-items: center; gap: 10px; min-height: 36px; font-weight: 800; font-size: 15px; }
+.t5-ref-card li b { width: 22px; height: 22px; border-radius: 6px; background: #1b2430; color: #fff; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.t5-ref-card li .rn { flex: 1; min-width: 0; }
+.t5-ref-card li .rs { font-family: var(--font-display); font-weight: 900; font-size: 13px; color: #0e8f63; white-space: nowrap; }
+.t5-ref-card li.found { color: #9aa5b1; }
+.t5-ref-card li.found .rn { text-decoration: line-through; text-decoration-thickness: 2px; }
+.t5-ref-card li.found b { background: #18b26b; }
+.t5-ref-card li.found .rs { color: #9aa5b1; }
+@keyframes refIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .t5-ref-card { animation: none; } }
     </style>
 </head>
 <body>
@@ -4543,9 +4579,9 @@ html, body {
             <div id="t5-admin-controls" class="admin-controls" style="display:none;">
                 <div style="display:flex; gap:8px; width:100%;">
                     <button class="btn-t5-strike" onclick="top5Mistake()">ΛΑΘΟΣ (Strike)</button>
-                    <button style="background:#0984e3; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; flex:1; cursor:pointer;" onclick="toggleT5Peek()">👀 ΣΚΟΝΑΚΙ ΔΙΑΙΤΗΤΗ</button>
+                    <button id="t5-peek-btn" class="t5-peek-btn" type="button" aria-label="Σημειώσεις διαιτητή: κράτα πατημένο για να δεις τις απαντήσεις"><span class="t5-peek-eye">👀</span><span class="t5-peek-hint">Κράτα</span></button>
                 </div>
-                <div id="t5-secret-list" style="display:none; background:#2d3436; color:#00b894; padding:15px; border-radius:8px; font-size:15px; text-align:left; font-weight:bold; line-height:1.5; width:100%;"></div>
+                <div id="t5-secret-list" class="t5-ref-card" style="display:none;"></div>
                 <button id="btn-t5-stop" class="btn-t5-stop" onclick="top5Stop()">ΣΤΑΜΑΤΑΩ ΕΔΩ (+1 ΠΟΝΤΟΣ)</button>
             </div>
         </div>
@@ -9327,6 +9363,47 @@ ${lower}
         }
         return _sc(text, cls, fromRect, toRect, ms);
     };
+})();
+</script>
+
+<script>
+/* v32: σημειώσεις διαιτητή στο Top 5 — φαίνονται μόνο όσο κρατάς το κουμπί */
+(function () {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    function renderRef() {
+        const list = document.getElementById('t5-secret-list');
+        if (!list || !currentQ || !currentQ.top5) return;
+        const slots = document.querySelectorAll('#t5-slots .top5-item');
+        const left = currentQ.top5.length - [...slots].filter(e => e.classList.contains('revealed')).length;
+        list.innerHTML = `<div class="ref-top"><span>📋 Σημειώσεις διαιτητή</span><small>${left ? `μένουν ${left}` : 'βρέθηκαν όλα'}</small></div><ol>` +
+            currentQ.top5.map((item, i) => {
+                const m = String(item).match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+                const found = slots[i] && slots[i].classList.contains('revealed');
+                return `<li class="${found ? 'found' : ''}"><b>${i + 1}</b><span class="rn">${esc(m ? m[1] : item)}</span>${m ? `<span class="rs">${esc(m[2])}</span>` : ''}</li>`;
+            }).join('') + '</ol>';
+    }
+    function show(on) {
+        const btn = document.getElementById('t5-peek-btn'), list = document.getElementById('t5-secret-list');
+        if (!btn || !list) return;
+        if (on) { renderRef(); const ac = document.getElementById('t5-admin-controls'); if (ac) list.style.bottom = (ac.offsetHeight + 10) + 'px'; list.style.display = 'block'; btn.classList.add('is-held'); }
+        else { list.style.display = 'none'; btn.classList.remove('is-held'); }
+    }
+    window.toggleT5Peek = function () { show(document.getElementById('t5-secret-list').style.display === 'none'); };
+    function bind() {
+        const btn = document.getElementById('t5-peek-btn'); if (!btn || btn.dataset.bound) return;
+        btn.dataset.bound = '1';
+        btn.addEventListener('pointerdown', e => { e.preventDefault(); try { btn.setPointerCapture(e.pointerId); } catch (_) {} show(true); });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => btn.addEventListener(ev, () => show(false)));
+        btn.addEventListener('contextmenu', e => e.preventDefault());
+        btn.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); show(true); } });
+        btn.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') show(false); });
+        btn.addEventListener('blur', () => show(false));
+        document.addEventListener('visibilitychange', () => { if (document.hidden) show(false); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
+    // Πάντα κλειστό όταν ανοίγει νέα ερώτηση
+    const _oq = window.openQuestion;
+    window.openQuestion = function (id, conf) { show(false); return _oq(id, conf); };
 })();
 </script>
 </body>

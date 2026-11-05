@@ -4056,6 +4056,34 @@ html, body {
 .pen-board .pen-circles { flex-wrap: wrap !important; max-width: 100% !important; }
 /* Ποιος Λείπει: πιο ευανάγνωστα ονόματα */
 .pitch-row > div > span { letter-spacing: -0.2px; }
+/* v29 Ποιος Λείπει: μεγάλο, καθαρό γήπεδο στο κινητό */
+#pitch-container.is-lineup {
+    max-width: 440px !important; width: 100% !important;
+    aspect-ratio: auto !important; min-height: min(60vh, 480px);
+    padding: 16px 2px !important; justify-content: space-around; margin-bottom: 8px !important;
+}
+#pitch-container.is-lineup .pitch-row { gap: 2px !important; padding: 0 2px !important; align-items: flex-start; }
+#pitch-container.is-lineup .pitch-row > div { padding: 0 1px !important; }
+#pitch-container.is-lineup .shirt {
+    width: 36px !important; height: 36px !important; font-size: 19px !important;
+    margin: 0 auto 4px !important; box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+#pitch-container.is-lineup .missing-shirt { font-size: 21px !important; border-width: 3px; }
+#pitch-container.is-lineup .pitch-player-name {
+    font-size: 15px; font-weight: 800; line-height: 1.12; letter-spacing: 0 !important;
+    white-space: normal !important; word-break: normal; overflow-wrap: normal; hyphens: manual; -webkit-hyphens: manual;
+    text-wrap: balance; overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 0 6px rgba(0,0,0,.55) !important;
+}
+@media (max-height: 760px) {
+    #pitch-container.is-lineup { padding: 10px 2px !important; }
+    #pitch-container.is-lineup .shirt { width: 28px !important; height: 28px !important; font-size: 15px !important; margin-bottom: 2px !important; }
+    #pitch-container.is-lineup .missing-shirt { font-size: 17px !important; }
+    .q-scroll-area:has(#pitch-container.is-lineup) #q-text { font-size: 17px !important; margin-bottom: 10px !important; line-height: 1.3; }
+}
+#pitch-container.is-lineup .missing-shirt.revealed-shirt { background: #f5c518 !important; color: #121820 !important; border-color: #fff; animation: qbPop .35s ease; }
+#pitch-container.is-lineup .pitch-player-name.revealed-name { color: #f5c518 !important; }
+@keyframes qbPop { 0% { transform: scale(.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -6790,6 +6818,8 @@ html, body {
 		
 		function renderNationsPitch(lineup) {
 		    const pitch = document.getElementById('pitch-container');
+		    pitch.classList.remove('is-lineup');
+		    pitch.style.height = ''; pitch.style.minHeight = '';
 		
 		    pitch.innerHTML = `
 		        <div class="pitch-markings">
@@ -7797,6 +7827,18 @@ html, body {
             // Για όλες τις άλλες ερωτήσεις
             document.getElementById('q-answer-box').innerText = currentQ.a;
             document.getElementById('q-answer-box').style.display = 'block';
+            if (currentQ.type === 'pitch') {
+                // Ο παίκτης που έλειπε εμφανίζεται και πάνω στο γήπεδο, στη θέση του
+                const pc = document.getElementById('pitch-container');
+                const miss = pc.querySelector('.missing-shirt');
+                if (miss) {
+                    miss.classList.add('revealed-shirt'); miss.textContent = '✓';
+                    const nm = miss.parentElement.querySelector('.pitch-player-name');
+                    if (nm) { nm.dataset.raw = currentQ.a; nm.classList.add('revealed-name'); }
+                    fitLineupNames();
+                }
+                setTimeout(() => document.getElementById('q-answer-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+            }
             document.getElementById('btn-correct').style.display = 'block';
             document.getElementById('btn-wrong').style.display = 'block';
         }
@@ -7953,7 +7995,65 @@ html, body {
 		    box2.classList.toggle('active-team-glow', currentTurn === 2);
 		}
 
+        // Ποιος Λείπει: τα ονόματα παίρνουν το μεγαλύτερο μέγεθος που χωράει
+        // (έως 2 γραμμές, χωρίς να κόβεται λέξη).
+        function qbSoftHyphen(name) {
+            // Σπάει μόνο πολύ μεγάλες λέξεις, μετά από φωνήεν κοντά στη μέση (Κωνσταντέ-λιας)
+            return name.split(' ').map(w => {
+                if (w.length < 7 || w.includes('-')) return w;
+                const V = /[αεηιουωάέήίόύώϊϋΐΰ]/i, mid = w.length / 2;
+                let best = -1;
+                for (let i = 3; i < w.length - 3; i++) {
+                    if (V.test(w[i]) && !V.test(w[i + 1]) && (best < 0 || Math.abs(i + 1 - mid) < Math.abs(best - mid))) best = i + 1;
+                }
+                return best > 0 ? w.slice(0, best) + '\u00AD' + w.slice(best) : w;
+            }).join(' ');
+        }
+        function fitLineupNames() {
+            const pc = document.getElementById('pitch-container');
+            if (!pc || !pc.offsetParent) return;
+            const START = (innerWidth <= 380 || innerHeight < 760) ? 14 : 15, MIN = 8, LH = 1.12;
+            pc.querySelectorAll('.pitch-player-name').forEach(n => {
+                if (!n.dataset.raw) n.dataset.raw = n.textContent.trim();
+                const fits = (size, maxLines = 2) => {
+                    n.style.fontSize = size + 'px';
+                    const lines = Math.round(n.offsetHeight / (size * LH));
+                    return n.scrollWidth <= n.clientWidth + 0.5 && lines <= maxLines;
+                };
+                const best = (txt, maxLines) => {
+                    n.textContent = txt;
+                    let size = START;
+                    while (!fits(size, maxLines) && size > MIN) size -= 0.5;
+                    return size;
+                };
+                // Ολόκληρες λέξεις, εκτός αν ο συλλαβισμός δίνει αισθητά μεγαλύτερα γράμματα
+                const whole = best(n.dataset.raw);
+                const hy = qbSoftHyphen(n.dataset.raw);
+                if (hy !== n.dataset.raw && whole < START) {
+                    const multi = n.dataset.raw.includes(' ') ? 3 : 2;
+                    const split = best(hy, multi);
+                    if (split >= whole + 2) { fits(split, multi); return; }
+                }
+                n.textContent = n.dataset.raw; fits(whole);
+            });
+            // Το γήπεδο παίρνει όλο τον διαθέσιμο χώρο ως το κουμπί, χωρίς να χρειάζεται scroll
+            const area = pc.closest('.q-scroll-area');
+            if (area) area.scrollTop = 0;
+            const rows = [...pc.querySelectorAll('.pitch-row')];
+            const need = rows.reduce((t, r) => t + r.offsetHeight, 0) + rows.length * 8 + (innerHeight < 760 ? 20 : 32);
+            let h = 480;
+            const ans = document.getElementById('q-answer-box');
+            const ansH = (ans && getComputedStyle(ans).display !== 'none') ? ans.offsetHeight + parseFloat(getComputedStyle(ans).marginTop || 0) + parseFloat(getComputedStyle(ans).marginBottom || 0) : 0;
+            if (area) h = Math.min(h, Math.floor(area.getBoundingClientRect().bottom - pc.getBoundingClientRect().top - 24 - ansH));
+            h = Math.max(need, h);
+            pc.style.minHeight = h + 'px';
+            pc.style.height = h + 'px';
+        }
+        window.addEventListener('resize', () => { const pc = document.getElementById('pitch-container'); if (pc && pc.classList.contains('is-lineup')) fitLineupNames(); });
+
         function fitPitchNames() {
+		    const pc = document.getElementById('pitch-container');
+		    if (pc && pc.classList.contains('is-lineup')) return fitLineupNames();
 		    const names = document.querySelectorAll('#pitch-container .pitch-row > div > span');
 		
 		    names.forEach(name => {
@@ -7972,6 +8072,7 @@ html, body {
 		
 		function renderPitch(lineup) {
 		    const pitch = document.getElementById('pitch-container');
+		    pitch.classList.add('is-lineup');
 		
 		    pitch.innerHTML = `
 		        <div class="pitch-markings">

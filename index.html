@@ -4081,7 +4081,7 @@ html, body {
     #pitch-container.is-lineup .missing-shirt { font-size: 17px !important; }
     .q-scroll-area:has(#pitch-container.is-lineup) #q-text { font-size: 17px !important; margin-bottom: 10px !important; line-height: 1.3; }
 }
-#pitch-container.is-lineup .missing-shirt.revealed-shirt { background: #f5c518 !important; color: #121820 !important; border-color: #fff; animation: qbPop .35s ease; }
+#pitch-container.is-lineup .missing-shirt.revealed-shirt { background: #f5c518 !important; color: #121820 !important; border-color: #fff; font-size: 19px !important; animation: qbPop .35s ease; }
 #pitch-container.is-lineup .pitch-player-name.revealed-name { color: #f5c518 !important; }
 @keyframes qbPop { 0% { transform: scale(.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
     </style>
@@ -7832,7 +7832,7 @@ html, body {
                 const pc = document.getElementById('pitch-container');
                 const miss = pc.querySelector('.missing-shirt');
                 if (miss) {
-                    miss.classList.add('revealed-shirt'); miss.textContent = '✓';
+                    miss.classList.add('revealed-shirt'); miss.textContent = '👕';
                     const nm = miss.parentElement.querySelector('.pitch-player-name');
                     if (nm) { nm.dataset.raw = currentQ.a; nm.classList.add('revealed-name'); }
                     fitLineupNames();

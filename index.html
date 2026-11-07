@@ -4286,6 +4286,20 @@ html, body {
 @keyframes rtBall { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 22px); opacity: 0; } }
 @keyframes rtFee { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cc-crest, .cc-link, .rt-club, .rt-arrow i, .rt-fee { animation: none !important; } }
+
+/* v37: Top 5 — όλες οι 5 θέσεις πάντα προσβάσιμες στο κινητό */
+#top5-container { flex-shrink: 0 !important; min-height: max-content; }
+.q-scroll-area:has(#top5-container[style*="flex"]) { overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
+.t5-face { flex-wrap: wrap; row-gap: 3px; padding: 6px 0; }
+.t5-name { flex: 1 1 auto; }
+.t5-stat { white-space: normal !important; max-width: 100% !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.2; text-align: center; }
+@media (max-height: 760px) {
+    #top5-container { padding: 10px 10px 10px !important; gap: 6px !important; }
+    #top5-container .top5-item { min-height: 42px; }
+    #top5-container .top5-num { width: 28px !important; height: 28px !important; font-size: 14px !important; }
+    .t5-name { font-size: 15px; }
+    .q-scroll-area:has(#top5-container[style*="flex"]) #q-text { font-size: 17px !important; margin-bottom: 10px !important; line-height: 1.3; }
+}
     </style>
 </head>
 <body>
